@@ -1,0 +1,86 @@
+/* src/styles/picker.css */
+
+/* Скрыть стандартные бордеры и фон react-mobile-picker */
+.picker-item,
+.picker-item-selected {
+  user-select: none;
+  transition: color 0.2s, background 0.2s, opacity 0.2s;
+}
+
+.picker-item {
+  opacity: 0.5;
+}
+
+.picker-item-selected {
+  border: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+
+.react-mobile-picker-column {
+  /* Убираем стандартные бордеры */
+  border: none !important;
+  background: transparent !important;
+}
+
+.react-mobile-picker {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* Убираем выделение текста при скролле */
+.react-mobile-picker-item {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.picker-gap .react-mobile-picker-item,
+.picker-gap .react-mobile-picker-wheel,
+.picker-gap .react-mobile-picker,
+.picker-gap .react-mobile-picker-column {
+  border: none !important;
+  border-top: none !important;
+  border-bottom: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.picker-gap .react-mobile-picker-column {
+  margin-left: 16px;
+  margin-right: 16px;
+}
+
+.picker-center-bar {
+  border-radius: 12px;
+}
+
+.picker-fade-mask {
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 35%, black 65%, transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0%, black 35%, black 65%, transparent 100%);
+}
+
+.picker-fade-mask * {
+  border: none !important;
+  border-top: none !important;
+  border-bottom: none !important;
+  box-shadow: none !important;
+}
+
+.picker-gap .react-mobile-picker-item {
+  border-top: 1px solid #E9E9EA !important;
+  border-bottom: 1px solid #E9E9EA !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.picker-gap .react-mobile-picker {
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.picker-fade-mask div[style*="position: absolute"][style*="top: 50%"] {
+  display: none !important;
+} 
