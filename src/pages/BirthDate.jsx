@@ -3,6 +3,7 @@ import StepWrapper from '../components/StepWrapper';
 import Button from '../components/Button';
 import { useUser } from '../context/UserContext';
 import Picker from 'react-mobile-picker';
+import { useNavigate } from 'react-router-dom';
 import '../styles/picker.css';
 
 const months = [
@@ -21,6 +22,7 @@ const getScaleByDistance = (distance) => {
 
 export default function BirthDate() {
   const { setUserData } = useUser();
+  const navigate = useNavigate();
   const [pickerValue, setPickerValue] = useState({
     month: months[0],
     day: '1',
@@ -50,7 +52,7 @@ export default function BirthDate() {
     const dayNum = String(pickerValue.day).padStart(2, '0');
     const date = `${pickerValue.year}-${monthNum}-${dayNum}`;
     setUserData(prevData => ({ ...prevData, birthDate: date }));
-    // переход на следующий шаг
+    navigate('/birth-time');
   };
 
   return (
