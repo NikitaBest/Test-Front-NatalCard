@@ -18,9 +18,9 @@ export default function BirthCity() {
 
   return (
     <StepWrapper>
-      <div>
-        <h1 className="text-xl font-semibold text-center mb-8">Город вашего рождения</h1>
-        <div className="mb-6">
+      <h1 className="text-xl font-semibold text-center mb-8">Город вашего рождения</h1>
+      <div className="flex flex-col items-center justify-center flex-1 w-full">
+        <div className="w-full max-w-[350px] mt-8 mb-6 flex justify-center">
           <Input
             value={city}
             onChange={(e) => setCity(e.target.value)}
@@ -28,7 +28,7 @@ export default function BirthCity() {
           />
         </div>
       </div>
-      <Button onClick={handleContinue} disabled={!city.trim()}>Завершить</Button>
+      <Button onClick={handleContinue} disabled={!city.trim()} className="mx-auto">Завершить</Button>
     </StepWrapper>
   );
 } 
