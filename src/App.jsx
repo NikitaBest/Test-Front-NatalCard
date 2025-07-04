@@ -7,7 +7,10 @@ import Gender from './pages/Gender';
 import BirthDate from './pages/BirthDate';
 import BirthTime from './pages/BirthTime';
 import BirthCity from './pages/BirthCity';
-import Success from './pages/Success';
+import AskAI from './pages/AskAI';
+import Settings from './pages/Settings';
+import Profile from './pages/Profile';
+import Today from './pages/Today';
 
 function App() {
   const [isAppLoading, setIsAppLoading] = useState(true);
@@ -33,7 +36,10 @@ function App() {
           <Route path="/birth-date" element={<BirthDate />} />
           <Route path="/birth-time" element={<BirthTime />} />
           <Route path="/birth-city" element={<BirthCity />} />
-          <Route path="/success" element={<Success />} />
+          <Route path="/ask-ai" element={<AskAI />} />
+          <Route path="/settings" element={<Settings />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/today" element={<Today />} />
         </Routes>
       )}
     </>

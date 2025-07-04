@@ -13,7 +13,7 @@ export default function BirthCity() {
   const handleContinue = () => {
     if (!city.trim()) return;
     setUserData(prevData => ({ ...prevData, birthCity: city }));
-    navigate('/success');
+    navigate('/profile');
   };
 
   return (
