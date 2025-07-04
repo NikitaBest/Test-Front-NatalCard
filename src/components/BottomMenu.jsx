@@ -12,7 +12,7 @@ export default function BottomMenu({ activeIndex = 2 }) {
   const navigate = useNavigate();
   return (
     <nav className="fixed left-0 right-0 bottom-0 bg-white border-t border-gray-300 z-50">
-      <div className="flex justify-between items-center px-1 py-3 max-w-md mx-auto">
+      <div className="flex justify-between items-center px-1 pt-4 pb-4 max-w-lg mx-auto">
         {menu.map((item, idx) => (
           <button
             key={item.label}
