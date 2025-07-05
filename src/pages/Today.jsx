@@ -35,7 +35,7 @@ export default function Today() {
           { icon: '⭐', text: 'Сегодня вас ждет лучший день в вашей жизни' },
           { icon: '🌱', text: 'Будьте осторожнее в первой половине дня' },
         ]}
-        image={<img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/Black_and_white_eye.jpg" alt="eye" className="w-24 h-24 object-contain rounded-full" />}
+        image={<img src="/image 313.png" alt="eye" className="w-24 h-24 object-contain rounded-full" />}
         blocks={[
           {
             title: 'Ваше Солнце',

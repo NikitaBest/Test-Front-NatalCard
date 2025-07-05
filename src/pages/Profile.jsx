@@ -23,7 +23,7 @@ export default function Profile() {
           Находясь в знаке Стрельца, оно наделяет вас неутомимой жаждой познания и стремлением к свободе. Ваша сила — в поиске смысла и расширении границ, как физических, так и интеллектуальных. Вы здесь, чтобы учиться и вдохновлять других своим оптимизмом.
         </>}
       >
-        <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/Black_and_white_eye.jpg" alt="eye" className="w-24 h-24 object-contain rounded-full" />
+        <img src="/img_11.png" alt="saturn" className="w-24 h-24 object-contain rounded-full" />
       </ProfileInfoBlock>
       <BottomMenu activeIndex={2} />
     </div>
