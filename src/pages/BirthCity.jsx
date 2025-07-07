@@ -18,7 +18,7 @@ export default function BirthCity() {
 
   return (
     <StepWrapper>
-      <h1 className="text-xl font-semibold text-center mb-8">Город вашего рождения</h1>
+      <h1 className="text-xl font-normal text-center mt-2 font-mono">Город вашего рождения</h1>
       <div className="flex flex-col items-center justify-center flex-1 w-full">
         <div className="w-full max-w-[350px] mt-8 mb-6 flex justify-center">
           <Input

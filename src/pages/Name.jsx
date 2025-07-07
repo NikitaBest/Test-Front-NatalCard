@@ -18,7 +18,7 @@ export default function Name() {
 
   return (
     <StepWrapper>
-      <h1 className="text-xl font-semibold text-center mt-2">Как вас зовут?</h1>
+      <h1 className="text-xl font-normal text-center mt-2 font-mono">Как вас зовут?</h1>
       <div className="flex flex-col items-center justify-center flex-1">
         <div className="mb-6 w-full mt-8">
           <Input

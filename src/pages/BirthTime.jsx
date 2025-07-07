@@ -35,7 +35,7 @@ export default function BirthTime() {
 
   return (
     <StepWrapper>
-      <h1 className="text-base font-normal font-mono text-[#1A1A1A] text-center mb-2">Укажите время рождения</h1>
+      <h1 className="text-xl font-normal text-center mt-2 font-mono">Укажите время рождения</h1>
       <div className="flex flex-col items-center justify-center flex-1">
         <div className="mb-6 w-full mt-8 flex justify-center">
           <div className="w-full max-w-[350px] h-[360px] bg-white/80 rounded-[28px] shadow-2xl flex items-center justify-center relative overflow-hidden picker-fade-mask">

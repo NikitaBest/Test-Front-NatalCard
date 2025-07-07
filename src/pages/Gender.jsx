@@ -21,7 +21,7 @@ export default function Gender() {
 
   return (
     <StepWrapper>
-      <h1 className="text-2xl font-normal text-center mt-2 font-mono">Укажите свой пол</h1>
+      <h1 className="text-xl font-normal text-center mt-2 font-mono">Укажите свой пол</h1>
       <div className="flex flex-col items-center justify-center flex-1">
         <div className="flex justify-center w-full mt-12 gap-4">
           <button
