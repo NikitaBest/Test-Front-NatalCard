@@ -28,7 +28,7 @@ export default function BirthCity() {
           />
         </div>
       </div>
-      <Button onClick={handleContinue} disabled={!city.trim()} className="mx-auto">Завершить</Button>
+      <Button onClick={handleContinue} disabled={!city.trim()} className="mx-auto w-full max-w-xs whitespace-nowrap overflow-hidden text-ellipsis text-lg sm:text-xl text-center">Рассчитать натальную карту</Button>
     </StepWrapper>
   );
 } 

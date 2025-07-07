@@ -20,7 +20,7 @@ export default function Start() {
           </p>
         </div>
         <div className="w-full">
-          <Button onClick={() => navigate('/name')} variant="wide">
+          <Button onClick={() => navigate('/name')} variant="wide" className="text-2xl">
             Начать
           </Button>
         </div>
