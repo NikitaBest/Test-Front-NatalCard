@@ -44,7 +44,7 @@ export default function AskAI() {
   const handleInputChange = (e) => setInputValue(e.target.value);
 
   return (
-    <div className="min-h-screen pt-0 relative overflow-hidden">
+    <div className="min-h-screen pt-10 relative overflow-hidden">
       <img
         src="/bg2.png"
         alt=""

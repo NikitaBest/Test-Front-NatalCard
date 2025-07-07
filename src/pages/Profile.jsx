@@ -11,7 +11,7 @@ export default function Profile() {
   const { userData } = useUser();
   const [activeTab, setActiveTab] = useState('map');
   return (
-    <div className="min-h-screen w-full overflow-x-hidden bg-white pt-0">
+    <div className="min-h-screen w-full overflow-x-hidden bg-white pt-10">
       <UserProfileHeader name={userData.name || 'Имя'} username={userData.username || '@username'} />
       <ProfileTabs active={activeTab} onChange={setActiveTab} />
       {activeTab === 'map' && <NatalChartSquare />}
