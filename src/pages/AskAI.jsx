@@ -53,7 +53,7 @@ export default function AskAI() {
       />
       <div className="bg-white/50 relative z-10 min-h-screen">
         <div className="w-full flex flex-col items-center pb-[92px]">
-          <h1 className="text-center font-anonymous-pro text-4xl font-light text-gray-800 mt-4 mb-2">Вопрос&nbsp;AI</h1>
+          <h1 className="text-2xl font-normal text-center mt-2 font-mono">Вопрос&nbsp;AI</h1>
           <div className="flex flex-row items-center justify-start w-full max-w-xl mx-auto mb-2 px-4">
             <HamburgerIcon />
             <div className="text-left text-xs sm:text-sm md:text-base lg:text-lg font-normal text-gray-400 ml-4 w-[320px] truncate">Получи ответы на самые важные вопросы</div>
