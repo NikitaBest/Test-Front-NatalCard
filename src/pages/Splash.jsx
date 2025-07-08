@@ -11,7 +11,8 @@ export default function Splash({ fadeOut = false }) {
         className="w-full max-w-xs sm:max-w-md h-auto max-h-[60vh] object-contain"
       />
       <p className="w-auto max-w-md mx-auto mb-8 text-center font-sans text-xs sm:text-sm font-normal leading-none text-[#1A1A1A]/60">
-        Точные расчеты на основе ведической астрологии и актуальных данных NASA
+        Точные расчеты на основе ведической астрологии<br />
+         и актуальных данных NASA
       </p>
     </div>
   );

@@ -28,7 +28,8 @@ export default function Start() {
 
       {/* Текст в футере */}
       <p className="w-full max-w-[320px] mx-auto text-center font-sans text-xs font-normal leading-none text-[#1A1A1A]/60">
-        Точные расчеты на основе ведической астрологии и актуальных данных NASA
+        Точные расчеты на основе ведической астрологии<br />
+         и актуальных данных NASA
       </p>
     </div>
   );
