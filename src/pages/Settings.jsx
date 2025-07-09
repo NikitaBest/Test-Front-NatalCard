@@ -3,11 +3,6 @@ import { useUser } from '../context/UserContext';
 
 export default function Settings() {
   const { userData } = useUser();
-  // Формируем ник (username) из имени, если нет отдельного поля
-  const username = userData.username || (userData.name ? `@${userData.name.toLowerCase()}` : '@username');
-
-  // Преобразование пола для отображения
-  const gender = userData.gender === 'male' ? 'Мужской' : userData.gender === 'female' ? 'Женский' : '';
 
   return (
     <div className="min-h-screen bg-white pt-10 relative overflow-hidden">
@@ -23,12 +18,12 @@ export default function Settings() {
       <div className="w-full max-w-xl mx-auto bg-[#fafbfc] shadow-sm mb-8 border border-gray-200">
         {[
           { label: 'Имя', value: userData.name || '' },
-          { label: 'Ник', value: username },
-          { label: 'Пол', value: gender },
+          { label: 'Ник', value: userData.userName ? `@${userData.userName}` : '@username' },
+          { label: 'Пол', value: userData.gender === 1 ? 'Мужской' : userData.gender === 2 ? 'Женский' : '' },
           { label: 'Дата рождения', value: userData.birthDate || '' },
           { label: 'Время рождения', value: userData.birthTime || '' },
-          { label: 'Место рождения', value: userData.birthCity || '' },
-          { label: 'История чата', value: '16 чатов' }, // Можно заменить на реальное значение
+          { label: 'Место рождения', value: userData.birthLocation || '' },
+          { label: 'История чата', value: '16 чатов' },
         ].map((row, idx) => (
           <div key={row.label} className="flex justify-between items-center px-6 py-4 border-b border-gray-300 text-base font-mono text-gray-700 last:border-b-0">
             <span className="text-left font-normal w-1/2">{row.label}</span>
