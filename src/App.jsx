@@ -12,6 +12,7 @@ import Settings from './pages/Settings';
 import Profile from './pages/Profile';
 import Today from './pages/Today';
 import { AnimatePresence, motion } from 'framer-motion';
+import { loginUser } from './utils/api';
 
 function App() {
   const [isAppLoading, setIsAppLoading] = useState(true);
@@ -24,6 +25,32 @@ function App() {
       setTimeout(() => setShowSplash(false), 500); // 500ms for fade out
     }, 3000);
     return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    // Авторизация при первом запуске, если токена нет
+    const token = localStorage.getItem('token');
+    if (!token) {
+      const testUserData = {
+        userTelegramId: 123,
+        firstName: 'string',
+        lastName: 'string',
+        userName: 'string',
+        photoUrl: 'string',
+        initData: 'string',
+        ignoreValidate: true,
+      };
+      loginUser(testUserData)
+        .then((data) => {
+          if (data.token) {
+            localStorage.setItem('token', data.token);
+          }
+        })
+        .catch((err) => {
+          // Можно добавить обработку ошибок
+          console.error('Ошибка авторизации:', err);
+        });
+    }
   }, []);
 
   return (
