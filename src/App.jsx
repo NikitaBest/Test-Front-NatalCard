@@ -32,7 +32,7 @@ function App() {
     const token = localStorage.getItem('token');
     if (!token) {
       const testUserData = {
-        userTelegramId: 12876,
+        userTelegramId: 124576,
         firstName: 'string',
         lastName: 'string',
         userName: 'string',
@@ -47,7 +47,7 @@ function App() {
           }
           if (data.user) {
             localStorage.setItem('userId', data.user.id);
-            localStorage.setItem('user', JSON.stringify(data.user));
+            // Не сохраняем localStorage.user здесь!
           }
         })
         .catch((err) => {
