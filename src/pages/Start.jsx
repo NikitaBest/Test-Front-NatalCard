@@ -1,8 +1,26 @@
 import { useNavigate } from 'react-router-dom';
 import Button from '../components/Button';
+import { useEffect } from 'react';
+
+function isProfileFilled(user) {
+  return (
+    user &&
+    typeof user.name === 'string' && user.name.trim() &&
+    typeof user.birthDate === 'string' && user.birthDate.trim() &&
+    typeof user.birthTime === 'string' && user.birthTime.trim() &&
+    typeof user.birthLocation === 'string' && user.birthLocation.trim()
+  );
+}
 
 export default function Start() {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    if (isProfileFilled(user)) {
+      navigate('/profile');
+    }
+  }, [navigate]);
 
   return (
     <div className="flex flex-col justify-between h-screen px-6 py-10 bg-white text-center">

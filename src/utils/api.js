@@ -40,4 +40,34 @@ export async function updateUserProfile(profileData) {
   });
   if (!response.ok) throw new Error('Ошибка обновления профиля');
   return response.json();
+}
+
+export async function searchCity(keyword) {
+  const token = localStorage.getItem('token');
+  const response = await fetch(
+    `https://astro-backend.odonta.burtimaxbot.ru/location/search?keyword=${encodeURIComponent(keyword)}`,
+    {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    }
+  );
+  if (!response.ok) throw new Error('Ошибка поиска города');
+  const data = await response.json();
+  return data.value || [];
+}
+
+export async function getCityUtc({ date, time, locationId }) {
+  const token = localStorage.getItem('token');
+  const response = await fetch(
+    `https://astro-backend.odonta.burtimaxbot.ru/location/utc?date=${encodeURIComponent(date)}&time=${encodeURIComponent(time)}&locationId=${encodeURIComponent(locationId)}`,
+    {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    }
+  );
+  if (!response.ok) throw new Error('Ошибка получения UTC');
+  const data = await response.json();
+  return data.value;
 } 
