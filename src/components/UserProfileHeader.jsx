@@ -1,10 +1,20 @@
 import React from 'react';
+import { useUser } from '../context/UserContext';
 
-export default function UserProfileHeader({ name = 'Имя', username = '@username', zodiac = [] }) {
+export default function UserProfileHeader() {
+  const { userData } = useUser();
+  const photoUrl = userData.photoUrl && userData.photoUrl.trim() ? userData.photoUrl : '/default-avatar.png';
+  const name = userData.name || 'Имя';
+  const username = userData.userName ? `@${userData.userName}` : '@username';
+
   return (
     <div className="w-full flex flex-col items-center pt-4 pb-1 sm:pt-6 sm:pb-2 bg-white">
       <div className="flex items-center w-full px-2 md:max-w-md md:mx-auto md:px-4">
-        <div className="w-14 h-14 sm:w-20 sm:h-20 rounded-full bg-gray-300 mr-4 sm:mr-6 flex-shrink-0" />
+        <img
+          src={photoUrl}
+          alt="avatar"
+          className="w-14 h-14 sm:w-20 sm:h-20 rounded-full object-cover mr-4 sm:mr-6 flex-shrink-0 bg-gray-300"
+        />
         <div className="flex flex-col min-w-0 w-full">
           <div className="flex items-baseline gap-1 sm:gap-2">
             <span className="text-lg sm:text-2xl font-semibold text-gray-800">{name}</span>

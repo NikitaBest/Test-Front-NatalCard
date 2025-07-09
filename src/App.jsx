@@ -32,11 +32,11 @@ function App() {
     const token = localStorage.getItem('token');
     if (!token) {
       const testUserData = {
-        userTelegramId: 124576,
+        userTelegramId: 6,
         firstName: 'string',
         lastName: 'string',
         userName: 'string',
-        photoUrl: 'string',
+        photoUrl: '/http://localhost:5173/123.jpeg.jpeg',
         initData: 'string',
         ignoreValidate: true,
       };
