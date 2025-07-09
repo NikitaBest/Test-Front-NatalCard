@@ -4,16 +4,37 @@ import StepWrapper from '../components/StepWrapper';
 import Input from '../components/Input';
 import Button from '../components/Button';
 import { useUser } from '../context/UserContext';
+import { updateUserProfile } from '../utils/api';
 
 export default function BirthCity() {
-  const { setUserData } = useUser();
+  const { userData, setUserData } = useUser();
   const [city, setCity] = useState('');
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
-  const handleContinue = () => {
+  const handleContinue = async () => {
     if (!city.trim()) return;
     setUserData(prevData => ({ ...prevData, birthCity: city }));
-    navigate('/profile');
+    setLoading(true);
+    try {
+      // Формируем объект для updateUserProfile
+      const profileData = {
+        name: userData.name,
+        gender: userData.gender === 'male' ? 1 : 0,
+        birthDate: userData.birthDate,
+        birthTime: userData.birthTime,
+        birthLocation: city,
+        latitude: 0, // TODO: вычислить по городу
+        longitude: 0, // TODO: вычислить по городу
+        utc: 0 // TODO: вычислить по городу
+      };
+      await updateUserProfile(profileData);
+      navigate('/profile');
+    } catch (err) {
+      alert('Ошибка при сохранении профиля: ' + err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -28,7 +49,7 @@ export default function BirthCity() {
           />
         </div>
       </div>
-      <Button onClick={handleContinue} disabled={!city.trim()} className="mx-auto w-full max-w-xs whitespace-nowrap overflow-hidden text-ellipsis text-lg sm:text-xl text-center">Рассчитать натальную карту</Button>
+      <Button onClick={handleContinue} disabled={!city.trim() || loading} className="mx-auto w-full max-w-xs whitespace-nowrap overflow-hidden text-ellipsis text-lg sm:text-xl text-center">{loading ? 'Сохраняем...' : 'Рассчитать натальную карту'}</Button>
     </StepWrapper>
   );
 } 

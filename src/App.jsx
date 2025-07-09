@@ -45,6 +45,10 @@ function App() {
           if (data.token) {
             localStorage.setItem('token', data.token);
           }
+          if (data.user) {
+            localStorage.setItem('userId', data.user.id);
+            localStorage.setItem('user', JSON.stringify(data.user));
+          }
         })
         .catch((err) => {
           // Можно добавить обработку ошибок

@@ -17,4 +17,27 @@ export async function loginUser(testUserData) {
   });
   if (!response.ok) throw new Error('Ошибка авторизации');
   return response.json(); // ожидается { user, token }
+}
+
+export async function updateUserProfile(profileData) {
+  const token = localStorage.getItem('token');
+  const userId = localStorage.getItem('userId');
+  if (!token || !userId) throw new Error('Нет токена или id пользователя');
+
+  // Формируем объект для запроса
+  const body = {
+    id: Number(userId),
+    ...profileData,
+  };
+
+  const response = await fetch('https://astro-backend.odonta.burtimaxbot.ru/user/update', {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+    body: JSON.stringify(body),
+  });
+  if (!response.ok) throw new Error('Ошибка обновления профиля');
+  return response.json();
 } 
