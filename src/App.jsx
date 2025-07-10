@@ -32,7 +32,7 @@ function App() {
     const token = localStorage.getItem('token');
     if (!token) {
       const testUserData = {
-        userTelegramId: 75678,
+        userTelegramId: 777723,
         firstName: 'string',
         lastName: 'string',
         userName: 'string',

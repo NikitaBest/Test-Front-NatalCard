@@ -19,10 +19,10 @@ export default function Settings() {
         {[
           { label: 'Имя', value: userData.name || '' },
           { label: 'Ник', value: userData.userName ? `@${userData.userName}` : '@username' },
-          { label: 'Пол', value: userData.gender === 1 ? 'Мужской' : userData.gender === 2 ? 'Женский' : '' },
+          { label: 'Пол', value: (userData.gender === 1 || userData.gender === 'male') ? 'Мужской' : (userData.gender === 2 || userData.gender === 'female') ? 'Женский' : '' },
           { label: 'Дата рождения', value: userData.birthDate || '' },
           { label: 'Время рождения', value: userData.birthTime || '' },
-          { label: 'Место рождения', value: userData.birthLocation || '' },
+          { label: 'Место рождения', value: userData.birthLocation || userData.birthCity || userData.birth_city || '' },
           { label: 'История чата', value: '16 чатов' },
         ].map((row, idx) => (
           <div key={row.label} className="flex justify-between items-center px-6 py-4 border-b border-gray-300 text-base font-mono text-gray-700 last:border-b-0">

@@ -1,7 +1,83 @@
 import React from 'react';
 
+const defaultCss = `
+/*
+ *  {
+    margin: 0px;
+    padding: 0px;
+}
+*/
+.chart-north {
+    border: 1px solid #CCC;
+    color: #333;
+    float: left;
+    font-family: Narrow;
+    margin: 0px 3px 2px 0px;
+    height: 331px;
+    width: 331px;
+}
+.chart-north polygon {
+    fill: #FDFDFD;
+    stroke: #000;
+    stroke-width: 0.18;
+}
+.chart-north div {
+    position: absolute;
+}
+.chart-north .sign {
+    font-size: 12px;
+    text-align: center;
+    width: 10px;
+    z-index: 2;
+}
+.chart-north .effects {
+    display: none;
+    font-size: 14px;
+    line-height: 15px;
+    text-align: center;
+    width: 62px;
+    z-index: 2;
+}
+.chart-north .houses polygon {
+    cursor: pointer;
+    opacity: 0;
+}
+.chart-north .planets {
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    z-index: 0;
+}
+.chart-north .planets .planet {
+    border: 1px solid transparent;
+    border-radius: 50%;
+    display: inline-block;
+    margin: 0em 0.05em;
+    padding: 0px 3px;
+    position: relative; 
+}
+.chart-north .planets .planet .retrograde {
+    font-size: 8px;
+    top: 12px;
+}
+.chart-north .planets .planet .degree {
+    font-size: 9px;
+    top: 18px;
+}
+.chart-north .aspects, .chart-north .arudhas, .chart-north .lagnas, .chart-north .upagrahas {
+    color: #888;
+    display: table;
+    font-size: 13px;
+    text-align: center;
+}
+.chart-north .when-change-asc {
+    display: none;
+}
+`;
+
 export default function NatalChartSquare({ chartData }) {
-  if (!chartData || !chartData.value || !chartData.value.chart) {
+  const chartViewRaw = chartData?.value?.chart?.chartView;
+  if (!chartViewRaw) {
     return (
       <div className="flex flex-col justify-center items-center mt-8">
         <div className="text-gray-400">Нет данных для отображения карты</div>
@@ -9,26 +85,22 @@ export default function NatalChartSquare({ chartData }) {
     );
   }
 
-  const chart = chartData.value.chart;
-  let chartView = null;
-  let chartCss = null;
-  try {
-    chartView = JSON.parse(chart.chartView);
-    chartCss = chartView.css;
-  } catch (e) {
-    chartView = { html: '', css: '' };
-    chartCss = '';
-  }
+  // Проверяем, есть ли <style> в chartViewRaw
+  const hasStyle = /<style[\s>]/.test(chartViewRaw);
 
   return (
     <div className="flex flex-col justify-center items-center mt-8 w-full">
-      {/* Вставка CSS для карты */}
-      {chartCss && <style>{chartCss}</style>}
-      {/* Вставка HTML/SVG карты */}
+      {!hasStyle && <style>{defaultCss}</style>}
       <div
-        className="w-full flex justify-center"
-        style={{ maxWidth: 360, minHeight: 360 }}
-        dangerouslySetInnerHTML={{ __html: chartView.html }}
+        style={{
+          width: 331,
+          height: 331,
+          background: '#fff',
+          position: 'relative',
+          overflow: 'hidden',
+          margin: '0 auto'
+        }}
+        dangerouslySetInnerHTML={{ __html: chartViewRaw }}
       />
     </div>
   );
