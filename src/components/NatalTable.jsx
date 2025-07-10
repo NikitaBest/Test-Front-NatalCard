@@ -1,6 +1,31 @@
 import React from 'react';
 
-export default function NatalTable() {
+export default function NatalTable({ chartData }) {
+  // Словари для отображения знаков и планет
+  const zodiacSigns = {
+    1: 'Овен', 2: 'Телец', 3: 'Близнецы', 4: 'Рак', 5: 'Лев', 6: 'Дева', 7: 'Весы', 8: 'Скорпион', 9: 'Стрелец', 10: 'Козерог', 11: 'Водолей', 12: 'Рыбы'
+  };
+  const planetSymbols = {
+    1: '☉ Солнце', 2: '☽ Луна', 3: '☿ Меркурий', 4: '♀ Венера', 5: '♂ Марс', 6: '♃ Юпитер', 7: '♄ Сатурн', 8: '♅ Уран', 9: '♆ Нептун', 10: '♇ Плутон'
+  };
+
+  let tableRows = null;
+  if (chartData && chartData.value && Array.isArray(chartData.value.table)) {
+    tableRows = chartData.value.table.map((row, i) => (
+      <tr key={i}>
+        <td className="border border-gray-400 px-2 py-1 w-1/3 text-left align-middle">
+          {row.zodiacSign ? zodiacSigns[row.zodiacSign] : ''}
+        </td>
+        <td className="px-2 py-1 w-1/3 text-left align-middle bg-gray-100">
+          {row.planet ? planetSymbols[row.planet] || row.planet : ''}
+        </td>
+        <td className="border border-gray-400 px-2 py-1 w-1/6 text-left align-middle">
+          {row.house}
+        </td>
+      </tr>
+    ));
+  }
+
   return (
     <div className="flex flex-col items-center mt-8 px-4 sm:px-8 w-full">
       <div className="flex w-full max-w-2xl">
@@ -12,29 +37,11 @@ export default function NatalTable() {
       <div className="flex w-full max-w-2xl">
         <table className="border border-gray-400 text-gray-500 text-base md:text-lg w-full bg-white">
           <tbody>
-            {/* 12 строк */}
-            {[
-              ['Лев', '☉ Солнце', '1'],
-              ['', '☉ Солнце', '2'],
-              ['Скорпион', '☽ Луна', '3'],
-              ['', '♆ Нептун', '4'],
-              ['Стрелец', '', '5'],
-              ['Рак', '', '6'],
-              ['', '⊕ Земля', '7'],
-              ['Весы', '', '8'],
-              ['Дева', '⚸ Лилит', '9'],
-              ['Рыбы', '', '10'],
-              ['Телец', '♄ Сатурн', '11'],
-              ['Водолей', '♂ Марс', '12'],
-              ['Козерог', '♃ Юпитер', ''],
-              ['Овен', '☿ Меркурий', ''],
-            ].map((row, i) => (
-              <tr key={i}>
-                <td className="border border-gray-400 px-2 py-1 w-1/3 text-left align-middle">{row[0]}</td>
-                <td className="px-2 py-1 w-1/3 text-left align-middle bg-gray-100">{row[1]}</td>
-                <td className="border border-gray-400 px-2 py-1 w-1/6 text-left align-middle">{row[2]}</td>
-              </tr>
-            ))}
+            {tableRows && tableRows.length > 0 ? (
+              tableRows
+            ) : (
+              <tr><td colSpan={3} className="text-center py-4 text-gray-400">Нет данных для таблицы</td></tr>
+            )}
           </tbody>
         </table>
       </div>

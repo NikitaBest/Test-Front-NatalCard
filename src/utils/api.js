@@ -70,4 +70,18 @@ export async function getCityUtc({ date, time, locationId }) {
   if (!response.ok) throw new Error('Ошибка получения UTC');
   const data = await response.json();
   return data.value;
+}
+
+export async function getUserChart() {
+  const token = localStorage.getItem('token');
+  if (!token) throw new Error('Нет токена');
+  const response = await fetch('https://astro-backend.odonta.burtimaxbot.ru/user/chart', {
+    method: 'GET',
+    headers: {
+      'accept': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+  if (!response.ok) throw new Error('Ошибка получения данных натальной карты');
+  return response.json();
 } 
