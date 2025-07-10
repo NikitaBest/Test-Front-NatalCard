@@ -30,10 +30,10 @@ export default function Start() {
       {/* Основной контент */}
       <div className="flex flex-col items-center gap-10 w-full max-w-[366px] mx-auto">
         <div>
-          <h1 className="font-mono font-normal font-[400] text-2xl leading-none text-[#1A1A1A] text-center max-w-[366px] w-full mx-auto">
+          <h1 className="text-xl font-normal text-center mt-2 font-mono max-w-[366px] w-full mx-auto">
             Раскройте тайны своей<br />натальной карты
           </h1>
-          <p className="mt-3 text-base sm:text-lg text-gray-500">
+          <p className="mt-3 text-base sm:text-lg text-gray-500/70 text-[#1A1A1A]/50">
             Ваш персональный гид по звёздам.
           </p>
         </div>
