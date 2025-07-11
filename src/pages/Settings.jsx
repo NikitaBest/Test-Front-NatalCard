@@ -82,10 +82,20 @@ export default function Settings() {
           style={{ opacity: 0.3, filter: 'drop-shadow(0 0 10px #000) brightness(0.3) contrast(1)' }}
         />
         {/* Фиксированная шапка */}
-        <div className="w-full max-w-md mx-auto bg-white/80 shadow-sm border border-gray-200 mt-2 overflow-hidden sticky top-0 z-20">
-          <div className="flex items-center px-4 py-4 border-b border-gray-300 bg-white/90">
-            <button className="mr-2 text-2xl" onClick={() => selectedChat ? setSelectedChat(null) : setShowChatList(false)}>&larr;</button>
-            <h2 className="text-2xl font-mono text-center flex-1">История чатов</h2>
+        <div className="w-full max-w-md mx-auto sticky top-0 z-20 bg-white/90">
+          <div className="flex items-center px-4 py-4 border-b border-gray-300">
+            <button
+              className="mr-2 flex items-center justify-center w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 transition"
+              onClick={() => selectedChat ? setSelectedChat(null) : setShowChatList(false)}
+              aria-label="Назад"
+              type="button"
+            >
+              <svg width="20" height="20" fill="none" viewBox="0 0 20 20">
+                <path d="M13 16l-5-5 5-5" stroke="#333" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
+            <h2 className="flex-1 text-center text-2xl font-bold text-gray-900">История чатов</h2>
+            <div className="w-9" />
           </div>
         </div>
         {/* Список чатов */}
