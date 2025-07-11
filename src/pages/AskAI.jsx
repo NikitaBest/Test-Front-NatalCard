@@ -196,10 +196,10 @@ export default function AskAI() {
               )}
               {error && <div className="text-center text-red-500 mb-4">{error}</div>}
               <button
-                className="w-full max-w-xs h-12 bg-black text-white rounded-xl text-lg font-mono mb-4"
+                className="w-full max-w-[180px] h-10 bg-gray-200 text-gray-800 rounded-xl text-base font-mono mb-4"
                 onClick={handleBack}
               >
-                Назад
+                Выйти из чата
               </button>
             </div>
           )}
@@ -212,10 +212,10 @@ export default function AskAI() {
                 placeholder="Задай свой вопрос..."
                 value={inputValue}
                 onChange={handleInputChange}
-                disabled={loading || dialogStarted}
+                disabled={loading}
                 onKeyDown={e => { if (e.key === 'Enter' && !dialogStarted) handleSend(); }}
               />
-              <button className="p-2 flex items-center justify-center" type="button" onClick={handleSend} disabled={!inputValue.trim() || loading || dialogStarted}>
+              <button className="p-2 flex items-center justify-center" type="button" onClick={handleSend} disabled={!inputValue.trim() || loading}>
                 <svg width="28" height="28" fill="none" viewBox="0 0 28 28"><circle cx="14" cy="14" r="14" fill="#F3F4F6"/><path d="M10.5 14h7m0 0-2.5-2.5M17.5 14l-2.5 2.5" stroke="#A1A1AA" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
               </button>
             </div>
