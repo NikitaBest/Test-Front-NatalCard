@@ -13,8 +13,12 @@ const defaultCss = `
     float: left;
     font-family: Narrow;
     margin: 0px 3px 2px 0px;
-    height: 331px;
-    width: 331px;
+    width: 100%;
+    max-width: 331px;
+    aspect-ratio: 1/1;
+    height: auto;
+    background: #fff;
+    position: relative;
 }
 .chart-north polygon {
     fill: #FDFDFD;
@@ -73,6 +77,33 @@ const defaultCss = `
 .chart-north .when-change-asc {
     display: none;
 }
+.chart-north svg {
+    width: 100% !important;
+    height: auto !important;
+    max-width: 100% !important;
+    display: block;
+}
+
+@media (max-width: 500px) {
+  .chart-north {
+    max-width: 98vw;
+    font-size: 12px;
+  }
+  .chart-north .sign {
+    font-size: 9px;
+    width: 8px;
+  }
+  .chart-north .planets {
+    font-size: 12px;
+  }
+  .chart-north .effects {
+    font-size: 11px;
+    width: 48px;
+  }
+  .chart-north .aspects, .chart-north .arudhas, .chart-north .lagnas, .chart-north .upagrahas {
+    font-size: 10px;
+  }
+}
 `;
 
 export default function NatalChartSquare({ chartData }) {
@@ -89,16 +120,18 @@ export default function NatalChartSquare({ chartData }) {
   const hasStyle = /<style[\s>]/.test(chartViewRaw);
 
   return (
-    <div className="flex flex-col justify-center items-center mt-8 w-full">
+    <div className="flex flex-col justify-center items-center mt-8 w-full px-2 sm:px-0">
       {!hasStyle && <style>{defaultCss}</style>}
       <div
         style={{
-          width: 331,
-          height: 331,
+          width: '100%',
+          maxWidth: 331,
+          aspectRatio: '1/1',
           background: '#fff',
           position: 'relative',
           overflow: 'hidden',
-          margin: '0 auto'
+          margin: '0 auto',
+          height: 'auto',
         }}
         dangerouslySetInnerHTML={{ __html: chartViewRaw }}
       />
