@@ -1,6 +1,7 @@
 import BottomMenu from '../components/BottomMenu';
 import { useUser } from '../context/UserContext';
 import { useState, useEffect } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 
 export default function Settings() {
   const { userData } = useUser();
@@ -90,47 +91,63 @@ export default function Settings() {
             <h2 className="text-2xl font-mono text-center flex-1">История чатов</h2>
           </div>
           {error && <div className="text-red-500 text-center py-4">{error}</div>}
-          {!selectedChat && (
-            <div>
-              {loadingChats ? (
-                <div className="text-center py-8">Загрузка чатов...</div>
-              ) : (
-                chats.length === 0 ? (
-                  <div className="text-center py-8 text-gray-400">Нет чатов</div>
+          <AnimatePresence mode="wait">
+            {!selectedChat && (
+              <motion.div
+                key="chat-list"
+                initial={{ opacity: 0, x: -30 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 30 }}
+                transition={{ duration: 0.25 }}
+              >
+                {loadingChats ? (
+                  <div className="text-center py-8">Загрузка чатов...</div>
                 ) : (
-                  chats.map((chat, idx) => (
-                    <button
-                      key={chat.id}
-                      className="w-full flex justify-between items-center px-6 py-4 border-b border-gray-200 text-base font-mono text-gray-700 hover:bg-gray-100 transition"
-                      onClick={() => setSelectedChat(chat)}
-                    >
-                      <span className="text-left font-normal">{chat.mainQuestion || `Вопрос ${idx + 1}`}</span>
-                      <span className="text-right font-normal text-gray-400 text-sm">{formatDate(chat.lastMessageTime)}</span>
-                    </button>
-                  ))
-                )
-              )}
-            </div>
-          )}
-          {selectedChat && (
-            <div className="max-h-[60vh] overflow-y-auto px-2 py-4 bg-[#fafbfc]">
-              {loadingHistory ? (
-                <div className="text-center py-8">Загрузка истории...</div>
-              ) : (
-                messages.length === 0 ? (
-                  <div className="text-center py-8 text-gray-400">Нет сообщений в чате</div>
-                ) : (
-                  messages.map((msg, i) => (
-                    <div key={i} className={`flex ${msg.isUser ? 'justify-end' : 'justify-start'} mb-2`}>
-                      <div className={`rounded-xl px-4 py-3 max-w-[80%] text-base font-sans ${msg.isUser ? 'bg-black text-white' : 'bg-gray-100 text-gray-900'}`}>
-                        {msg.content}
-                      </div>
-                    </div>
-                  ))
-                )
-              )}
-            </div>
-          )}
+                  chats.length === 0 ? (
+                    <div className="text-center py-8 text-gray-400">Нет чатов</div>
+                  ) : (
+                    chats.map((chat, idx) => (
+                      <button
+                        key={chat.id}
+                        className="w-full flex justify-between items-center px-6 py-4 border-b border-gray-200 text-base font-mono text-gray-700 hover:bg-gray-100 transition"
+                        onClick={() => setSelectedChat(chat)}
+                      >
+                        <span className="text-left font-normal">{chat.mainQuestion || `Вопрос ${idx + 1}`}</span>
+                        <span className="text-right font-normal text-gray-400 text-sm">{formatDate(chat.lastMessageTime)}</span>
+                      </button>
+                    ))
+                  )
+                )}
+              </motion.div>
+            )}
+            {selectedChat && (
+              <motion.div
+                key="chat-history"
+                initial={{ opacity: 0, x: 30 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -30 }}
+                transition={{ duration: 0.25 }}
+              >
+                <div className="max-h-[60vh] overflow-y-auto px-2 py-4 bg-[#fafbfc]">
+                  {loadingHistory ? (
+                    <div className="text-center py-8">Загрузка истории...</div>
+                  ) : (
+                    messages.length === 0 ? (
+                      <div className="text-center py-8 text-gray-400">Нет сообщений в чате</div>
+                    ) : (
+                      messages.map((msg, i) => (
+                        <div key={i} className={`flex ${msg.isUser ? 'justify-end' : 'justify-start'} mb-2`}>
+                          <div className={`rounded-xl px-4 py-3 max-w-[80%] text-base font-sans ${msg.isUser ? 'bg-black text-white' : 'bg-gray-100 text-gray-900'}`}>
+                            {msg.content}
+                          </div>
+                        </div>
+                      ))
+                    )
+                  )}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
         <BottomMenu activeIndex={1} />
       </div>
