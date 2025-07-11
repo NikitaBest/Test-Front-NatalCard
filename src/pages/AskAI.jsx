@@ -209,7 +209,7 @@ export default function AskAI() {
             <div className="flex items-center border-t border-gray-300 bg-white">
               <input
                 className="flex-1 py-5 px-3 text-base font-mono text-gray-400 bg-transparent outline-none border-none placeholder-gray-400"
-                placeholder="Задай свой вопрос..."
+                placeholder={dialogStarted ? "Введите сообщение..." : "Задай свой вопрос..."}
                 value={inputValue}
                 onChange={handleInputChange}
                 disabled={loading}
