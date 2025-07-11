@@ -16,11 +16,11 @@ function HamburgerIcon() {
 
 const QUESTIONS = {
   career: [
-    'С чего мне начать?',
-    'Стоит ли идти этой дорогой?',
+    'Как подобрать профессию?',
+    'Что меня ждет?',
     'Какая сфера деятельности мне подойдёт?',
-    'Составь план на будущее',
-    'Как развить дисциплину?'
+    'Составь план для карьерного роста',
+    'Как развить навыки?'
   ],
   self: [
     'С чего мне начать?',
@@ -40,44 +40,88 @@ const QUESTIONS = {
 export default function AskAI() {
   const [activeTab, setActiveTab] = useState('self');
   const [inputValue, setInputValue] = useState('');
-  const [showAnswer, setShowAnswer] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [messages, setMessages] = useState([]); // {isUser, content, createdAt}
+  const [chatId, setChatId] = useState(0); // 0 для нового чата
+  const [error, setError] = useState(null);
+  const [selectedQuestion, setSelectedQuestion] = useState(null);
+  const [dialogStarted, setDialogStarted] = useState(false);
 
-  const handleQuestionClick = (q) => {
+  const handleQuestionClick = (q, idx) => {
     setInputValue(q);
-    setShowAnswer(false);
+    setSelectedQuestion(idx);
   };
   const handleInputChange = (e) => {
     setInputValue(e.target.value);
-    setShowAnswer(false);
+    setSelectedQuestion(null);
   };
-  const handleSend = () => {
-    if (inputValue.trim()) {
-      setLoading(true);
-      setShowAnswer(false);
-      setTimeout(() => {
-        setLoading(false);
-        setShowAnswer(true);
-      }, 2000); // имитация задержки ответа
+
+  const handleSend = async () => {
+    if (!inputValue.trim()) return;
+    setLoading(true);
+    setError(null);
+    const token = localStorage.getItem('token');
+    const now = new Date();
+    const dateTime = now.toISOString();
+    try {
+      // 1. Отправляем сообщение пользователя
+      const res = await fetch('https://astro-backend.odonta.burtimaxbot.ru/ai-chat/send-message', {
+        method: 'POST',
+        headers: {
+          'accept': 'application/json',
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          dateTime,
+          chatId,
+          content: inputValue.trim(),
+        })
+      });
+      if (!res.ok) throw new Error('Ошибка отправки сообщения');
+      const data = await res.json();
+      if (!data.value) throw new Error('Нет ответа от сервера');
+      // Сохраняем chatId, если новый
+      if (data.value.chatId && chatId !== data.value.chatId) setChatId(data.value.chatId);
+      // Добавляем сообщение пользователя в историю
+      setMessages(prev => [...prev, {
+        isUser: true,
+        content: inputValue.trim(),
+        createdAt: data.value.createdAt,
+      }]);
+      setInputValue('');
+      setDialogStarted(true);
+      // 2. Получаем ответ ИИ
+      const answerRes = await fetch(`https://astro-backend.odonta.burtimaxbot.ru/ai-chat/answer?dateTime=${encodeURIComponent(data.value.createdAt)}&chatId=${data.value.chatId}`, {
+        headers: {
+          'accept': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        }
+      });
+      if (!answerRes.ok) throw new Error('Ошибка получения ответа ИИ');
+      const answerData = await answerRes.json();
+      if (answerData.value && answerData.value.content) {
+        setMessages(prev => [...prev, {
+          isUser: false,
+          content: answerData.value.content,
+          createdAt: answerData.value.createdAt,
+        }]);
+      }
+    } catch (e) {
+      setError(e.message);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const staticAnswer = (
-    <div className="w-full max-w-md mx-auto bg-white/80 rounded-xl shadow-none mb-8 px-4 py-8 flex flex-col items-center">
-      <h2 className="text-2xl font-normal text-center mb-6 mt-2 font-mono">Ответ на ваш вопрос</h2>
-      <div className="text-base sm:text-lg text-gray-800 font-sans text-left mb-6 w-full">
-        <b>Ваше Солнце</b> определяет ваше эго, идентичность и главную роль в жизни.  Находясь в знаке Стрельца, оно наделяет вас неутолимой жаждой познания и стремлением к свободе. Ваша сила — в поиске смысла и расширении границ, как физических, так и интеллектуальных. Вы здесь, чтобы учиться и вдохновлять других своим оптимизмом.
-      </div>
-      <ol className="text-base sm:text-lg text-gray-800 font-sans text-left mb-6 w-full list-decimal pl-6">
-        <li>определяет ше эго, идентичность и главную роль в жизни.  Находясь в знаке Стрельца, оно наделяет вас неутолимой жаждой познания и стремлением к свободе. Ваша сила — в поиске смысла и расширении границ, как физических, так и интеллектуальных. Вы здесь, чтобы учиться и вдохновлять других своим оптимизмом.</li>
-        <li>определяет ваше эго, идентичность и главную роль в жизни.  Находясь в знаке Стрельца, оно наделяет вас неутолимой жаждой познания и стремлением к свободе. Ваша сила — в поиске смысла и расширении границ, как физических, так и интеллектуальных. Вы здесь, чтобы учиться и вдохновлять других своим оптимизмом.</li>
-      </ol>
-      <div className="text-base sm:text-lg text-gray-800 font-sans text-left w-full">
-        <b>Находясь в знаке Стрельца</b>, оно наделяет вас неутолимой жаждой познания и стремлением к свободе. Ваша сила — в поиске смысла и расширении границ, как физических, так и интеллектуальных. Вы здесь, чтобы учиться и вдохновлять других своим оптимизмом.
-      </div>
-      <button className="mt-10 w-full max-w-xs h-12 bg-black text-white rounded-xl text-lg font-mono" onClick={() => setShowAnswer(false)}>Назад</button>
-    </div>
-  );
+  const handleBack = () => {
+    setMessages([]);
+    setDialogStarted(false);
+    setInputValue('');
+    setSelectedQuestion(null);
+    setChatId(0);
+    setError(null);
+  };
 
   return (
     <div className="min-h-screen pt-10 relative overflow-hidden">
@@ -117,52 +161,64 @@ export default function AskAI() {
           </div>
           <hr className="w-[90%] mx-auto border-gray-300 mb-4" />
           <div className="mb-12">
-            <AskAITabs active={activeTab} onChange={tab => { setActiveTab(tab); setInputValue(''); setShowAnswer(false); }} />
+            <AskAITabs active={activeTab} onChange={tab => { setActiveTab(tab); setInputValue(''); setSelectedQuestion(null); setDialogStarted(false); setMessages([]); setChatId(0); setError(null); }} />
           </div>
-          {/* Ответ */}
-          <AnimatePresence mode="wait">
-            {showAnswer && (
-              <motion.div
-                key="ai-answer"
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 30 }}
-                transition={{ duration: 0.35, ease: 'easeInOut' }}
-                className="w-full flex flex-col items-center"
-              >
-                {staticAnswer}
-              </motion.div>
-            )}
-          </AnimatePresence>
-          <div className="flex flex-col items-center w-full max-w-md mx-auto mb-24">
-            {!showAnswer && QUESTIONS[activeTab].map((q, i) => (
+          {/* Вопросы только до начала диалога */}
+          {!dialogStarted && (
+            <div className="flex flex-col items-center w-full max-w-md mx-auto mb-8">
+              {QUESTIONS[activeTab].map((q, i) => (
+                <button
+                  key={i}
+                  className={`font-mono text-base transition mb-10 focus:outline-none ${
+                    selectedQuestion === i ? 'text-black font-semibold' : 'text-gray-400 hover:text-gray-700'
+                  }`}
+                  onClick={() => handleQuestionClick(q, i)}
+                  type="button"
+                >
+                  {q}
+                </button>
+              ))}
+            </div>
+          )}
+          {/* История диалога */}
+          {dialogStarted && (
+            <div className="flex flex-col items-center w-full max-w-md mx-auto mb-8">
+              {messages.length > 0 && (
+                <div className="w-full bg-white/80 rounded-xl shadow-none mb-8 px-4 py-6 flex flex-col gap-6">
+                  {messages.map((msg, i) => (
+                    <div key={i} className={`flex ${msg.isUser ? 'justify-end' : 'justify-start'}`}>
+                      <div className={`rounded-xl px-4 py-3 max-w-[80%] text-base font-sans ${msg.isUser ? 'bg-black text-white' : 'bg-gray-100 text-gray-900'}`}>
+                        {msg.content}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+              {error && <div className="text-center text-red-500 mb-4">{error}</div>}
               <button
-                key={i}
-                className={`font-mono text-base transition mb-10 focus:outline-none ${inputValue === q ? 'text-black' : 'text-gray-400 hover:text-gray-700'}`}
-                onClick={() => handleQuestionClick(q)}
-                type="button"
+                className="w-full max-w-xs h-12 bg-black text-white rounded-xl text-lg font-mono mb-4"
+                onClick={handleBack}
               >
-                {q}
+                Назад
               </button>
-            ))}
-          </div>
+            </div>
+          )}
         </div>
         <div className="fixed left-0 right-0 bottom-[56px] z-50 w-full flex justify-center pointer-events-none">
           <div className="w-full max-w-md mx-auto px-2 pointer-events-auto">
-            {!showAnswer && (
-              <div className="flex items-center border-t border-gray-300 bg-white">
-                <input
-                  className="flex-1 py-5 px-3 text-base font-mono text-gray-400 bg-transparent outline-none border-none placeholder-gray-400"
-                  placeholder="Задай свой вопрос..."
-                  value={inputValue}
-                  onChange={handleInputChange}
-                  disabled={showAnswer || loading}
-                />
-                <button className="p-2 flex items-center justify-center" type="button" onClick={handleSend} disabled={!inputValue.trim() || showAnswer || loading}>
-                  <svg width="28" height="28" fill="none" viewBox="0 0 28 28"><circle cx="14" cy="14" r="14" fill="#F3F4F6"/><path d="M10.5 14h7m0 0-2.5-2.5M17.5 14l-2.5 2.5" stroke="#A1A1AA" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                </button>
-              </div>
-            )}
+            <div className="flex items-center border-t border-gray-300 bg-white">
+              <input
+                className="flex-1 py-5 px-3 text-base font-mono text-gray-400 bg-transparent outline-none border-none placeholder-gray-400"
+                placeholder="Задай свой вопрос..."
+                value={inputValue}
+                onChange={handleInputChange}
+                disabled={loading || dialogStarted}
+                onKeyDown={e => { if (e.key === 'Enter' && !dialogStarted) handleSend(); }}
+              />
+              <button className="p-2 flex items-center justify-center" type="button" onClick={handleSend} disabled={!inputValue.trim() || loading || dialogStarted}>
+                <svg width="28" height="28" fill="none" viewBox="0 0 28 28"><circle cx="14" cy="14" r="14" fill="#F3F4F6"/><path d="M10.5 14h7m0 0-2.5-2.5M17.5 14l-2.5 2.5" stroke="#A1A1AA" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+              </button>
+            </div>
           </div>
         </div>
         <BottomMenu activeIndex={0} />
