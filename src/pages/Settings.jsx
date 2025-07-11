@@ -99,7 +99,7 @@ export default function Settings() {
           </div>
         </div>
         {/* Список чатов */}
-        <div className="w-full max-w-md mx-auto bg-white/80 shadow-sm border border-gray-200 overflow-hidden pb-4">
+        <div className="w-full max-w-md mx-auto bg-white/80 shadow-sm border border-gray-200 overflow-hidden pb-[56px]">
           {error && <div className="text-red-500 text-center py-4">{error}</div>}
           <AnimatePresence mode="wait">
             {!selectedChat && (
