@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useState, useEffect } from 'react';
 
 const UserContext = createContext();
 
@@ -13,6 +13,17 @@ export function UserProvider({ children }) {
       birthCity: ''
     };
   });
+
+  // Слушаем изменения localStorage (например, если другой вкладкой обновили)
+  useEffect(() => {
+    function syncUserData(e) {
+      if (e.key === 'user') {
+        setUserData(e.newValue ? JSON.parse(e.newValue) : {});
+      }
+    }
+    window.addEventListener('storage', syncUserData);
+    return () => window.removeEventListener('storage', syncUserData);
+  }, []);
 
   const value = { userData, setUserData };
 

@@ -18,8 +18,8 @@ export default function TodayCalendar({ value = new Date(), onChange }) {
   const dates = getDates();
 
   return (
-    <div className="w-full flex flex-col bg-[#fafbfc]">
-      <div className="flex gap-10 w-full max-w-md justify-center py-4">
+    <div className="w-full flex flex-col">
+      <div className="flex gap-10 w-full max-w-md justify-center py-2">
         {dates.map((date, idx) => {
           const isSelected = date.toDateString() === value.toDateString();
           return (
@@ -36,7 +36,7 @@ export default function TodayCalendar({ value = new Date(), onChange }) {
                 {weekDays[date.getDay()]}
               </span>
               {isSelected ? (
-                <span className="w-10 h-10 flex items-center justify-center rounded-full text-lg font-bold bg-[#e5e8eb] text-gray-900 transition">
+                <span className="w-10 h-10 flex items-center justify-center rounded-full text-lg font-bold bg-gray-800 text-white transition">
                   {date.getDate()}
                 </span>
               ) : (
@@ -46,7 +46,6 @@ export default function TodayCalendar({ value = new Date(), onChange }) {
           );
         })}
       </div>
-      <hr className="w-full border-gray-300" />
     </div>
   );
 } 
