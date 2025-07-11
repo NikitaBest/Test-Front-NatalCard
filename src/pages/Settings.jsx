@@ -12,9 +12,8 @@ export default function Settings() {
   const [loadingHistory, setLoadingHistory] = useState(false);
   const [error, setError] = useState(null);
 
-  // Загрузка чатов
+  // Загружаем чаты сразу при заходе на страницу (для отображения количества)
   useEffect(() => {
-    if (!showChatList) return;
     async function fetchChats() {
       setLoadingChats(true);
       setError(null);
@@ -36,9 +35,9 @@ export default function Settings() {
       }
     }
     fetchChats();
-  }, [showChatList]);
+  }, []);
 
-  // Загрузка истории чата
+  // Загрузка истории чата (оставляем как было)
   useEffect(() => {
     if (!selectedChat) return;
     async function fetchHistory() {
@@ -169,7 +168,7 @@ export default function Settings() {
           onClick={() => setShowChatList(true)}
         >
           <span className="text-left font-normal w-1/2">История чата</span>
-          <span className="text-right font-normal w-1/2 break-words text-gray-400">{chats.length ? `${chats.length} чатов` : ''}</span>
+          <span className="text-right font-normal w-1/2 break-words text-gray-400">{loadingChats ? '...' : chats.length ? `${chats.length} чатов` : ''}</span>
         </button>
       </div>
       <BottomMenu activeIndex={1} />
