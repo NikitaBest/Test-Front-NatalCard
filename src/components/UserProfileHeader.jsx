@@ -8,7 +8,7 @@ export default function UserProfileHeader() {
   const username = userData.userName ? `@${userData.userName}` : '@username';
 
   return (
-    <div className="w-full flex flex-col items-center pt-4 pb-1 sm:pt-6 sm:pb-2 bg-white">
+    <div className="w-full flex flex-col items-center pt-4 pb-1 sm:pt-6 sm:pb-2 bg-white pl-4">
       <div className="flex items-center w-full px-2 md:max-w-md md:mx-auto md:px-4">
         <img
           src={photoUrl}
