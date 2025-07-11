@@ -11,42 +11,87 @@ function getToday() {
   return d;
 }
 
+// Массив изображений для объяснений (как в Profile.jsx)
+const explanationImages = [
+  '/img_11.png',
+  '/image 313.png',
+  '/img_12.png',
+  '/imm11.png',
+  '/imm06.png',
+];
+
 export default function Today() {
   const { userData } = useUser();
   const [selectedDate, setSelectedDate] = useState(getToday);
+  const [dailyData, setDailyData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Если пользователь зашёл на страницу в другой день, обновить selectedDate
-    const today = getToday();
-    if (selectedDate.toDateString() !== today.toDateString()) {
-      setSelectedDate(today);
+    async function fetchDaily() {
+      setLoading(true);
+      setError(null);
+      try {
+        // Формат даты для запроса: DD.MM.YYYY
+        const dateStr = selectedDate.toLocaleDateString('ru-RU');
+        const token = localStorage.getItem('token');
+        if (!token) throw new Error('Нет токена авторизации');
+        const res = await fetch(
+          `https://astro-backend.odonta.burtimaxbot.ru/user/daily-horoscope?date=${dateStr}`,
+          {
+            headers: {
+              'accept': 'application/json',
+              'Authorization': `Bearer ${token}`,
+            }
+          }
+        );
+        if (!res.ok) throw new Error('Ошибка загрузки');
+        const data = await res.json();
+        if (!data.value || !data.value.explanations || !data.value.explanations[0]) {
+          throw new Error('Нет данных на выбранную дату');
+        }
+        const explanation = data.value.explanations[0];
+        // Выбор изображения по дню месяца (или другой логике)
+        const imageIdx = selectedDate.getDate() % explanationImages.length;
+        setDailyData({
+          title: explanation.title,
+          tips: (explanation.subTitles || []).map((sub, i) => ({
+            icon: i === 0 ? '⭐' : '🌱',
+            text: sub
+          })),
+          image: explanationImages[imageIdx],
+          blocks: [
+            {
+              title: explanation.title,
+              text: explanation.description
+            }
+          ]
+        });
+      } catch (e) {
+        setError(e.message);
+        setDailyData(null);
+      } finally {
+        setLoading(false);
+      }
     }
-    // eslint-disable-next-line
-  }, []);
+    fetchDaily();
+  }, [selectedDate]);
 
   return (
     <div className="min-h-screen w-full max-w-full overflow-x-hidden bg-white pt-10 mx-auto">
       <UserProfileHeader name={userData.name || 'Имя'} username={userData.username || '@username'} />
       <TodayCalendar value={selectedDate} onChange={setSelectedDate} />
       <h2 className="text-center font-mono text-2xl font-normal text-gray-800 mt-10 mb-6">Ежедневный расклад</h2>
-      <TodayInfoBlock
-        title="Солнце в Стрельце"
-        tips={[
-          { icon: '⭐', text: 'Сегодня вас ждет лучший день в вашей жизни' },
-          { icon: '🌱', text: 'Будьте осторожнее в первой половине дня' },
-        ]}
-        image={<img src="/image 313.png" alt="eye" className="w-24 h-24 object-contain rounded-full" />}
-        blocks={[
-          {
-            title: 'Ваше Солнце',
-            text: 'определяет ваше эго, идентичность и главную роль в жизни. Находясь в знаке Стрельца, оно наделяет вас неутомимой жаждой познания и стремлением к свободе. Ваша сила — в поиске смысла и расширении границ, как физических, так и интеллектуальных. Вы здесь, чтобы учиться и вдохновлять других своим оптимизмом.'
-          },
-          {
-            title: 'Ваша Луна',
-            text: 'определяет ваше эго, идентичность и главную роль в жизни. Находясь в знаке Стрельца, оно наделяет вас неутомимой жаждой познания и стремлением к свободе. Ваша сила — в поиске смысла и расширении границ, как физических, так и интеллектуальных. Вы здесь, чтобы учиться и вдохновлять других своим оптимизмом.'
-          }
-        ]}
-      />
+      {loading && <div className="text-center text-gray-400">Загрузка...</div>}
+      {error && <div className="text-center text-red-500">{error}</div>}
+      {dailyData && (
+        <TodayInfoBlock
+          title={dailyData.title}
+          tips={dailyData.tips}
+          image={dailyData.image ? <img src={dailyData.image} alt="symbol" className="w-24 h-24 object-contain rounded-full" /> : null}
+          blocks={dailyData.blocks}
+        />
+      )}
       <BottomMenu activeIndex={3} />
     </div>
   );
