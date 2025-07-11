@@ -160,9 +160,11 @@ export default function AskAI() {
             <div className="text-left text-xs sm:text-sm md:text-base lg:text-lg font-normal text-gray-400 ml-4 w-[320px] truncate">Получи ответы на самые важные вопросы</div>
           </div>
           <hr className="w-[90%] mx-auto border-gray-300 mb-4" />
-          <div className="mb-12">
-            <AskAITabs active={activeTab} onChange={tab => { setActiveTab(tab); setInputValue(''); setSelectedQuestion(null); setDialogStarted(false); setMessages([]); setChatId(0); setError(null); }} />
-          </div>
+          {!dialogStarted && (
+            <div className="mb-12">
+              <AskAITabs active={activeTab} onChange={tab => { setActiveTab(tab); setInputValue(''); setSelectedQuestion(null); setDialogStarted(false); setMessages([]); setChatId(0); setError(null); }} />
+            </div>
+          )}
           {/* Вопросы только до начала диалога */}
           {!dialogStarted && (
             <div className="flex flex-col items-center w-full max-w-md mx-auto mb-8">

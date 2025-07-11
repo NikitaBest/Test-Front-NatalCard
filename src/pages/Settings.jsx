@@ -81,15 +81,15 @@ export default function Settings() {
           className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[180vw] max-w-none h-auto z-0"
           style={{ opacity: 0.3, filter: 'drop-shadow(0 0 10px #000) brightness(0.3) contrast(1)' }}
         />
-        <div className="w-full max-w-md mx-auto bg-white/80 shadow-sm border border-gray-200 mt-2 rounded-xl overflow-hidden">
-          <div className="flex items-center px-4 py-4 border-b border-gray-300">
-            {selectedChat ? (
-              <button className="mr-2 text-2xl" onClick={() => setSelectedChat(null)}>&larr;</button>
-            ) : (
-              <button className="mr-2 text-2xl" onClick={() => setShowChatList(false)}>&larr;</button>
-            )}
+        {/* Фиксированная шапка */}
+        <div className="w-full max-w-md mx-auto bg-white/80 shadow-sm border border-gray-200 mt-2 overflow-hidden sticky top-0 z-20">
+          <div className="flex items-center px-4 py-4 border-b border-gray-300 bg-white/90">
+            <button className="mr-2 text-2xl" onClick={() => selectedChat ? setSelectedChat(null) : setShowChatList(false)}>&larr;</button>
             <h2 className="text-2xl font-mono text-center flex-1">История чатов</h2>
           </div>
+        </div>
+        {/* Список чатов */}
+        <div className="w-full max-w-md mx-auto bg-white/80 shadow-sm border border-gray-200 overflow-hidden pb-4">
           {error && <div className="text-red-500 text-center py-4">{error}</div>}
           <AnimatePresence mode="wait">
             {!selectedChat && (
@@ -106,16 +106,18 @@ export default function Settings() {
                   chats.length === 0 ? (
                     <div className="text-center py-8 text-gray-400">Нет чатов</div>
                   ) : (
-                    chats.map((chat, idx) => (
-                      <button
-                        key={chat.id}
-                        className="w-full flex justify-between items-center px-6 py-4 border-b border-gray-200 text-base font-mono text-gray-700 hover:bg-gray-100 transition"
-                        onClick={() => setSelectedChat(chat)}
-                      >
-                        <span className="text-left font-normal">{chat.mainQuestion || `Вопрос ${idx + 1}`}</span>
-                        <span className="text-right font-normal text-gray-400 text-sm">{formatDate(chat.lastMessageTime)}</span>
-                      </button>
-                    ))
+                    <div className="flex flex-col divide-y divide-gray-300">
+                      {chats.map((chat, idx) => (
+                        <button
+                          key={chat.id}
+                          className="w-full flex justify-between items-center px-6 py-4 text-base font-mono text-gray-700 hover:bg-gray-50 transition"
+                          onClick={() => setSelectedChat(chat)}
+                        >
+                          <span className="text-left font-normal">{chat.mainQuestion || `Вопрос ${idx + 1}`}</span>
+                          <span className="text-right font-normal text-gray-400 text-sm">{formatDate(chat.lastMessageTime)}</span>
+                        </button>
+                      ))}
+                    </div>
                   )
                 )}
               </motion.div>
@@ -144,6 +146,10 @@ export default function Settings() {
                       ))
                     )
                   )}
+                </div>
+                {/* Поле ввода для продолжения чата */}
+                <div className="w-full px-2 pb-4">
+                  <ChatInputSection chatId={selectedChat.id} onMessageSent={msg => setMessages(prev => [...prev, msg])} disabled={loadingHistory} />
                 </div>
               </motion.div>
             )}
@@ -189,6 +195,85 @@ export default function Settings() {
         </button>
       </div>
       <BottomMenu activeIndex={1} />
+    </div>
+  );
+}
+
+// --- ChatInputSection ---
+function ChatInputSection({ chatId, onMessageSent, disabled }) {
+  const [inputValue, setInputValue] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const handleSend = async () => {
+    if (!inputValue.trim()) return;
+    setLoading(true);
+    setError(null);
+    const token = localStorage.getItem('token');
+    const now = new Date();
+    const dateTime = now.toISOString();
+    try {
+      // Отправляем сообщение пользователя
+      const res = await fetch('https://astro-backend.odonta.burtimaxbot.ru/ai-chat/send-message', {
+        method: 'POST',
+        headers: {
+          'accept': 'application/json',
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          dateTime,
+          chatId,
+          content: inputValue.trim(),
+        })
+      });
+      if (!res.ok) throw new Error('Ошибка отправки сообщения');
+      const data = await res.json();
+      if (!data.value) throw new Error('Нет ответа от сервера');
+      // Добавляем сообщение пользователя в историю
+      onMessageSent({
+        isUser: true,
+        content: inputValue.trim(),
+        createdAt: data.value.createdAt,
+      });
+      setInputValue("");
+      // Получаем ответ ИИ
+      const answerRes = await fetch(`https://astro-backend.odonta.burtimaxbot.ru/ai-chat/answer?dateTime=${encodeURIComponent(data.value.createdAt)}&chatId=${chatId}`, {
+        headers: {
+          'accept': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        }
+      });
+      if (!answerRes.ok) throw new Error('Ошибка получения ответа ИИ');
+      const answerData = await answerRes.json();
+      if (answerData.value && answerData.value.content) {
+        onMessageSent({
+          isUser: false,
+          content: answerData.value.content,
+          createdAt: answerData.value.createdAt,
+        });
+      }
+    } catch (e) {
+      setError(e.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="flex items-center border-t border-gray-300 bg-white rounded-b-xl">
+      <input
+        className="flex-1 py-5 px-3 text-base font-mono text-gray-400 bg-transparent outline-none border-none placeholder-gray-400"
+        placeholder="Введите сообщение..."
+        value={inputValue}
+        onChange={e => setInputValue(e.target.value)}
+        disabled={loading || disabled}
+        onKeyDown={e => { if (e.key === 'Enter') handleSend(); }}
+      />
+      <button className="p-2 flex items-center justify-center" type="button" onClick={handleSend} disabled={!inputValue.trim() || loading || disabled}>
+        <svg width="28" height="28" fill="none" viewBox="0 0 28 28"><circle cx="14" cy="14" r="14" fill="#F3F4F6"/><path d="M10.5 14h7m0 0-2.5-2.5M17.5 14l-2.5 2.5" stroke="#A1A1AA" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+      </button>
+      {error && <div className="text-red-500 text-xs ml-2">{error}</div>}
     </div>
   );
 } 
