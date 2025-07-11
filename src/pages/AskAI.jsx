@@ -206,7 +206,7 @@ export default function AskAI() {
             </div>
           )}
         </div>
-        <div className="fixed left-0 right-0 bottom-[56px] z-50 w-full flex justify-center pointer-events-none">
+        <div className="fixed left-0 right-0 bottom-[45px] z-50 w-full flex justify-center pointer-events-none">
           <div className="w-full max-w-md mx-auto px-2 pointer-events-auto">
             <div className="flex items-center border-t border-gray-300 bg-white">
               <input
