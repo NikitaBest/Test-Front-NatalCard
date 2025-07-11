@@ -23,18 +23,18 @@ export default function UserProfileHeader() {
           <div className="flex flex-wrap gap-2 sm:gap-6 mt-2 sm:mt-3 w-full">
             {/* Пример: три знака зодиака с иконками */}
             <span className="flex items-center gap-1 text-gray-700 text-xs sm:text-lg whitespace-nowrap">
-              <span className="text-base sm:text-xl">\u</span> Sagittarius
+              <span className="text-base sm:text-xl">☽</span> Sagittarius
             </span>
             <span className="flex items-center gap-1 text-gray-700 text-xs sm:text-lg whitespace-nowrap">
-              <span className="text-base sm:text-xl">\uC</span> Leo
+              <span className="text-base sm:text-xl">☉</span> Leo
             </span>
             <span className="flex items-center gap-1 text-gray-700 text-xs sm:text-lg whitespace-nowrap">
-              <span className="text-base sm:text-xl">\uA</span> Gemini
+              <span className="text-base sm:text-xl">♇</span> Gemini
             </span>
           </div>
         </div>
       </div>
-      <hr className="w-[90%] mx-auto border-gray-300 mt-3 sm:mt-4" />
+      <hr className="w-[90%] mx-auto border-gray-400 mt-3 sm:mt-4" />
     </div>
   );
 } 
