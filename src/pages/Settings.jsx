@@ -113,7 +113,17 @@ export default function Settings() {
                           className="w-full flex justify-between items-center px-6 py-4 text-base font-mono text-gray-700 hover:bg-gray-50 transition"
                           onClick={() => setSelectedChat(chat)}
                         >
-                          <span className="text-left font-normal">{chat.mainQuestion || `Вопрос ${idx + 1}`}</span>
+                          <span
+                            className="text-left font-normal overflow-hidden text-ellipsis whitespace-normal"
+                            style={{
+                              display: '-webkit-box',
+                              WebkitLineClamp: 2,
+                              WebkitBoxOrient: 'vertical',
+                              overflow: 'hidden'
+                            }}
+                          >
+                            {chat.mainQuestion || `Вопрос ${idx + 1}`}
+                          </span>
                           <span className="text-right font-normal text-gray-400 text-sm">{formatDate(chat.lastMessageTime)}</span>
                         </button>
                       ))}
