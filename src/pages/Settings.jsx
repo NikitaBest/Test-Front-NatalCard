@@ -81,25 +81,27 @@ export default function Settings() {
           className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[180vw] max-w-none h-auto z-0"
           style={{ opacity: 0.3, filter: 'drop-shadow(0 0 10px #000) brightness(0.3) contrast(1)' }}
         />
-        {/* Фиксированная шапка */}
-        <div className="w-full max-w-md mx-auto sticky top-0 z-20 bg-white/90">
-          <div className="flex items-center px-4 py-4 border-b border-gray-300">
-            <button
-              className="mr-2 flex items-center justify-center w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 transition"
-              onClick={() => selectedChat ? setSelectedChat(null) : setShowChatList(false)}
-              aria-label="Назад"
-              type="button"
-            >
-              <svg width="20" height="20" fill="none" viewBox="0 0 20 20">
-                <path d="M13 16l-5-5 5-5" stroke="#333" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </button>
-            <h2 className="flex-1 text-center text-2xl font-bold text-gray-900">История чатов</h2>
-            <div className="w-9" />
+        {/* Фиксированная шапка только если не выбран чат */}
+        {!selectedChat && (
+          <div className="fixed top-0 left-0 right-0 z-30 bg-white/90 w-full max-w-md mx-auto mt-4">
+            <div className="flex items-center px-4 py-4 border-b border-gray-300">
+              <button
+                className="mr-2 flex items-center justify-center w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 transition"
+                onClick={() => setShowChatList(false)}
+                aria-label="Назад"
+                type="button"
+              >
+                <svg width="20" height="20" fill="none" viewBox="0 0 20 20">
+                  <path d="M13 16l-5-5 5-5" stroke="#333" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </button>
+              <h2 className="flex-1 text-center text-2xl font-bold text-gray-900">История чатов</h2>
+              <div className="w-9" />
+            </div>
           </div>
-        </div>
+        )}
         {/* Список чатов */}
-        <div className="w-full max-w-md mx-auto bg-white/80 shadow-sm border border-gray-200 overflow-hidden pb-[56px]">
+        <div className="w-full max-w-md mx-auto bg-white/80 shadow-sm border border-gray-200 overflow-hidden pb-[56px] pt-[88px]">
           {error && <div className="text-red-500 text-center py-4">{error}</div>}
           <AnimatePresence mode="wait">
             {!selectedChat && (
@@ -150,26 +152,46 @@ export default function Settings() {
                 exit={{ opacity: 0, x: -30 }}
                 transition={{ duration: 0.25 }}
               >
-                <div className="max-h-[60vh] overflow-y-auto px-2 py-4 bg-[#fafbfc]">
+                {/* Фиксированная шапка */}
+                <div className="fixed top-0 left-0 right-0 z-30 bg-white/90 w-full max-w-md mx-auto mt-4">
+                  <div className="flex items-center px-4 py-4 border-b border-gray-300">
+                    <button
+                      className="mr-2 flex items-center justify-center w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 transition"
+                      onClick={() => selectedChat ? setSelectedChat(null) : setShowChatList(false)}
+                      aria-label="Назад"
+                      type="button"
+                    >
+                      <svg width="20" height="20" fill="none" viewBox="0 0 20 20">
+                        <path d="M13 16l-5-5 5-5" stroke="#333" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    </button>
+                    <h2 className="flex-1 text-center text-2xl font-bold text-gray-900">История чатов</h2>
+                    <div className="w-9" />
+                  </div>
+                </div>
+                {/* Контейнер сообщений */}
+                <div className="relative bg-white/50 z-10 pt-[88px] h-screen overflow-y-auto w-full flex flex-col items-center pb-[92px]">
                   {loadingHistory ? (
                     <div className="text-center py-8">Загрузка истории...</div>
+                  ) : messages.length === 0 ? (
+                    <div className="text-center py-8 text-gray-400">Нет сообщений в чате</div>
                   ) : (
-                    messages.length === 0 ? (
-                      <div className="text-center py-8 text-gray-400">Нет сообщений в чате</div>
-                    ) : (
-                      messages.map((msg, i) => (
-                        <div key={i} className={`flex ${msg.isUser ? 'justify-end' : 'justify-start'} mb-2`}>
+                    <div className="w-full bg-white/80 rounded-xl shadow-none mb-8 px-4 py-6 flex flex-col gap-6">
+                      {messages.map((msg, i) => (
+                        <div key={i} className={`flex ${msg.isUser ? 'justify-end' : 'justify-start'}`}>
                           <div className={`rounded-xl px-4 py-3 max-w-[80%] text-base font-sans ${msg.isUser ? 'bg-black text-white' : 'bg-gray-100 text-gray-900'}`}>
                             {msg.content}
                           </div>
                         </div>
-                      ))
-                    )
+                      ))}
+                    </div>
                   )}
                 </div>
-                {/* Поле ввода для продолжения чата */}
-                <div className="w-full px-2 pb-4">
-                  <ChatInputSection chatId={selectedChat.id} onMessageSent={msg => setMessages(prev => [...prev, msg])} disabled={loadingHistory} />
+                {/* Фиксированное поле ввода */}
+                <div className="fixed left-0 right-0 bottom-[56px] z-50 w-full flex justify-center pointer-events-none">
+                  <div className="w-full max-w-md mx-auto px-2 pointer-events-auto">
+                    <ChatInputSection chatId={selectedChat.id} onMessageSent={msg => setMessages(prev => [...prev, msg])} disabled={loadingHistory} />
+                  </div>
                 </div>
               </motion.div>
             )}
