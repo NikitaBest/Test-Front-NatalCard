@@ -2,9 +2,10 @@ import BottomMenu from '../components/BottomMenu';
 import { useUser } from '../context/UserContext';
 import { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 
 export default function Settings() {
-  const { userData } = useUser();
+  const { userData, setUserData } = useUser();
   const [showChatList, setShowChatList] = useState(false);
   const [chats, setChats] = useState([]);
   const [loadingChats, setLoadingChats] = useState(false);
@@ -12,6 +13,8 @@ export default function Settings() {
   const [messages, setMessages] = useState([]);
   const [loadingHistory, setLoadingHistory] = useState(false);
   const [error, setError] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const navigate = useNavigate();
 
   // Загружаем чаты сразу при заходе на страницу (для отображения количества)
   useEffect(() => {
@@ -236,6 +239,38 @@ export default function Settings() {
           <span className="text-right font-normal w-1/2 break-words text-gray-400">{loadingChats ? '...' : chats.length ? `${chats.length} чатов` : ''}</span>
         </button>
       </div>
+      {/* Кнопка изменить данные */}
+      <button
+        className="w-full max-w-xs mx-auto mt-6 py-3 bg-gray-200 text-gray-700 rounded-xl text-base font-mono flex items-center justify-center"
+        onClick={() => setShowModal(true)}
+      >
+        Изменить данные
+      </button>
+      {/* Модалка подтверждения */}
+      {showModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30">
+          <div className="bg-white rounded-2xl shadow-xl p-6 w-[90vw] max-w-xs flex flex-col items-center">
+            <div className="text-lg font-normal text-center mb-6">Вы уверены, что хотите изменить данные?</div>
+            <div className="flex gap-8">
+              <button
+                className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center text-2xl hover:bg-gray-300"
+                onClick={() => setShowModal(false)}
+                aria-label="Отмена"
+              >✕</button>
+              <button
+                className="w-12 h-12 rounded-full bg-green-200 flex items-center justify-center text-2xl hover:bg-green-300"
+                onClick={() => {
+                  localStorage.removeItem('user');
+                  setUserData({ name: '', gender: '', birthDate: '', birthTime: '', birthCity: '' });
+                  setShowModal(false);
+                  navigate('/name');
+                }}
+                aria-label="Подтвердить"
+              >✔</button>
+            </div>
+          </div>
+        </div>
+      )}
       <BottomMenu activeIndex={1} />
     </div>
   );
