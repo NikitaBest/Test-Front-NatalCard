@@ -188,7 +188,7 @@ export default function Settings() {
                   )}
                 </div>
                 {/* Фиксированное поле ввода */}
-                <div className="fixed left-0 right-0 bottom-[56px] z-50 w-full flex justify-center pointer-events-none">
+                <div className="fixed left-0 right-0 bottom-[45px] z-50 w-full flex justify-center pointer-events-none">
                   <div className="w-full max-w-md mx-auto px-2 pointer-events-auto">
                     <ChatInputSection chatId={selectedChat.id} onMessageSent={msg => setMessages(prev => [...prev, msg])} disabled={loadingHistory} />
                   </div>
