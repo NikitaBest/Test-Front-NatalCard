@@ -261,7 +261,7 @@ export default function Settings() {
                 className="w-12 h-12 rounded-full bg-green-200 flex items-center justify-center text-2xl hover:bg-green-300"
                 onClick={() => {
                   localStorage.removeItem('user');
-                  setUserData({ name: '', gender: '', birthDate: '', birthTime: '', birthCity: '' });
+                  setUserData({ name: '', gender: '', birthDate: '', birthTime: '', birthLocation: '' });
                   setShowModal(false);
                   navigate('/name');
                 }}
