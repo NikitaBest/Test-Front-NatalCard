@@ -1,8 +1,64 @@
 import BottomMenu from '../components/BottomMenu';
 import AskAITabs from '../components/AskAITabs';
-import { useState } from 'react';
-import planetGif from '../assets/planet.gif';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+
+// Компонент анимированных точек загрузки
+function LoadingDots() {
+  return (
+    <div className="flex space-x-2">
+      {[0, 1, 2].map((i) => (
+        <motion.div
+          key={i}
+          className="w-3 h-3 bg-gray-600 rounded-full"
+          animate={{
+            scale: [1, 1.2, 1],
+            opacity: [0.5, 1, 0.5],
+          }}
+          transition={{
+            duration: 1.2,
+            repeat: Infinity,
+            delay: i * 0.2,
+            ease: "easeInOut"
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
+// Компонент эффекта печатания
+function TypewriterEffect({ text, onComplete }) {
+  const [displayedText, setDisplayedText] = useState('');
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    if (currentIndex < text.length) {
+      const timer = setTimeout(() => {
+        setDisplayedText(prev => prev + text[currentIndex]);
+        setCurrentIndex(prev => prev + 1);
+      }, 30); // Скорость печатания (30ms на символ)
+
+      return () => clearTimeout(timer);
+    } else if (onComplete) {
+      onComplete();
+    }
+  }, [currentIndex, text, onComplete]);
+
+  useEffect(() => {
+    setDisplayedText('');
+    setCurrentIndex(0);
+  }, [text]);
+
+  return (
+    <div className="rounded-xl px-4 py-3 max-w-[80%] text-base font-sans bg-gray-100 text-gray-900">
+      {displayedText}
+      {currentIndex < text.length && (
+        <span className="animate-pulse">|</span>
+      )}
+    </div>
+  );
+}
 
 function HamburgerIcon() {
   return (
@@ -141,15 +197,7 @@ export default function AskAI() {
               exit={{ opacity: 0 }}
               transition={{ duration: 0.3 }}
             >
-              <motion.img
-                src={planetGif}
-                alt="Загрузка..."
-                className="w-40 h-40 aspect-square object-cover rounded-full opacity-90"
-                initial={{ scale: 0.7, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.7, opacity: 0 }}
-                transition={{ duration: 0.5, ease: 'easeInOut' }}
-              />
+              <LoadingDots />
             </motion.div>
           </AnimatePresence>
         )}
@@ -189,9 +237,13 @@ export default function AskAI() {
                 <div className="w-full bg-white/80 rounded-xl shadow-none mb-8 px-4 py-6 flex flex-col gap-6">
                   {messages.map((msg, i) => (
                     <div key={i} className={`flex ${msg.isUser ? 'justify-end' : 'justify-start'}`}>
-                      <div className={`rounded-xl px-4 py-3 max-w-[80%] text-base font-sans ${msg.isUser ? 'bg-black text-white' : 'bg-gray-100 text-gray-900'}`}>
-                        {msg.content}
-                      </div>
+                      {msg.isUser ? (
+                        <div className="rounded-xl px-4 py-3 max-w-[80%] text-base font-sans bg-black text-white">
+                          {msg.content}
+                        </div>
+                      ) : (
+                        <TypewriterEffect text={msg.content} />
+                      )}
                     </div>
                   ))}
                 </div>
