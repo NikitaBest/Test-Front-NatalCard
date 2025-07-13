@@ -4,6 +4,7 @@ import TodayCalendar from '../components/TodayCalendar';
 import TodayInfoBlock from '../components/TodayInfoBlock';
 import { useUser } from '../context/UserContext';
 import { useState, useEffect } from 'react';
+import { getUserChart } from '../utils/api';
 
 function getToday() {
   const d = new Date();
@@ -20,12 +21,25 @@ const explanationImages = [
   '/imm06.png',
 ];
 
+function getSignNameByRasi(rasi) {
+  const signs = [
+    '', 'Овен', 'Телец', 'Близнецы', 'Рак', 'Лев', 'Дева', 'Весы', 'Скорпион', 'Стрелец', 'Козерог', 'Водолей', 'Рыбы'
+  ];
+  return signs[rasi] || '';
+}
+
 export default function Today() {
   const { userData } = useUser();
   const [selectedDate, setSelectedDate] = useState(getToday);
   const [dailyData, setDailyData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [chartData, setChartData] = useState(null);
+
+  // Загрузка натальной карты для знаков
+  useEffect(() => {
+    getUserChart().then(setChartData).catch(() => {});
+  }, []);
 
   useEffect(() => {
     async function fetchDaily() {
@@ -77,9 +91,21 @@ export default function Today() {
     fetchDaily();
   }, [selectedDate]);
 
+  // Вычисляем знаки
+  let ascSign = '', sunSign = '', moonSign = '';
+  if (chartData && chartData.value && chartData.value.chart && Array.isArray(chartData.value.chart.planets)) {
+    const planets = chartData.value.chart.planets;
+    const asc = planets.find(p => p.planet === 1);
+    const sun = planets.find(p => p.planet === 2);
+    const moon = planets.find(p => p.planet === 3);
+    ascSign = asc ? getSignNameByRasi(asc.rasi) : '';
+    sunSign = sun ? getSignNameByRasi(sun.rasi) : '';
+    moonSign = moon ? getSignNameByRasi(moon.rasi) : '';
+  }
+
   return (
     <div className="min-h-screen w-full max-w-full overflow-x-hidden bg-white pt-10 mx-auto">
-      <UserProfileHeader name={userData.name || 'Имя'} username={userData.username || '@username'} />
+      <UserProfileHeader name={userData.name || 'Имя'} username={userData.username || '@username'} ascSign={ascSign} sunSign={sunSign} moonSign={moonSign} />
       <div className="border-t border-gray-300/60 w-full mt-8 mb-0" />
       <TodayCalendar value={selectedDate} onChange={setSelectedDate} />
       <div className="border-t border-gray-300/60 w-full my-0" />

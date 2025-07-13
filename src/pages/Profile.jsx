@@ -34,9 +34,28 @@ export default function Profile() {
     '/imm06.png',
   ];
 
+  // Функция для получения названия знака по номеру rasi
+  function getSignNameByRasi(rasi) {
+    const signs = [
+      '', 'Овен', 'Телец', 'Близнецы', 'Рак', 'Лев', 'Дева', 'Весы', 'Скорпион', 'Стрелец', 'Козерог', 'Водолей', 'Рыбы'
+    ];
+    return signs[rasi] || '';
+  }
+
+  let ascSign = '', sunSign = '', moonSign = '';
+  if (chartData && chartData.value && chartData.value.chart && Array.isArray(chartData.value.chart.planets)) {
+    const planets = chartData.value.chart.planets;
+    const asc = planets.find(p => p.planet === 1);
+    const sun = planets.find(p => p.planet === 2);
+    const moon = planets.find(p => p.planet === 3);
+    ascSign = asc ? getSignNameByRasi(asc.rasi) : '';
+    sunSign = sun ? getSignNameByRasi(sun.rasi) : '';
+    moonSign = moon ? getSignNameByRasi(moon.rasi) : '';
+  }
+
   return (
     <div className="min-h-screen w-full overflow-x-hidden bg-white pt-10">
-      <UserProfileHeader name={userData.name || 'Имя'} username={userData.username || '@username'} />
+      <UserProfileHeader name={userData.name || 'Имя'} username={userData.username || '@username'} ascSign={ascSign} sunSign={sunSign} moonSign={moonSign} />
       <ProfileTabs active={activeTab} onChange={setActiveTab} />
       <AnimatePresence mode="wait">
         {activeTab === 'map' && (

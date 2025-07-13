@@ -1,11 +1,7 @@
 import React from 'react';
-import { useUser } from '../context/UserContext';
 
-export default function UserProfileHeader() {
-  const { userData } = useUser();
-  const photoUrl = userData.photoUrl && userData.photoUrl.trim() ? userData.photoUrl : '/default-avatar.png';
-  const name = userData.name || 'Имя';
-  const username = userData.userName ? `@${userData.userName}` : '@username';
+export default function UserProfileHeader({ name, username, ascSign, sunSign, moonSign }) {
+  const photoUrl = '/default-avatar.png';
 
   return (
     <div className="w-full flex flex-col items-center pt-4 pb-1 sm:pt-6 sm:pb-2 bg-white pl-4">
@@ -21,15 +17,14 @@ export default function UserProfileHeader() {
             <span className="text-xs sm:text-base text-gray-400">{username}</span>
           </div>
           <div className="flex flex-wrap gap-2 sm:gap-6 mt-2 sm:mt-3 w-full">
-            {/* Пример: три знака зодиака с иконками */}
             <span className="flex items-center gap-1 text-gray-700 text-xs sm:text-lg whitespace-nowrap">
-              <span className="text-base sm:text-xl">☽</span> Sagittarius
+              <span className="text-base sm:text-xl">☽</span> {moonSign}
             </span>
             <span className="flex items-center gap-1 text-gray-700 text-xs sm:text-lg whitespace-nowrap">
-              <span className="text-base sm:text-xl">☉</span> Leo
+              <span className="text-base sm:text-xl">☉</span> {sunSign}
             </span>
             <span className="flex items-center gap-1 text-gray-700 text-xs sm:text-lg whitespace-nowrap">
-              <span className="text-base sm:text-xl">♇</span> Gemini
+              <span className="text-base sm:text-xl">♇</span> {ascSign}
             </span>
           </div>
         </div>
