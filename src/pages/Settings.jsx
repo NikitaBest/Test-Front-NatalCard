@@ -1,6 +1,6 @@
 import BottomMenu from '../components/BottomMenu';
 import { useUser } from '../context/UserContext';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 
@@ -230,34 +230,7 @@ export default function Settings() {
                   </div>
                 </div>
                 {/* Контейнер сообщений */}
-                <div className="relative bg-white/50 z-10 pt-[88px] h-screen overflow-y-auto w-full flex flex-col items-center pb-[92px]">
-                  {loadingHistory ? (
-                    <div className="text-center py-8">Загрузка истории...</div>
-                  ) : messages.length === 0 ? (
-                    <div className="text-center py-8 text-gray-400">Нет сообщений в чате</div>
-                  ) : (
-                    <div className="w-full bg-white/80 rounded-xl shadow-none mb-8 px-4 py-6 flex flex-col gap-6">
-                      {messages.map((msg, i) => (
-                        <div key={i} className={`flex ${msg.isUser ? 'justify-end' : 'justify-start'}`}>
-                          {msg.isUser ? (
-                            <div className="rounded-xl px-4 py-3 max-w-[80%] text-base font-sans bg-black text-white">
-                              {msg.content}
-                            </div>
-                          ) : (
-                            // Для новых сообщений используем эффект печатания, для исторических - отображаем сразу
-                            msg.isNew ? (
-                              <TypewriterEffect text={msg.content} />
-                            ) : (
-                              <div className="rounded-xl px-4 py-3 max-w-[80%] text-base font-sans bg-gray-100 text-gray-900">
-                                {msg.content}
-                              </div>
-                            )
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
+                <ChatMessagesList messages={messages} loading={loadingHistory} />
                 {/* Фиксированное поле ввода */}
                 <div className="fixed left-0 right-0 bottom-[45px] z-50 w-full flex justify-center pointer-events-none">
                   <div className="w-full max-w-md mx-auto px-2 pointer-events-auto">
@@ -442,5 +415,55 @@ function ChatInputSection({ chatId, onMessageSent, disabled }) {
         {error && <div className="text-red-500 text-xs ml-2">{error}</div>}
       </div>
     </>
+  );
+} 
+
+// --- ChatMessagesList ---
+function ChatMessagesList({ messages, loading }) {
+  const messagesEndRef = useRef(null);
+  const containerRef = useRef(null);
+
+  useEffect(() => {
+    // Автоскролл к последнему сообщению
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [messages]);
+
+  return (
+    <div
+      ref={containerRef}
+      className="w-full bg-white/80 rounded-xl shadow-none mb-8 px-4 py-6 flex flex-col gap-6 overflow-y-auto"
+      style={{
+        maxHeight: 'calc(100vh - 220px)', // 220px: примерная высота хедера + инпута
+        minHeight: '200px',
+        marginTop: '88px', // отступ под фиксированный хедер
+      }}
+    >
+      {loading ? (
+        <div className="text-center py-8">Загрузка истории...</div>
+      ) : messages.length === 0 ? (
+        <div className="text-center py-8 text-gray-400">Нет сообщений в чате</div>
+      ) : (
+        messages.map((msg, i) => (
+          <div key={i} className={`flex ${msg.isUser ? 'justify-end' : 'justify-start'}`}>
+            {msg.isUser ? (
+              <div className="rounded-xl px-4 py-3 max-w-[80%] text-base font-sans bg-black text-white">
+                {msg.content}
+              </div>
+            ) : (
+              msg.isNew ? (
+                <TypewriterEffect text={msg.content} />
+              ) : (
+                <div className="rounded-xl px-4 py-3 max-w-[80%] text-base font-sans bg-gray-100 text-gray-900">
+                  {msg.content}
+                </div>
+              )
+            )}
+          </div>
+        ))
+      )}
+      <div ref={messagesEndRef} />
+    </div>
   );
 } 
