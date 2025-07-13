@@ -4,6 +4,63 @@ import { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 
+// Компонент анимированных точек загрузки
+function LoadingDots() {
+  return (
+    <div className="flex space-x-2">
+      {[0, 1, 2].map((i) => (
+        <motion.div
+          key={i}
+          className="w-3 h-3 bg-gray-600 rounded-full"
+          animate={{
+            scale: [1, 1.2, 1],
+            opacity: [0.5, 1, 0.5],
+          }}
+          transition={{
+            duration: 1.2,
+            repeat: Infinity,
+            delay: i * 0.2,
+            ease: "easeInOut"
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
+// Компонент эффекта печатания
+function TypewriterEffect({ text, onComplete }) {
+  const [displayedText, setDisplayedText] = useState('');
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    if (currentIndex < text.length) {
+      const timer = setTimeout(() => {
+        setDisplayedText(prev => prev + text[currentIndex]);
+        setCurrentIndex(prev => prev + 1);
+      }, 30); // Скорость печатания (30ms на символ)
+
+      return () => clearTimeout(timer);
+    } else if (onComplete) {
+      onComplete();
+    }
+  }, [currentIndex, text, onComplete]);
+
+  useEffect(() => {
+    setDisplayedText('');
+    setCurrentIndex(0);
+  }, [text]);
+
+  return (
+    <div className="rounded-xl px-4 py-3 max-w-[80%] text-base font-sans bg-gray-100 text-gray-900">
+      {displayedText}
+      {currentIndex < text.length && (
+        <span className="animate-pulse">|</span>
+      )}
+    </div>
+  );
+}
+
 export default function Settings() {
   const { userData, setUserData } = useUser();
   const [showChatList, setShowChatList] = useState(false);
@@ -182,9 +239,20 @@ export default function Settings() {
                     <div className="w-full bg-white/80 rounded-xl shadow-none mb-8 px-4 py-6 flex flex-col gap-6">
                       {messages.map((msg, i) => (
                         <div key={i} className={`flex ${msg.isUser ? 'justify-end' : 'justify-start'}`}>
-                          <div className={`rounded-xl px-4 py-3 max-w-[80%] text-base font-sans ${msg.isUser ? 'bg-black text-white' : 'bg-gray-100 text-gray-900'}`}>
-                            {msg.content}
-                          </div>
+                          {msg.isUser ? (
+                            <div className="rounded-xl px-4 py-3 max-w-[80%] text-base font-sans bg-black text-white">
+                              {msg.content}
+                            </div>
+                          ) : (
+                            // Для новых сообщений используем эффект печатания, для исторических - отображаем сразу
+                            msg.isNew ? (
+                              <TypewriterEffect text={msg.content} />
+                            ) : (
+                              <div className="rounded-xl px-4 py-3 max-w-[80%] text-base font-sans bg-gray-100 text-gray-900">
+                                {msg.content}
+                              </div>
+                            )
+                          )}
                         </div>
                       ))}
                     </div>
@@ -281,6 +349,7 @@ function ChatInputSection({ chatId, onMessageSent, disabled }) {
   const [inputValue, setInputValue] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [newMessages, setNewMessages] = useState([]); // Отслеживаем новые сообщения
 
   const handleSend = async () => {
     if (!inputValue.trim()) return;
@@ -307,13 +376,16 @@ function ChatInputSection({ chatId, onMessageSent, disabled }) {
       if (!res.ok) throw new Error('Ошибка отправки сообщения');
       const data = await res.json();
       if (!data.value) throw new Error('Нет ответа от сервера');
-      // Добавляем сообщение пользователя в историю
-      onMessageSent({
+      
+      // Добавляем сообщение пользователя в историю (отображается сразу)
+      const userMessage = {
         isUser: true,
         content: inputValue.trim(),
         createdAt: data.value.createdAt,
-      });
+      };
+      onMessageSent(userMessage);
       setInputValue("");
+      
       // Получаем ответ ИИ
       const answerRes = await fetch(`https://astro-backend.odonta.burtimaxbot.ru/ai-chat/answer?dateTime=${encodeURIComponent(data.value.createdAt)}&chatId=${chatId}`, {
         headers: {
@@ -324,11 +396,14 @@ function ChatInputSection({ chatId, onMessageSent, disabled }) {
       if (!answerRes.ok) throw new Error('Ошибка получения ответа ИИ');
       const answerData = await answerRes.json();
       if (answerData.value && answerData.value.content) {
-        onMessageSent({
+        // Добавляем ответ ИИ как новое сообщение (будет печататься)
+        const aiMessage = {
           isUser: false,
           content: answerData.value.content,
           createdAt: answerData.value.createdAt,
-        });
+          isNew: true, // Помечаем как новое сообщение
+        };
+        onMessageSent(aiMessage);
       }
     } catch (e) {
       setError(e.message);
@@ -338,19 +413,34 @@ function ChatInputSection({ chatId, onMessageSent, disabled }) {
   };
 
   return (
-    <div className="flex items-center border-t border-gray-300 bg-white rounded-b-xl">
-      <input
-        className="flex-1 py-5 px-3 text-base font-mono text-gray-400 bg-transparent outline-none border-none placeholder-gray-400"
-        placeholder="Введите сообщение..."
-        value={inputValue}
-        onChange={e => setInputValue(e.target.value)}
-        disabled={loading || disabled}
-        onKeyDown={e => { if (e.key === 'Enter') handleSend(); }}
-      />
-      <button className="p-2 flex items-center justify-center" type="button" onClick={handleSend} disabled={!inputValue.trim() || loading || disabled}>
-        <svg width="28" height="28" fill="none" viewBox="0 0 28 28"><circle cx="14" cy="14" r="14" fill="#F3F4F6"/><path d="M10.5 14h7m0 0-2.5-2.5M17.5 14l-2.5 2.5" stroke="#A1A1AA" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-      </button>
-      {error && <div className="text-red-500 text-xs ml-2">{error}</div>}
-    </div>
+    <>
+      {loading && (
+        <AnimatePresence>
+          <motion.div
+            className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-white/80"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <LoadingDots />
+          </motion.div>
+        </AnimatePresence>
+      )}
+      <div className="flex items-center border-t border-gray-300 bg-white rounded-b-xl">
+        <input
+          className="flex-1 py-5 px-3 text-base font-mono text-gray-400 bg-transparent outline-none border-none placeholder-gray-400"
+          placeholder="Введите сообщение..."
+          value={inputValue}
+          onChange={e => setInputValue(e.target.value)}
+          disabled={loading || disabled}
+          onKeyDown={e => { if (e.key === 'Enter') handleSend(); }}
+        />
+        <button className="p-2 flex items-center justify-center" type="button" onClick={handleSend} disabled={!inputValue.trim() || loading || disabled}>
+          <svg width="28" height="28" fill="none" viewBox="0 0 28 28"><circle cx="14" cy="14" r="14" fill="#F3F4F6"/><path d="M10.5 14h7m0 0-2.5-2.5M17.5 14l-2.5 2.5" stroke="#A1A1AA" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+        </button>
+        {error && <div className="text-red-500 text-xs ml-2">{error}</div>}
+      </div>
+    </>
   );
 } 
