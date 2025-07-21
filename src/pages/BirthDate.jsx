@@ -58,11 +58,11 @@ export default function BirthDate() {
   return (
     <StepWrapper>
       <h1 className="text-xl font-normal text-center mt-2 font-mono">Укажите свою дату рождения</h1>
-      <div className="flex flex-col items-center justify-center flex-1">
+      <div className="flex flex-col items-center justify-center flex-grow">
         <div className="mb-6 w-full mt-8 flex justify-center">
-          <div className="w-full max-w-[350px] h-[360px] bg-white/80 rounded-[28px] shadow-2xl flex items-center justify-center relative overflow-hidden picker-fade-mask">
+          <div className="w-full max-w-[350px] h-[360px] bg-white/80 rounded-[48px] shadow-2xl flex items-center justify-center relative overflow-hidden picker-fade-mask">
             {/* Серая полоса по центру */}
-            <div className="pointer-events-none absolute left-0 right-0 top-1/2 -translate-y-1/2 h-12 w-[95%] mx-auto bg-[#E9E9EA] z-10 rounded-[28px] picker-center-bar" />
+            <div className="pointer-events-none absolute left-0 right-0 top-1/2 -translate-y-1/2 h-12 w-[95%] mx-auto bg-[#E9E9EA] z-10 rounded-[48px] picker-center-bar" />
             <Picker
               value={pickerValue}
               onChange={setPickerValue}
@@ -144,7 +144,9 @@ export default function BirthDate() {
           </div>
         </div>
       </div>
-      <Button onClick={handleContinue} disabled={!pickerValue.day || !pickerValue.month || !pickerValue.year} className="mx-auto">Продолжить</Button>
+      <div className="w-full px-4 pb-4">
+        <Button onClick={handleContinue} disabled={!pickerValue.day || !pickerValue.month || !pickerValue.year} className="w-full">Продолжить</Button>
+      </div>
     </StepWrapper>
   );
 }
