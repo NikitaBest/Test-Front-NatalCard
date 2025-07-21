@@ -61,6 +61,22 @@ function TypewriterEffect({ text, onComplete }) {
   );
 }
 
+function getChatPlural(count) {
+  const lastDigit = count % 10;
+  const lastTwoDigits = count % 100;
+
+  if (lastTwoDigits >= 11 && lastTwoDigits <= 19) {
+    return 'чатов';
+  }
+  if (lastDigit === 1) {
+    return 'чат';
+  }
+  if ([2, 3, 4].includes(lastDigit)) {
+    return 'чата';
+  }
+  return 'чатов';
+}
+
 export default function Settings() {
   const { userData, setUserData } = useUser();
   const [showChatList, setShowChatList] = useState(false);
@@ -279,7 +295,7 @@ export default function Settings() {
               onClick={() => setShowChatList(true)}
             >
               <span className="text-left font-normal w-1/2">История чата</span>
-              <span className="text-right font-normal w-1/2 break-words text-gray-400">{loadingChats ? '...' : chats.length ? `${chats.length} чатов` : ''}</span>
+              <span className="text-right font-normal w-1/2 break-words text-gray-400">{loadingChats ? '...' : chats.length ? `${chats.length} ${getChatPlural(chats.length)}` : ''}</span>
             </button>
           </div>
           {/* Кнопка изменить данные */}
