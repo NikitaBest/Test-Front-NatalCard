@@ -79,7 +79,7 @@ function App() {
           }
           if (data.user) {
             localStorage.setItem('userId', data.user.id);
-            // Не сохраняем localStorage.user здесь!
+            localStorage.setItem('user', JSON.stringify(data.user)); // сохраняем профиль пользователя
           }
         })
         .catch((err) => {
