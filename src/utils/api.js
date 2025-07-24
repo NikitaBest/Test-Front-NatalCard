@@ -75,4 +75,18 @@ export async function getUserChart() {
   });
   if (!response.ok) throw new Error('Ошибка получения данных натальной карты');
   return response.json();
+}
+
+export async function fetchUserProfile() {
+  const token = localStorage.getItem('token');
+  if (!token) throw new Error('Нет токена');
+  const response = await fetch('https://astro-backend.odonta.burtimaxbot.ru/user/profile', {
+    method: 'GET',
+    headers: {
+      'accept': 'application/json',
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+  if (!response.ok) throw new Error('Ошибка получения профиля');
+  return response.json();
 } 
