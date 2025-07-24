@@ -61,25 +61,20 @@ export default function Today() {
         );
         if (!res.ok) throw new Error('Ошибка загрузки');
         const data = await res.json();
-        if (!data.value || !data.value.explanations || !data.value.explanations[0]) {
+        if (!data.value || !data.value.explanations || !data.value.explanations.length) {
           throw new Error('Нет данных на выбранную дату');
         }
-        const explanation = data.value.explanations[0];
-        // Выбор изображения по дню месяца (или другой логике)
-        const imageIdx = selectedDate.getDate() % explanationImages.length;
+        const explanations = data.value.explanations;
         setDailyData({
-          title: explanation.title,
-          tips: (explanation.subTitles || []).map((sub, i) => ({
-            icon: i === 0 ? '⭐' : '🌱',
-            text: sub
-          })),
-          image: explanationImages[imageIdx],
-          blocks: [
-            {
-              title: explanation.title,
-              text: explanation.description
-            }
-          ]
+          blocks: explanations.map((explanation, idx) => ({
+            title: explanation.title,
+            tips: (explanation.sub_titles || []).map((sub, i) => ({
+              icon: i === 0 ? '⭐' : '🌱',
+              text: sub
+            })),
+            image: explanationImages[idx % explanationImages.length],
+            text: explanation.description
+          }))
         });
       } catch (e) {
         setError(e.message);
@@ -114,9 +109,6 @@ export default function Today() {
       {error && <div className="text-center text-red-500">{error}</div>}
       {dailyData && (
         <TodayInfoBlock
-          title={dailyData.title}
-          tips={dailyData.tips}
-          image={dailyData.image ? <img src={dailyData.image} alt="symbol" className="w-24 h-24 object-contain rounded-full" /> : null}
           blocks={dailyData.blocks}
         />
       )}
