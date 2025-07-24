@@ -100,7 +100,7 @@ export default function Today() {
 
   return (
     <div className="min-h-screen w-full max-w-full overflow-x-hidden bg-white mx-auto">
-      <UserProfileHeader name={userData.name || 'Имя'} username={userData.username || '@username'} photoUrl={userData.photoUrl || '/default-avatar.png'} ascSign={ascSign} sunSign={sunSign} moonSign={moonSign} />
+      <UserProfileHeader name={userData.name || 'Имя'} username={userData.userName || '@username'} photoUrl={userData.photoUrl || '/default-avatar.png'} ascSign={ascSign} sunSign={sunSign} moonSign={moonSign} />
       <div className="border-t border-gray-300/60 w-full mt-4 mb-0" />
       <TodayCalendar value={selectedDate} onChange={setSelectedDate} />
       <div className="border-t border-gray-300/60 w-full my-0" />
