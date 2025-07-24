@@ -31,16 +31,36 @@ function App() {
     // Авторизация при первом запуске, если токена нет
     const token = localStorage.getItem('token');
     if (!token) {
-      const testUserData = {
-        userTelegramId: 888443,
-        firstName: 'string',
-        lastName: 'string',
-        userName: 'string',
-        photoUrl: 'http://localhost:5173/123.jpeg',
-        initData: 'string',
-        ignoreValidate: true,
-      };
-      loginUser(testUserData)
+      // Пытаемся получить данные из Telegram Web App
+      const tg = window.Telegram?.WebApp;
+      let userData;
+      
+      if (tg && tg.initDataUnsafe?.user) {
+        // Данные из Telegram Web App
+        const user = tg.initDataUnsafe.user;
+        userData = {
+          userTelegramId: user.id,
+          firstName: user.first_name || '',
+          lastName: user.last_name || '',
+          userName: user.username || '',
+          photoUrl: user.photo_url || '',
+          initData: tg.initData || '',
+          ignoreValidate: true,
+        };
+      } else {
+        // Fallback - тестовые данные
+        userData = {
+          userTelegramId: 888443,
+          firstName: 'string',
+          lastName: 'string',
+          userName: 'string',
+          photoUrl: 'http://localhost:5173/123.jpeg',
+          initData: 'string',
+          ignoreValidate: true,
+        };
+      }
+      
+      loginUser(userData)
         .then((data) => {
           if (data.token) {
             localStorage.setItem('token', data.token);
