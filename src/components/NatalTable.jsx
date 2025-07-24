@@ -13,14 +13,14 @@ export default function NatalTable({ chartData }) {
   if (chartData && chartData.value && Array.isArray(chartData.value.table)) {
     tableRows = chartData.value.table.map((row, i) => (
       <tr key={i}>
+        <td className="border border-gray-400 px-2 py-1 w-1/6 text-left align-middle">
+          {row.house}
+        </td>
         <td className="border border-gray-400 px-2 py-1 w-1/3 text-left align-middle">
           {row.zodiacSign ? zodiacSigns[row.zodiacSign] : ''}
         </td>
         <td className="px-2 py-1 w-1/3 text-left align-middle bg-gray-100">
           {row.planet ? planetSymbols[row.planet] || row.planet : ''}
-        </td>
-        <td className="border border-gray-400 px-2 py-1 w-1/6 text-left align-middle">
-          {row.house}
         </td>
       </tr>
     ));
@@ -31,7 +31,7 @@ export default function NatalTable({ chartData }) {
       <div className="flex w-full max-w-2xl">
         {/* Левая верхняя подпись */}
         <div className="flex flex-col justify-start items-start w-1/3">
-          <span className="font-normal text-gray-400 text-lg pl-1 mb-1">З н а к и</span>
+          <span className="font-normal text-gray-400 text-lg pl-1 mb-1">Д о м а</span>
         </div>
       </div>
       <div className="flex w-full max-w-2xl">
@@ -47,7 +47,7 @@ export default function NatalTable({ chartData }) {
       </div>
       <div className="flex w-full max-w-2xl">
         <div className="flex flex-col justify-end items-end w-full">
-          <span className="font-normal text-gray-400 text-lg pr-1 mt-1">Д о м а</span>
+          <span className="font-normal text-gray-400 text-lg pr-1 mt-1">П л а н е т ы</span>
         </div>
       </div>
     </div>
