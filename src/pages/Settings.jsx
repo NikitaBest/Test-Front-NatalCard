@@ -154,12 +154,12 @@ export default function Settings() {
         <img
           src="/bg2.png"
           alt=""
-          className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[180vw] max-w-none h-auto z-0"
+          className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-auto z-0"
           style={{ opacity: 0.3, filter: 'drop-shadow(0 0 10px #000) brightness(0.3) contrast(1)' }}
         />
         {/* Фиксированная шапка только если не выбран чат */}
         {!selectedChat && (
-          <div className="fixed top-0 left-0 right-0 z-30 bg-white/90 w-full max-w-md mx-auto mt-4">
+          <div className="fixed top-0 left-0 right-0 z-30 bg-white/90 w-full mt-4">
             <div className="flex items-center px-4 py-4 border-b border-gray-300">
               <button
                 className="mr-2 flex items-center justify-center w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 transition"
@@ -177,8 +177,8 @@ export default function Settings() {
           </div>
         )}
         {/* Список чатов */}
-        <div className="w-full max-w-md mx-auto bg-white/80 shadow-sm border border-gray-200 overflow-hidden pb-[56px] pt-[88px]">
-          {error && <div className="text-red-500 text-center py-4">{error}</div>}
+        <div className="w-full bg-white/80 shadow-sm border border-gray-200 overflow-hidden pb-[56px] pt-[88px]">
+          {error && <div className="text-red-500 text-center py-4 px-4">{error}</div>}
           <AnimatePresence mode="wait">
             {!selectedChat && (
               <motion.div
@@ -198,11 +198,11 @@ export default function Settings() {
                       {chats.map((chat, idx) => (
                         <button
                           key={chat.id}
-                          className="w-full flex justify-between items-center px-6 py-4 text-base font-mono text-gray-700 hover:bg-gray-50 transition"
+                          className="w-full flex justify-between items-center px-4 py-4 text-sm font-mono text-gray-700 hover:bg-gray-50 transition"
                           onClick={() => setSelectedChat(chat)}
                         >
                           <span
-                            className="text-left font-normal overflow-hidden text-ellipsis whitespace-normal"
+                            className="text-left font-normal overflow-hidden text-ellipsis whitespace-normal flex-1 pr-2"
                             style={{
                               display: '-webkit-box',
                               WebkitLineClamp: 2,
@@ -212,7 +212,7 @@ export default function Settings() {
                           >
                             {chat.mainQuestion || `Вопрос ${idx + 1}`}
                           </span>
-                          <span className="text-right font-normal text-gray-400 text-sm">{formatDate(chat.lastMessageTime)}</span>
+                          <span className="text-right font-normal text-gray-400 text-xs flex-shrink-0">{formatDate(chat.lastMessageTime)}</span>
                         </button>
                       ))}
                     </div>
@@ -229,7 +229,7 @@ export default function Settings() {
                 transition={{ duration: 0.25 }}
               >
                 {/* Фиксированная шапка */}
-                <div className="fixed top-0 left-0 right-0 z-30 bg-white/90 w-full max-w-md mx-auto mt-4">
+                <div className="fixed top-0 left-0 right-0 z-30 bg-white/90 w-full mt-4">
                   <div className="flex items-center px-4 py-4 border-b border-gray-300">
                     <button
                       className="mr-2 flex items-center justify-center w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 transition"
@@ -248,8 +248,8 @@ export default function Settings() {
                 {/* Контейнер сообщений */}
                 <ChatMessagesList messages={messages} loading={loadingHistory} />
                 {/* Фиксированное поле ввода */}
-                <div className="fixed left-0 right-0 bottom-[45px] z-50 w-full flex justify-center pointer-events-none">
-                  <div className="w-full max-w-md mx-auto px-2 pointer-events-auto">
+                <div className="fixed left-0 right-0 bottom-[45px] z-50 w-full flex justify-center pointer-events-none px-2">
+                  <div className="w-full pointer-events-auto">
                     <ChatInputSection chatId={selectedChat.id} onMessageSent={msg => setMessages(prev => [...prev, msg])} disabled={loadingHistory} />
                   </div>
                 </div>
@@ -263,19 +263,19 @@ export default function Settings() {
   }
 
   return (
-    <div className="flex flex-col h-screen bg-white">
+    <div className="flex flex-col h-screen bg-white overflow-hidden">
       <div className="flex-grow overflow-y-auto pt-10 pb-24 relative">
         <img
           src="/bg2.png"
           alt=""
-          className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[180vw] max-w-none h-auto z-0"
+          className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-auto z-0"
           style={{ opacity: 0.3, filter: 'drop-shadow(0 0 10px #000) brightness(0.3) contrast(1)' }}
         />
-        <div className="relative z-10">
+        <div className="relative z-10 px-4">
           <h1 className="text-xl font-normal text-center mt-2 font-mono">Настройки</h1>
-          <hr className="w-[90%] mx-auto border-gray-300 my-4" />
+          <hr className="w-full mx-auto border-gray-300 my-4" />
           <h2 className="text-center text-lg font-normal text-gray-700 mb-8 font-mono">Профиль пользователя</h2>
-          <div className="w-full max-w-xl mx-auto bg-[#fafbfc] shadow-sm mb-8 border border-gray-200">
+          <div className="w-full bg-[#fafbfc] shadow-sm mb-8 border border-gray-200 rounded-lg">
             {[
               { label: 'Имя', value: userData.name || '' },
               { label: 'Ник', value: userData.userName ? `@${userData.userName}` : '@username' },
@@ -284,24 +284,24 @@ export default function Settings() {
               { label: 'Время рождения', value: userData.birthTime || '' },
               { label: 'Место рождения', value: userData.birthLocation || userData.birthCity || userData.birth_city || '' },
             ].map((row, idx) => (
-              <div key={row.label} className="flex justify-between items-center px-6 py-4 border-b border-gray-300 text-base font-mono text-gray-700 last:border-b-0">
-                <span className="text-left font-normal w-1/2">{row.label}</span>
-                <span className="text-right font-normal w-1/2 break-words">{row.value}</span>
+              <div key={row.label} className="flex justify-between items-center px-4 py-3 border-b border-gray-300 text-sm font-mono text-gray-700 last:border-b-0">
+                <span className="text-left font-normal flex-1 pr-2">{row.label}</span>
+                <span className="text-right font-normal flex-1 break-words">{row.value}</span>
               </div>
             ))}
             {/* История чата — отдельная строка */}
             <button
-              className="flex justify-between items-center w-full px-6 py-4 border-b border-gray-300 text-base font-mono text-gray-700 hover:bg-gray-100 transition"
+              className="flex justify-between items-center w-full px-4 py-3 border-b border-gray-300 text-sm font-mono text-gray-700 hover:bg-gray-100 transition"
               onClick={() => setShowChatList(true)}
             >
-              <span className="text-left font-normal w-1/2">История чата</span>
-              <span className="text-right font-normal w-1/2 break-words text-gray-400">{loadingChats ? '...' : chats.length ? `${chats.length} ${getChatPlural(chats.length)}` : ''}</span>
+              <span className="text-left font-normal flex-1">История чата</span>
+              <span className="text-right font-normal flex-1 text-gray-400">{loadingChats ? '...' : chats.length ? `${chats.length} ${getChatPlural(chats.length)}` : ''}</span>
             </button>
           </div>
           {/* Кнопка изменить данные */}
-          <div className="px-4">
+          <div className="px-2">
             <button
-              className="w-full max-w-xs mx-auto mt-6 py-3 bg-gray-200 text-gray-700 rounded-xl text-base font-mono flex items-center justify-center"
+              className="w-full py-3 bg-gray-200 text-gray-700 rounded-xl text-base font-mono flex items-center justify-center"
               onClick={() => setShowModal(true)}
             >
               Изменить данные
@@ -311,17 +311,17 @@ export default function Settings() {
       </div>
       {/* Модалка подтверждения */}
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30">
-          <div className="bg-white rounded-2xl shadow-xl p-6 w-[90vw] max-w-xs flex flex-col items-center">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 p-4">
+          <div className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-sm flex flex-col items-center">
             <div className="text-lg font-normal text-center mb-6">Вы уверены, что хотите изменить данные?</div>
-            <div className="flex gap-8">
+            <div className="flex gap-6">
               <button
-                className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center text-2xl hover:bg-gray-300"
+                className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center text-2xl hover:bg-gray-300 transition"
                 onClick={() => setShowModal(false)}
                 aria-label="Отмена"
               >✕</button>
               <button
-                className="w-12 h-12 rounded-full bg-green-200 flex items-center justify-center text-2xl hover:bg-green-300"
+                className="w-12 h-12 rounded-full bg-green-200 flex items-center justify-center text-2xl hover:bg-green-300 transition"
                 onClick={() => {
                   localStorage.removeItem('user');
                   setUserData({ name: '', gender: '', birthDate: '', birthTime: '', birthLocation: '' });
@@ -424,7 +424,7 @@ function ChatInputSection({ chatId, onMessageSent, disabled }) {
       )}
       <div className="flex items-center border-t border-gray-300 bg-white rounded-b-xl">
         <input
-          className="flex-1 py-5 px-3 text-base font-mono text-gray-400 bg-transparent outline-none border-none placeholder-gray-400"
+          className="flex-1 py-4 px-3 text-sm font-mono text-gray-400 bg-transparent outline-none border-none placeholder-gray-400"
           placeholder="Введите сообщение..."
           value={inputValue}
           onChange={e => setInputValue(e.target.value)}
@@ -432,9 +432,9 @@ function ChatInputSection({ chatId, onMessageSent, disabled }) {
           onKeyDown={e => { if (e.key === 'Enter') handleSend(); }}
         />
         <button className="p-2 flex items-center justify-center" type="button" onClick={handleSend} disabled={!inputValue.trim() || loading || disabled}>
-          <svg width="28" height="28" fill="none" viewBox="0 0 28 28"><circle cx="14" cy="14" r="14" fill="#F3F4F6"/><path d="M10.5 14h7m0 0-2.5-2.5M17.5 14l-2.5 2.5" stroke="#A1A1AA" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+          <svg width="24" height="24" fill="none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="12" fill="#F3F4F6"/><path d="M9 12h6m0 0-2-2m2 2-2 2" stroke="#A1A1AA" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
         </button>
-        {error && <div className="text-red-500 text-xs ml-2">{error}</div>}
+        {error && <div className="text-red-500 text-xs ml-2 px-2">{error}</div>}
       </div>
     </>
   );
@@ -457,7 +457,7 @@ function ChatMessagesList({ messages, loading }) {
       ref={containerRef}
       className="w-full bg-white/80 rounded-xl shadow-none mb-8 px-4 py-6 flex flex-col gap-6 overflow-y-auto"
       style={{
-        maxHeight: 'calc(100vh - 220px)', // 220px: примерная высота хедера + инпута
+        maxHeight: 'calc(100vh - 200px)', // Уменьшено для мобильных
         minHeight: '200px',
         marginTop: '88px', // отступ под фиксированный хедер
       }}
@@ -470,14 +470,14 @@ function ChatMessagesList({ messages, loading }) {
         messages.map((msg, i) => (
           <div key={i} className={`flex ${msg.isUser ? 'justify-end' : 'justify-start'}`}>
             {msg.isUser ? (
-              <div className="rounded-xl px-4 py-3 max-w-[80%] text-base font-sans bg-black text-white">
+              <div className="rounded-xl px-3 py-2 max-w-[85%] text-sm font-sans bg-black text-white">
                 {msg.content}
               </div>
             ) : (
               msg.isNew ? (
                 <TypewriterEffect text={msg.content} />
               ) : (
-                <div className="rounded-xl px-4 py-3 max-w-[80%] text-base font-sans bg-gray-100 text-gray-900">
+                <div className="rounded-xl px-3 py-2 max-w-[85%] text-sm font-sans bg-gray-100 text-gray-900">
                   {msg.content}
                 </div>
               )

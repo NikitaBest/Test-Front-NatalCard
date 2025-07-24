@@ -62,7 +62,7 @@ function App() {
       } else {
         // Fallback - тестовые данные
         userData = {
-          userTelegramId: 888443,
+          userTelegramId: 44440909,
           firstName: 'string',
           lastName: 'string',
           userName: 'string',
