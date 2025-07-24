@@ -1,7 +1,6 @@
 import React from 'react';
 
-export default function UserProfileHeader({ name, username, ascSign, sunSign, moonSign }) {
-  const photoUrl = '/default-avatar.png';
+export default function UserProfileHeader({ name, username, photoUrl, ascSign, sunSign, moonSign }) {
 
   return (
     <div className="w-full flex flex-col items-center pt-4 pb-1 sm:pt-6 sm:pb-2 bg-white pl-4">

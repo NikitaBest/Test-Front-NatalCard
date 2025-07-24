@@ -55,7 +55,7 @@ export default function Profile() {
 
   return (
     <div className="min-h-screen w-full overflow-x-hidden bg-white pt-10">
-      <UserProfileHeader name={userData.name || 'Имя'} username={userData.username || '@username'} ascSign={ascSign} sunSign={sunSign} moonSign={moonSign} />
+      <UserProfileHeader name={userData.name || 'Имя'} username={userData.username || '@username'} photoUrl={userData.photoUrl || '/default-avatar.png'} ascSign={ascSign} sunSign={sunSign} moonSign={moonSign} />
       <ProfileTabs active={activeTab} onChange={setActiveTab} />
       <AnimatePresence mode="wait">
         {activeTab === 'map' && (
