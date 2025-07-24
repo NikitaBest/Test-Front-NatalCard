@@ -28,11 +28,23 @@ function App() {
   }, []);
 
   useEffect(() => {
+    // Telegram WebApp настройки
+    const tg = window.Telegram?.WebApp;
+    if (tg) {
+      try {
+        tg.expand && tg.expand();
+        tg.disableClosingConfirmation && tg.disableClosingConfirmation();
+        tg.disableVerticalSwipes && tg.disableVerticalSwipes();
+        tg.lockOrientation && tg.lockOrientation();
+      } catch (e) {
+        // Не критично, если что-то не поддерживается
+        console.warn('Telegram WebApp API error:', e);
+      }
+    }
     // Авторизация при первом запуске, если токена нет
     const token = localStorage.getItem('token');
     if (!token) {
       // Пытаемся получить данные из Telegram Web App
-      const tg = window.Telegram?.WebApp;
       let userData;
       
       if (tg && tg.initDataUnsafe?.user) {
