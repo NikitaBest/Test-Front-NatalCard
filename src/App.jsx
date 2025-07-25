@@ -13,10 +13,22 @@ import Profile from './pages/Profile';
 import Today from './pages/Today';
 import { AnimatePresence, motion } from 'framer-motion';
 import { loginUser } from './utils/api';
+import { useUser } from './context/UserContext';
+
+function isProfileFilled(user) {
+  return (
+    user &&
+    typeof user.name === 'string' && user.name.trim() &&
+    typeof user.birthDate === 'string' && user.birthDate.trim() &&
+    typeof user.birthTime === 'string' && user.birthTime.trim() &&
+    typeof user.birthLocation === 'string' && user.birthLocation.trim()
+  );
+}
 
 function App() {
   const [isAppLoading, setIsAppLoading] = useState(true);
   const [showSplash, setShowSplash] = useState(true);
+  const { setUserData } = useUser();
   const location = useLocation();
 
   useEffect(() => {
@@ -80,6 +92,14 @@ function App() {
           if (data.user) {
             localStorage.setItem('userId', data.user.id);
             localStorage.setItem('user', JSON.stringify(data.user)); // сохраняем профиль пользователя
+            setUserData(data.user);
+            
+            // Проверяем, заполнен ли профиль пользователя
+            if (isProfileFilled(data.user)) {
+              // Если профиль заполнен - перенаправляем на профиль
+              window.location.href = '/profile';
+            }
+            // Если профиль не заполнен - остаёмся на Start для прохождения шагов
           }
         })
         .catch((err) => {

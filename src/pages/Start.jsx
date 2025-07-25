@@ -1,7 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import Button from '../components/Button';
 import { useEffect } from 'react';
-import { fetchUserProfile } from '../utils/api';
 import { useUser } from '../context/UserContext';
 
 function isProfileFilled(user) {
@@ -16,29 +15,14 @@ function isProfileFilled(user) {
 
 export default function Start() {
   const navigate = useNavigate();
-  const { setUserData } = useUser();
+  const { userData } = useUser();
 
   useEffect(() => {
-    async function checkProfile() {
-      const token = localStorage.getItem('token');
-      if (!token) return; // если нет токена — пусть идёт по шагам
-
-      try {
-        const data = await fetchUserProfile();
-        if (data && data.value) {
-          setUserData(data.value);
-          localStorage.setItem('user', JSON.stringify(data.value));
-          // Проверяем заполненность профиля
-          if (isProfileFilled(data.value)) {
-            navigate('/profile');
-          }
-        }
-      } catch (e) {
-        // Ошибка — пусть идёт по шагам
-      }
+    // Проверяем, есть ли уже заполненный профиль в контексте
+    if (isProfileFilled(userData)) {
+      navigate('/profile');
     }
-    checkProfile();
-  }, [navigate, setUserData]);
+  }, [userData, navigate]);
 
   return (
     <div className="flex flex-col justify-between h-screen px-6 py-10 bg-white text-center">
