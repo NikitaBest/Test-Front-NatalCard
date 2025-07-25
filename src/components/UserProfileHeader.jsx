@@ -23,7 +23,7 @@ export default function UserProfileHeader({ name, username, photoUrl, ascSign, s
               <span className="text-base sm:text-xl">☉</span> {sunSign}
             </span>
             <span className="flex items-center gap-1 text-gray-700 text-xs sm:text-lg whitespace-nowrap">
-              <span className="text-base sm:text-xl">♇</span> {ascSign}
+              <span className="text-base sm:text-xl">↑</span> {ascSign}
             </span>
           </div>
         </div>
