@@ -184,10 +184,10 @@ export default function AskAI() {
       <img
         src="/bg2.png"
         alt=""
-        className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[180vw] max-w-none h-auto z-0"
+        className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-auto z-0"
         style={{ opacity: 1, filter: 'drop-shadow(0 0 10px #000) brightness(0.5) contrast(2.5)' }}
       />
-      <div className="bg-white/50 relative z-10 min-h-screen">
+      <div className="bg-white/50 relative z-10 min-h-screen flex flex-col">
         {loading && (
           <AnimatePresence>
             <motion.div
@@ -201,7 +201,7 @@ export default function AskAI() {
             </motion.div>
           </AnimatePresence>
         )}
-        <div className="w-full flex flex-col items-center pb-[92px]">
+        <div className="w-full flex flex-col items-center pb-[92px] flex-1">
           <h1 className="text-2xl font-normal text-center mt-2 font-mono">Вопрос&nbsp;AI</h1>
           <div className="flex flex-row items-center justify-start w-full max-w-xl mx-auto mb-2 px-4">
             <HamburgerIcon />
@@ -215,15 +215,24 @@ export default function AskAI() {
           )}
           {/* Вопросы только до начала диалога */}
           {!dialogStarted && (
-            <div className="flex flex-col items-center w-full max-w-md mx-auto mb-8 px-4">
+            <div className="flex flex-col items-center w-full max-w-md mx-auto mb-8 px-4 overflow-fix" style={{ minHeight: '200px' }}>
               {QUESTIONS[activeTab].map((q, i) => (
                 <button
                   key={i}
-                  className={`font-mono text-base transition mb-10 focus:outline-none ${
+                  className={`ask-ai-question font-mono text-base transition mb-8 focus:outline-none text-center w-full max-w-sm ${
                     selectedQuestion === i ? 'text-black font-semibold' : 'text-gray-400 hover:text-gray-700'
                   }`}
                   onClick={() => handleQuestionClick(q, i)}
                   type="button"
+                  style={{
+                    lineHeight: '1.5',
+                    padding: '8px 16px',
+                    wordWrap: 'break-word',
+                    whiteSpace: 'normal',
+                    display: 'block',
+                    position: 'relative',
+                    zIndex: 10
+                  }}
                 >
                   {q}
                 </button>

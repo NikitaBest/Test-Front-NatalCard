@@ -1,1 +1,41 @@
 @import "tailwindcss";
+
+/* Глобальные стили для предотвращения проблем с отображением в продакшене */
+
+/* Предотвращение наложения текста */
+* {
+  box-sizing: border-box;
+}
+
+/* Явные стили для кнопок вопросов */
+.ask-ai-question {
+  display: block !important;
+  position: relative !important;
+  z-index: 10 !important;
+  word-wrap: break-word !important;
+  white-space: normal !important;
+  line-height: 1.5 !important;
+  margin-bottom: 2rem !important;
+}
+
+/* Предотвращение проблем с flexbox */
+.flex-container {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+}
+
+/* Явные стили для табов */
+.ask-ai-tabs {
+  position: relative !important;
+  z-index: 10 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* Предотвращение проблем с overflow */
+.overflow-fix {
+  overflow: visible !important;
+  position: relative !important;
+}
