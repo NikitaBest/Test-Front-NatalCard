@@ -45,7 +45,15 @@ export default function NatalTable({ chartData }) {
             {houseData.zodiacSign ? zodiacSigns[houseData.zodiacSign] : ''}
           </td>
           <td className="px-2 py-1 w-1/3 text-left align-middle bg-gray-100">
-            {houseData.planets.length > 0 ? houseData.planets.join(', ') : ''}
+            {houseData.planets.length > 0 ? (
+              <div className="flex flex-col gap-1">
+                {houseData.planets.map((planet, planetIndex) => (
+                  <div key={planetIndex} className="text-sm">
+                    {planet}
+                  </div>
+                ))}
+              </div>
+            ) : ''}
           </td>
         </tr>
       ));
