@@ -2,6 +2,7 @@ import BottomMenu from '../components/BottomMenu';
 import AskAITabs from '../components/AskAITabs';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import bgImage from '../assets/bg2.png';
 
 // Компонент анимированных точек загрузки
 function LoadingDots() {
@@ -182,7 +183,7 @@ export default function AskAI() {
   return (
     <div className="min-h-screen pt-10 relative overflow-hidden">
       <img
-        src="/bg2.png"
+        src={bgImage}
         alt=""
         className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-auto z-0"
         style={{ opacity: 1, filter: 'drop-shadow(0 0 10px #000) brightness(0.5) contrast(2.5)' }}

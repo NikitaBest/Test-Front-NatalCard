@@ -3,6 +3,7 @@ import { useUser } from '../context/UserContext';
 import { useState, useEffect, useRef } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import bgImage from '../assets/bg2.png';
 
 // Компонент анимированных точек загрузки
 function LoadingDots() {
@@ -152,7 +153,7 @@ export default function Settings() {
     return (
       <div className="min-h-screen bg-white pt-10 relative overflow-hidden">
         <img
-          src="/bg2.png"
+          src={bgImage}
           alt=""
           className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-auto z-0"
           style={{ opacity: 0.3, filter: 'drop-shadow(0 0 10px #000) brightness(0.3) contrast(1)' }}
@@ -266,7 +267,7 @@ export default function Settings() {
     <div className="flex flex-col h-screen bg-white overflow-hidden">
       <div className="flex-grow overflow-y-auto pt-10 pb-24 relative">
         <img
-          src="/bg2.png"
+          src={bgImage}
           alt=""
           className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-auto z-0"
           style={{ opacity: 0.3, filter: 'drop-shadow(0 0 10px #000) brightness(0.3) contrast(1)' }}
