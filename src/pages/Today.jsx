@@ -45,6 +45,12 @@ export default function Today() {
     async function fetchDaily() {
       setLoading(true);
       setError(null);
+      
+      // Небольшая задержка перед очисткой данных для лучшего UX
+      setTimeout(() => {
+        setDailyData(null);
+      }, 100);
+      
       try {
         // Формат даты для запроса: DD.MM.YYYY
         const dateStr = selectedDate.toLocaleDateString('ru-RU');
