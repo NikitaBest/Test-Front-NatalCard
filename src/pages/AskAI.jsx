@@ -181,14 +181,22 @@ export default function AskAI() {
   };
 
   return (
-    <div className="min-h-screen pt-10 relative overflow-hidden">
+    <div 
+      className="min-h-screen bg-white pt-10 relative overflow-hidden"
+      style={{
+        backgroundImage: `url(${bgImage})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat'
+      }}
+    >
       <img
         src={bgImage}
         alt=""
         className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-auto z-0"
         style={{ opacity: 1, filter: 'drop-shadow(0 0 10px #000) brightness(0.5) contrast(2.5)' }}
       />
-      <div className="bg-white/50 relative z-10 min-h-screen flex flex-col">
+      <div className="relative z-10 min-h-screen flex flex-col">
         {loading && (
           <AnimatePresence>
             <motion.div
@@ -202,7 +210,7 @@ export default function AskAI() {
             </motion.div>
           </AnimatePresence>
         )}
-        <div className="w-full flex flex-col items-center pb-[92px] flex-1">
+        <div className="w-full flex flex-col items-center pb-[92px] flex-1 bg-white/80">
           <h1 className="text-2xl font-normal text-center mt-2 font-mono">Вопрос&nbsp;AI</h1>
           <div className="flex flex-row items-center justify-start w-full max-w-xl mx-auto mb-2 px-4">
             <HamburgerIcon />
