@@ -249,7 +249,7 @@ export default function Settings() {
                 {/* Контейнер сообщений */}
                 <ChatMessagesList messages={messages} loading={loadingHistory} />
                 {/* Фиксированное поле ввода */}
-                <div className="fixed left-0 right-0 bottom-[45px] z-50 w-full flex justify-center pointer-events-none px-2">
+                <div className="fixed left-0 right-0 bottom-[55px] z-50 w-full flex justify-center pointer-events-none px-2">
                   <div className="w-full pointer-events-auto">
                     <ChatInputSection chatId={selectedChat.id} onMessageSent={msg => setMessages(prev => [...prev, msg])} disabled={loadingHistory} />
                   </div>
