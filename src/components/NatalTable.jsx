@@ -11,19 +11,44 @@ export default function NatalTable({ chartData }) {
 
   let tableRows = null;
   if (chartData && chartData.value && Array.isArray(chartData.value.table)) {
-    tableRows = chartData.value.table.map((row, i) => (
-      <tr key={i}>
-        <td className="border border-gray-400 px-2 py-1 w-1/6 text-left align-middle">
-          {row.house}
-        </td>
-        <td className="border border-gray-400 px-2 py-1 w-1/3 text-left align-middle">
-          {row.zodiacSign ? zodiacSigns[row.zodiacSign] : ''}
-        </td>
-        <td className="px-2 py-1 w-1/3 text-left align-middle bg-gray-100">
-          {row.planet ? planetSymbols[row.planet] || row.planet : ''}
-        </td>
-      </tr>
-    ));
+    // Группируем данные по домам
+    const housesData = {};
+    
+    chartData.value.table.forEach(row => {
+      const houseNumber = row.house;
+      if (!housesData[houseNumber]) {
+        housesData[houseNumber] = {
+          house: houseNumber,
+          zodiacSign: row.zodiacSign,
+          planets: []
+        };
+      }
+      
+      // Добавляем планету в дом, если она есть
+      if (row.planet) {
+        const planetName = planetSymbols[row.planet] || row.planet;
+        if (!housesData[houseNumber].planets.includes(planetName)) {
+          housesData[houseNumber].planets.push(planetName);
+        }
+      }
+    });
+
+    // Создаем строки таблицы из сгруппированных данных
+    tableRows = Object.values(housesData)
+      .sort((a, b) => a.house - b.house) // Сортируем по номеру дома
+      .map((houseData, i) => (
+        <tr key={i}>
+          <td className="border border-gray-400 px-2 py-1 w-1/6 text-left align-middle">
+            {houseData.house}
+          </td>
+          <td className="border border-gray-400 px-2 py-1 w-1/3 text-left align-middle">
+            {houseData.zodiacSign ? zodiacSigns[houseData.zodiacSign] : ''}
+          </td>
+          <td className="px-2 py-1 w-1/3 text-left align-middle bg-gray-100">
+            {houseData.planets.length > 0 ? houseData.planets.join(', ') : ''}
+          </td>
+        </tr>
+      ));
   }
 
   return (
