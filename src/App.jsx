@@ -54,58 +54,73 @@ function App() {
       }
     }
     
-    // Всегда делаем авторизацию при входе в приложение для синхронизации данных
-    // Пытаемся получить данные из Telegram Web App
-    let userData;
+    // Проверяем, есть ли уже токен (пользователь уже авторизован)
+    const token = localStorage.getItem('token');
     
-    if (tg && tg.initDataUnsafe?.user) {
-      // Данные из Telegram Web App
-      const user = tg.initDataUnsafe.user;
-      userData = {
-        userTelegramId: user.id,
-        firstName: user.first_name || '',
-        lastName: user.last_name || '',
-        userName: user.username || '',
-        photoUrl: user.photo_url || '',
-        initData: tg.initData || '',
-        ignoreValidate: true,
-      };
+    if (token) {
+      // Если токен есть - пользователь уже авторизован, проверяем профиль
+      const storedUser = JSON.parse(localStorage.getItem('user') || '{}');
+      if (isProfileFilled(storedUser)) {
+        setUserData(storedUser);
+        // Если профиль заполнен - перенаправляем на профиль
+        if (location.pathname === '/start') {
+          window.location.href = '/profile';
+        }
+      }
     } else {
-      // Fallback - тестовые данные
-      userData = {
-        userTelegramId: 44440909,
-        firstName: 'string',
-        lastName: 'string',
-        userName: 'string',
-        photoUrl: 'http://localhost:5173/123.jpeg',
-        initData: 'string',
-        ignoreValidate: true,
-      };
-    }
-    
-    loginUser(userData)
-      .then((data) => {
-        if (data.token) {
-          localStorage.setItem('token', data.token);
-        }
-        if (data.user) {
-          localStorage.setItem('userId', data.user.id);
-          localStorage.setItem('user', JSON.stringify(data.user)); // сохраняем профиль пользователя
-          setUserData(data.user);
-          
-          // Проверяем, заполнен ли профиль пользователя
-          if (isProfileFilled(data.user)) {
-            // Если профиль заполнен - перенаправляем на профиль
-            window.location.href = '/profile';
+      // Если токена нет - делаем авторизацию
+      // Пытаемся получить данные из Telegram Web App
+      let userData;
+      
+      if (tg && tg.initDataUnsafe?.user) {
+        // Данные из Telegram Web App
+        const user = tg.initDataUnsafe.user;
+        userData = {
+          userTelegramId: user.id,
+          firstName: user.first_name || '',
+          lastName: user.last_name || '',
+          userName: user.username || '',
+          photoUrl: user.photo_url || '',
+          initData: tg.initData || '',
+          ignoreValidate: true,
+        };
+      } else {
+        // Fallback - тестовые данные
+        userData = {
+          userTelegramId: 44440909,
+          firstName: 'string',
+          lastName: 'string',
+          userName: 'string',
+          photoUrl: 'http://localhost:5173/123.jpeg',
+          initData: 'string',
+          ignoreValidate: true,
+        };
+      }
+      
+      loginUser(userData)
+        .then((data) => {
+          if (data.token) {
+            localStorage.setItem('token', data.token);
           }
-          // Если профиль не заполнен - остаёмся на Start для прохождения шагов
-        }
-      })
-      .catch((err) => {
-        // Можно добавить обработку ошибок
-        console.error('Ошибка авторизации:', err);
-      });
-  }, []);
+          if (data.user) {
+            localStorage.setItem('userId', data.user.id);
+            localStorage.setItem('user', JSON.stringify(data.user)); // сохраняем профиль пользователя
+            setUserData(data.user);
+            
+            // Проверяем, заполнен ли профиль пользователя
+            if (isProfileFilled(data.user)) {
+              // Если профиль заполнен - перенаправляем на профиль
+              window.location.href = '/profile';
+            }
+            // Если профиль не заполнен - остаёмся на Start для прохождения шагов
+          }
+        })
+        .catch((err) => {
+          // Можно добавить обработку ошибок
+          console.error('Ошибка авторизации:', err);
+        });
+    }
+  }, [setUserData, location.pathname]);
 
   return (
     <>
