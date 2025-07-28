@@ -2,27 +2,23 @@ import { useNavigate } from 'react-router-dom';
 import Button from '../components/Button';
 import { useEffect } from 'react';
 import { useUser } from '../context/UserContext';
-
-function isProfileFilled(user) {
-  return (
-    user &&
-    typeof user.name === 'string' && user.name.trim() &&
-    typeof user.birthDate === 'string' && user.birthDate.trim() &&
-    typeof user.birthTime === 'string' && user.birthTime.trim() &&
-    typeof user.birthLocation === 'string' && user.birthLocation.trim()
-  );
-}
+import Splash from './Splash';
 
 export default function Start() {
   const navigate = useNavigate();
-  const { userData } = useUser();
+  const { isProfileFilled, isLoading } = useUser();
 
   useEffect(() => {
     // Проверяем, есть ли уже заполненный профиль в контексте
-    if (isProfileFilled(userData)) {
+    if (isProfileFilled) {
       navigate('/profile');
     }
-  }, [userData, navigate]);
+  }, [isProfileFilled, navigate]);
+
+  // Показываем сплэш пока загружается проверка пользователя
+  if (isLoading) {
+    return <Splash fadeOut={false} />;
+  }
 
   return (
     <div className="flex flex-col justify-between h-screen px-6 py-10 bg-white text-center">
