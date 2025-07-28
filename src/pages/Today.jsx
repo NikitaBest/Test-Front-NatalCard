@@ -110,8 +110,8 @@ export default function Today() {
       <div className="border-t border-gray-300/60 w-full mt-4 mb-0" />
       <TodayCalendar value={selectedDate} onChange={setSelectedDate} />
       <div className="border-t border-gray-300/60 w-full my-0" />
-      <h2 className="text-center font-mono text-2xl font-normal text-gray-800 mb-6 mt-8">
-        Расклад на {selectedDate.toLocaleDateString('ru-RU')}
+      <h2 className="text-center font-mono text-1xl font-normal text-gray-800 mb-6 mt-8">
+        Гороскоп на {selectedDate.toLocaleDateString('ru-RU')}
       </h2>
       {loading && <div className="text-center text-gray-400">Загрузка...</div>}
       {error && <div className="text-center text-red-500">{error}</div>}
