@@ -5,6 +5,7 @@ import Input from '../components/Input';
 import Button from '../components/Button';
 import { useUser } from '../context/UserContext';
 import { useLanguage } from '../context/LanguageContext';
+import LanguageSelect from '../components/LanguageSelect';
 import Picker from 'react-mobile-picker';
 import '../styles/picker.css';
 
@@ -37,6 +38,11 @@ export default function BirthTime() {
 
   return (
     <StepWrapper>
+      {/* Переключатель языка в правом верхнем углу */}
+      <div className="absolute top-4 right-4 z-10">
+        <LanguageSelect variant="compact" />
+      </div>
+      
       <h1 className="text-xl font-normal text-center mt-2 font-mono">{t('birthTime.title')}</h1>
       <div className="flex flex-col items-center justify-center flex-1">
         <div className="mb-6 w-full mt-8 flex justify-center">
