@@ -63,6 +63,7 @@
     "birthTime": "Birth Time",
     "birthPlace": "Birth Place",
     "chatHistory": "Chat History",
+    "chatHistoryTitle": "Chat History",
     "language": "Language",
     "editData": "Edit Data",
     "confirmEditData": "Are you sure you want to change the data?",
@@ -142,7 +143,7 @@
     "noData": "No data for selected date",
     "noAuth": "No authorization token",
     "loadError": "Loading error",
-    "weekDays": ["sun", "mon", "tue", "wed", "thu", "fri", "sat"]
+    "weekDays": ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"]
   },
   "splash": {
     "footer": "Accurate calculations based on Vedic astrology and current NASA data"

@@ -176,7 +176,7 @@ export default function Settings() {
                   <path d="M13 16l-5-5 5-5" stroke="#333" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               </button>
-              <h2 className="flex-1 text-center text-2xl font-normal text-gray-900">История чатов</h2>
+              <h2 className="flex-1 text-center text-2xl font-normal text-gray-900">{t('settings.chatHistoryTitle')}</h2>
               <div className="w-9" />
             </div>
           </div>
@@ -246,7 +246,7 @@ export default function Settings() {
                         <path d="M13 16l-5-5 5-5" stroke="#333" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                       </svg>
                     </button>
-                    <h2 className="flex-1 text-center text-2xl font-normal text-gray-900">История чатов</h2>
+                    <h2 className="flex-1 text-center text-2xl font-normal text-gray-900">{t('settings.chatHistoryTitle')}</h2>
                     <div className="w-9" />
                   </div>
                 </div>

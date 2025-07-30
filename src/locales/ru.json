@@ -63,6 +63,7 @@
     "birthTime": "Время рождения",
     "birthPlace": "Место рождения",
     "chatHistory": "История чата",
+    "chatHistoryTitle": "История чатов",
     "language": "Язык",
     "editData": "Изменить данные",
     "confirmEditData": "Вы уверены, что хотите изменить данные?",
