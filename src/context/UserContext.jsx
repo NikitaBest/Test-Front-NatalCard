@@ -50,7 +50,7 @@ export function UserProvider({ children }) {
         } else {
           // Fallback - тестовые данные
           userData = {
-            userTelegramId: 4444090956,
+            userTelegramId: 909092345,
             firstName: 'string',
             lastName: 'string',
             userName: 'string',

@@ -13,6 +13,7 @@ import Profile from './pages/Profile';
 import Today from './pages/Today';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useUser } from './context/UserContext';
+import { LanguageProvider } from './context/LanguageContext';
 
 function App() {
   const [isAppLoading, setIsAppLoading] = useState(true);
@@ -45,7 +46,7 @@ function App() {
   }, []);
 
   return (
-    <>
+    <LanguageProvider>
       {showSplash && <Splash fadeOut={!isAppLoading} />}
       {!showSplash && (
         <AnimatePresence mode="wait">
@@ -73,7 +74,7 @@ function App() {
           </motion.div>
         </AnimatePresence>
       )}
-    </>
+    </LanguageProvider>
   );
 }
 export default App;

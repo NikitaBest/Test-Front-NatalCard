@@ -2,14 +2,11 @@ import { useState, useMemo } from 'react';
 import StepWrapper from '../components/StepWrapper';
 import Button from '../components/Button';
 import { useUser } from '../context/UserContext';
+import { useLanguage } from '../context/LanguageContext';
 import Picker from 'react-mobile-picker';
 import { useNavigate } from 'react-router-dom';
 import '../styles/picker.css';
 
-const months = [
-  'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
-  'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'
-];
 const currentYear = new Date().getFullYear();
 const years = Array.from({ length: 100 }, (_, i) => String(currentYear - i));
 
@@ -22,7 +19,12 @@ const getScaleByDistance = (distance) => {
 
 export default function BirthDate() {
   const { setUserData } = useUser();
+  const { t } = useLanguage();
   const navigate = useNavigate();
+  
+  // Получаем месяцы из переводов
+  const months = t('birthDate.months');
+  
   const [pickerValue, setPickerValue] = useState({
     month: months[0],
     day: '1',
@@ -34,7 +36,7 @@ export default function BirthDate() {
     const monthIndex = months.indexOf(pickerValue.month);
     const year = Number(pickerValue.year);
     return new Date(year, monthIndex + 1, 0).getDate();
-  }, [pickerValue.month, pickerValue.year]);
+  }, [pickerValue.month, pickerValue.year, months]);
 
   const optionGroups = {
     month: months,
@@ -57,7 +59,7 @@ export default function BirthDate() {
 
   return (
     <StepWrapper>
-      <h1 className="text-xl font-normal text-center mt-2 font-mono">Укажите свою дату рождения</h1>
+      <h1 className="text-xl font-normal text-center mt-2 font-mono">{t('birthDate.title')}</h1>
       <div className="flex flex-col items-center justify-center flex-grow">
         <div className="mb-6 w-full mt-8 flex justify-center">
           <div className="w-full max-w-[350px] h-[360px] bg-white/80 rounded-[48px] shadow-2xl flex items-center justify-center relative overflow-hidden picker-fade-mask">
@@ -145,7 +147,7 @@ export default function BirthDate() {
         </div>
       </div>
       <div className="w-full px-4 pb-4">
-        <Button onClick={handleContinue} disabled={!pickerValue.day || !pickerValue.month || !pickerValue.year} className="w-full">Продолжить</Button>
+        <Button onClick={handleContinue} disabled={!pickerValue.day || !pickerValue.month || !pickerValue.year} className="w-full">{t('common.continue')}</Button>
       </div>
     </StepWrapper>
   );

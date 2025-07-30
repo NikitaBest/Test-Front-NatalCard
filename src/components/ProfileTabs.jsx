@@ -1,6 +1,9 @@
 import React from 'react';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function ProfileTabs({ active = 'map', onChange }) {
+  const { t } = useLanguage();
+  
   return (
     <div className="flex items-center justify-center gap-4 mt-8 mb-6 select-none">
       <button
@@ -13,7 +16,7 @@ export default function ProfileTabs({ active = 'map', onChange }) {
         onClick={() => onChange && onChange('map')}
         type="button"
       >
-        Карта
+        {t('profile.tabs.map')}
       </button>
       <span className="h-6 w-px bg-gray-300 mx-2" />
       <button
@@ -26,7 +29,7 @@ export default function ProfileTabs({ active = 'map', onChange }) {
         onClick={() => onChange && onChange('table')}
         type="button"
       >
-        Таблица
+        {t('profile.tabs.table')}
       </button>
     </div>
   );

@@ -2,6 +2,7 @@ import BottomMenu from '../components/BottomMenu';
 import AskAITabs from '../components/AskAITabs';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useLanguage } from '../context/LanguageContext';
 import bgImage from '../assets/bg2.png';
 
 // Компонент анимированных точек загрузки
@@ -71,30 +72,8 @@ function HamburgerIcon() {
   );
 }
 
-const QUESTIONS = {
-  career: [
-    'Какую профессию мне выбрать, чтобы раскрыть мой потенциал и чувствовать удовлетворение от дела?',
-    'В чём мои сильные стороны и таланты, которые я могу превратить в источник дохода?',
-    'Какую нишу, направление или индустрию мне лучше развивать, чтобы реализоваться и зарабатывать?',
-    'Какой стиль работы подходит мне лучше: предпринимательство, найм, творчество, фриланс, наставничество?',
-    'Что сейчас мешает мне реализоваться в карьере — и как это преодолеть?'
-  ],
-  self: [
-    'С чего мне начать путь к себе и своему предназначению?',
-    'Какие внутренние качества и установки мне мешают двигаться вперёд — и как их трансформировать?',
-    'В чём моя личная сила — и как её раскрыть?',
-    'Какой стиль саморазвития подойдёт именно мне: практики, дисциплина, творчество или духовный путь?',
-    'Как сформировать личную систему развития: что изучать, как расти и куда двигаться?',
-  ],
-  love: [
-    'Как построить гармоничные отношения?',
-    'Что мешает мне встретить любовь?',
-    'Как понять свои чувства?',
-    'Как наладить отношения с партнёром?'
-  ]
-};
-
 export default function AskAI() {
+  const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState('self');
   const [inputValue, setInputValue] = useState('');
   const [loading, setLoading] = useState(false);
@@ -103,6 +82,15 @@ export default function AskAI() {
   const [error, setError] = useState(null);
   const [selectedQuestion, setSelectedQuestion] = useState(null);
   const [dialogStarted, setDialogStarted] = useState(false);
+
+  // Получаем вопросы из переводов
+  const getQuestions = () => {
+    return {
+      career: t('askAI.questions.career'),
+      self: t('askAI.questions.self'),
+      love: t('askAI.questions.love')
+    };
+  };
 
   const handleQuestionClick = (q, idx) => {
     setInputValue(q);
@@ -180,6 +168,8 @@ export default function AskAI() {
     setError(null);
   };
 
+  const questions = getQuestions();
+
   return (
     <div 
       className="min-h-screen bg-white pt-10 relative overflow-hidden"
@@ -211,10 +201,10 @@ export default function AskAI() {
           </AnimatePresence>
         )}
         <div className="w-full flex flex-col items-center pb-[92px] flex-1 bg-white/80">
-          <h1 className="text-2xl font-normal text-center mt-2 font-mono">Вопрос&nbsp;AI</h1>
+          <h1 className="text-2xl font-normal text-center mt-2 font-mono">{t('askAI.title')}</h1>
           <div className="flex flex-row items-center justify-start w-full max-w-xl mx-auto mb-2 px-4">
             <HamburgerIcon />
-            <div className="text-left text-xs sm:text-sm md:text-base lg:text-lg font-normal text-gray-400 ml-4 w-[320px] truncate">Получи ответы на самые важные вопросы</div>
+            <div className="text-left text-xs sm:text-sm md:text-base lg:text-lg font-normal text-gray-400 ml-4 w-[320px] truncate">{t('askAI.subtitle')}</div>
           </div>
           <hr className="w-[90%] mx-auto border-gray-300 mb-4" />
           {!dialogStarted && (
@@ -225,7 +215,7 @@ export default function AskAI() {
           {/* Вопросы только до начала диалога */}
           {!dialogStarted && (
             <div className="flex flex-col items-center w-full max-w-md mx-auto mb-8 px-4 overflow-fix" style={{ minHeight: '200px' }}>
-              {QUESTIONS[activeTab].map((q, i) => (
+              {questions[activeTab].map((q, i) => (
                 <button
                   key={i}
                   className={`ask-ai-question font-mono text-base transition mb-8 focus:outline-none text-center w-full max-w-sm ${
@@ -271,7 +261,7 @@ export default function AskAI() {
                 className="w-full max-w-[180px] h-10 bg-gray-200 text-gray-800 rounded-xl text-base font-mono mb-4"
                 onClick={handleBack}
               >
-                Выйти из чата
+                {t('askAI.exitChat')}
               </button>
             </div>
           )}
@@ -281,7 +271,7 @@ export default function AskAI() {
             <div className="flex items-center border-t border-gray-300 bg-white">
               <input
                 className="flex-1 py-5 px-3 text-base font-mono text-gray-400 bg-transparent outline-none border-none placeholder-gray-400"
-                placeholder={dialogStarted ? "Введите сообщение..." : "Задай свой вопрос..."}
+                placeholder={dialogStarted ? t('askAI.messagePlaceholder') : t('askAI.placeholder')}
                 value={inputValue}
                 onChange={handleInputChange}
                 disabled={loading}

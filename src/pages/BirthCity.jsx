@@ -4,11 +4,13 @@ import StepWrapper from '../components/StepWrapper';
 import Input from '../components/Input';
 import Button from '../components/Button';
 import { useUser } from '../context/UserContext';
+import { useLanguage } from '../context/LanguageContext';
 import { updateUserProfile, searchCity, getCityUtc } from '../utils/api';
 import { useEffect } from 'react';
 
 export default function BirthCity() {
   const { userData, setUserData } = useUser();
+  const { t } = useLanguage();
   const [city, setCity] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const [selectedCity, setSelectedCity] = useState(null);
@@ -66,7 +68,7 @@ export default function BirthCity() {
       }
       navigate('/profile');
     } catch (err) {
-      alert('Ошибка при сохранении профиля: ' + err.message);
+      alert(t('birthCity.saveError') + err.message);
     } finally {
       setLoading(false);
     }
@@ -74,7 +76,7 @@ export default function BirthCity() {
 
   return (
     <StepWrapper>
-      <h1 className="text-xl font-normal text-center mt-2 font-mono">Город вашего рождения</h1>
+      <h1 className="text-xl font-normal text-center mt-2 font-mono">{t('birthCity.title')}</h1>
       <div className="flex flex-col items-center justify-center flex-1 w-full">
         <div className="w-full max-w-[350px] mt-8 mb-6 flex flex-col justify-center relative">
           <input
@@ -83,7 +85,7 @@ export default function BirthCity() {
               setCity(e.target.value);
               setSelectedCity(null);
             }}
-            placeholder="Введите город..."
+            placeholder={t('birthCity.placeholder')}
             className="w-full text-center text-lg font-mono bg-transparent outline-none border-none border-b border-gray-400 focus:border-black transition placeholder-gray-400 py-3"
             style={{ borderRadius: 0 }}
           />
@@ -104,11 +106,11 @@ export default function BirthCity() {
           )}
           {/* Поиск... */}
           {searching && city.trim().length > 1 && (
-            <div className="absolute left-0 right-0 top-12 text-center text-gray-400 bg-white">Поиск...</div>
+            <div className="absolute left-0 right-0 top-12 text-center text-gray-400 bg-white">{t('birthCity.searching')}</div>
           )}
         </div>
       </div>
-      <Button onClick={handleContinue} disabled={!selectedCity || loading} className="mx-auto w-full max-w-xs whitespace-nowrap overflow-hidden text-ellipsis text-lg sm:text-xl text-center">{loading ? 'Сохраняем...' : 'Рассчитать натальную карту'}</Button>
+      <Button onClick={handleContinue} disabled={!selectedCity || loading} className="mx-auto w-full max-w-xs whitespace-nowrap overflow-hidden text-ellipsis text-lg sm:text-xl text-center">{loading ? t('birthCity.saving') : t('birthCity.calculateButton')}</Button>
     </StepWrapper>
   );
 } 

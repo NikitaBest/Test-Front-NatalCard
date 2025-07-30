@@ -1,15 +1,18 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-
-const menu = [
-  { label: 'Вопрос AI', path: '/ask-ai' },
-  { label: 'Настройки', path: '/settings' },
-  { label: 'На меня', path: '/profile' },
-  { label: 'На сегодня', path: '/today' },
-];
+import { useLanguage } from '../context/LanguageContext';
 
 export default function BottomMenu({ activeIndex = 2 }) {
   const navigate = useNavigate();
+  const { t } = useLanguage();
+  
+  const menu = [
+    { label: t('navigation.askAI'), path: '/ask-ai' },
+    { label: t('navigation.settings'), path: '/settings' },
+    { label: t('navigation.profile'), path: '/profile' },
+    { label: t('navigation.today'), path: '/today' },
+  ];
+
   return (
     <nav className="fixed left-0 right-0 bottom-0 bg-white border-t border-gray-300 z-50">
       <div className="flex justify-between items-center px-1 pt-3 pb-8 max-w-lg mx-auto">

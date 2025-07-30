@@ -1,12 +1,19 @@
 import React from 'react';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function NatalTable({ chartData }) {
+  const { t } = useLanguage();
+  
   // Словари для отображения знаков и планет
   const zodiacSigns = {
-    1: 'Овен', 2: 'Телец', 3: 'Близнецы', 4: 'Рак', 5: 'Лев', 6: 'Дева', 7: 'Весы', 8: 'Скорпион', 9: 'Стрелец', 10: 'Козерог', 11: 'Водолей', 12: 'Рыбы'
+    1: t('profile.signs.aries'), 2: t('profile.signs.taurus'), 3: t('profile.signs.gemini'), 
+    4: t('profile.signs.cancer'), 5: t('profile.signs.leo'), 6: t('profile.signs.virgo'), 
+    7: t('profile.signs.libra'), 8: t('profile.signs.scorpio'), 9: t('profile.signs.sagittarius'), 
+    10: t('profile.signs.capricorn'), 11: t('profile.signs.aquarius'), 12: t('profile.signs.pisces')
   };
   const planetSymbols = {
-    1: '☉ Солнце', 2: '☽ Луна', 3: '☿ Меркурий', 4: '♀ Венера', 5: '♂ Марс', 6: '♃ Юпитер', 7: '♄ Сатурн', 8: '♅ Уран', 9: '♆ Нептун', 10: '♇ Плутон'
+    1: '☉ Солнце', 2: '☽ Луна', 3: '☿ Меркурий', 4: '♀ Венера', 5: '♂ Марс', 
+    6: '♃ Юпитер', 7: '♄ Сатурн', 8: '♅ Уран', 9: '♆ Нептун', 10: '♇ Плутон'
   };
 
   let tableRows = null;
@@ -64,7 +71,7 @@ export default function NatalTable({ chartData }) {
       <div className="flex w-full max-w-2xl">
         {/* Левая верхняя подпись */}
         <div className="flex flex-col justify-start items-start w-1/3">
-          <span className="font-normal text-gray-400 text-lg pl-1 mb-1">Д о м а</span>
+          <span className="font-normal text-gray-400 text-lg pl-1 mb-1">{t('profile.houses')}</span>
         </div>
       </div>
       <div className="flex w-full max-w-2xl">
@@ -73,14 +80,14 @@ export default function NatalTable({ chartData }) {
             {tableRows && tableRows.length > 0 ? (
               tableRows
             ) : (
-              <tr><td colSpan={3} className="text-center py-4 text-gray-400">Нет данных для таблицы</td></tr>
+              <tr><td colSpan={3} className="text-center py-4 text-gray-400">{t('profile.noData')}</td></tr>
             )}
           </tbody>
         </table>
       </div>
       <div className="flex w-full max-w-2xl">
         <div className="flex flex-col justify-end items-end w-full">
-          <span className="font-normal text-gray-400 text-lg pr-1 mt-1">П л а н е т ы</span>
+          <span className="font-normal text-gray-400 text-lg pr-1 mt-1">{t('profile.planets')}</span>
         </div>
       </div>
     </div>

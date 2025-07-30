@@ -4,9 +4,11 @@ import StepWrapper from '../components/StepWrapper';
 import Input from '../components/Input';
 import Button from '../components/Button';
 import { useUser } from '../context/UserContext';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function Name() {
   const { setUserData } = useUser();
+  const { t } = useLanguage();
   const [name, setName] = useState('');
   const navigate = useNavigate();
 
@@ -18,17 +20,17 @@ export default function Name() {
 
   return (
     <StepWrapper>
-      <h1 className="text-xl font-normal text-center mt-2 font-mono">Как вас зовут?</h1>
+      <h1 className="text-xl font-normal text-center mt-2 font-mono">{t('name.title')}</h1>
       <div className="flex flex-col items-center justify-center flex-1">
         <div className="mb-6 w-full mt-8">
           <Input
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder="Введите имя..."
+            placeholder={t('name.placeholder')}
           />
         </div>
       </div>
-      <Button onClick={handleContinue} disabled={!name.trim()} className="mx-auto">Продолжить</Button>
+      <Button onClick={handleContinue} disabled={!name.trim()} className="mx-auto">{t('common.continue')}</Button>
     </StepWrapper>
   );
 }

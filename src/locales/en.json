@@ -1,0 +1,149 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "continue": "Continue",
+    "back": "Back",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "save": "Save",
+    "edit": "Edit",
+    "yes": "Yes",
+    "no": "No"
+  },
+  "navigation": {
+    "askAI": "Ask AI",
+    "settings": "Settings",
+    "profile": "Profile",
+    "today": "Today"
+  },
+  "start": {
+    "title": "Discover the secrets of your natal chart",
+    "subtitle": "Your personal guide to the stars.",
+    "startButton": "Start",
+    "footer": "Accurate calculations based on Vedic astrology and current NASA data"
+  },
+  "name": {
+    "title": "What's your name?",
+    "placeholder": "Enter your name..."
+  },
+  "gender": {
+    "title": "What's your gender?",
+    "male": "Male",
+    "female": "Female"
+  },
+  "birthDate": {
+    "title": "What's your birth date?",
+    "months": [
+      "January", "February", "March", "April", "May", "June",
+      "July", "August", "September", "October", "November", "December"
+    ]
+  },
+  "birthTime": {
+    "title": "What time were you born?",
+    "subtitle": "Select your birth time"
+  },
+  "birthCity": {
+    "title": "Your birth city",
+    "placeholder": "Enter city...",
+    "searching": "Searching...",
+    "saveError": "Error saving profile: ",
+    "calculateButton": "Calculate natal chart",
+    "saving": "Saving..."
+  },
+  "settings": {
+    "title": "Settings",
+    "userProfile": "User Profile",
+    "name": "Name",
+    "username": "Username",
+    "gender": "Gender",
+    "male": "Male",
+    "female": "Female",
+    "birthDate": "Birth Date",
+    "birthTime": "Birth Time",
+    "birthPlace": "Birth Place",
+    "chatHistory": "Chat History",
+    "language": "Language",
+    "editData": "Edit Data",
+    "confirmEditData": "Are you sure you want to change the data?",
+    "chats": "chats",
+    "chat": "chat",
+    "chata": "chats"
+  },
+  "askAI": {
+    "title": "Ask AI",
+    "subtitle": "Get answers to the most important questions",
+    "placeholder": "Ask your question...",
+    "messagePlaceholder": "Enter message...",
+    "exitChat": "Exit Chat",
+    "tabs": {
+      "career": "Career",
+      "self": "Self-Development",
+      "love": "Love"
+    },
+    "questions": {
+      "career": [
+        "What profession should I choose to unlock my potential and feel fulfilled?",
+        "What are my strengths and talents that I can turn into a source of income?",
+        "What niche, direction or industry should I develop to realize myself and earn money?",
+        "What work style suits me better: entrepreneurship, employment, creativity, freelancing, mentoring?",
+        "What is currently preventing me from realizing myself in my career — and how to overcome it?"
+      ],
+      "self": [
+        "Where should I start my journey to myself and my purpose?",
+        "What internal qualities and attitudes are preventing me from moving forward — and how to transform them?",
+        "What is my personal strength — and how to unlock it?",
+        "What style of self-development will suit me: practices, discipline, creativity or spiritual path?",
+        "How to form a personal development system: what to study, how to grow and where to move?"
+      ],
+      "love": [
+        "How to build harmonious relationships?",
+        "What prevents me from finding love?",
+        "How to understand my feelings?",
+        "How to improve relationships with a partner?"
+      ]
+    }
+  },
+  "profile": {
+    "title": "Profile",
+    "natalChart": "Natal Chart",
+    "houses": "H o u s e s",
+    "planets": "P l a n e t s",
+    "noData": "No data for table",
+    "tabs": {
+      "map": "Chart",
+      "table": "Table"
+    },
+    "loading": {
+      "chart": "Loading chart...",
+      "data": "Loading data..."
+    },
+    "error": {
+      "timeout": "Building the chart takes more time. Try later or go to another page and come back.",
+      "retry": "Try again"
+    },
+    "signs": {
+      "aries": "Aries",
+      "taurus": "Taurus",
+      "gemini": "Gemini",
+      "cancer": "Cancer",
+      "leo": "Leo",
+      "virgo": "Virgo",
+      "libra": "Libra",
+      "scorpio": "Scorpio",
+      "sagittarius": "Sagittarius",
+      "capricorn": "Capricorn",
+      "aquarius": "Aquarius",
+      "pisces": "Pisces"
+    }
+  },
+  "today": {
+    "title": "Horoscope for {date}",
+    "noData": "No data for selected date",
+    "noAuth": "No authorization token",
+    "loadError": "Loading error"
+  },
+  "splash": {
+    "footer": "Accurate calculations based on Vedic astrology and current NASA data"
+  }
+} 

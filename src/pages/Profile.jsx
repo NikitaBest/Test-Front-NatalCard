@@ -5,6 +5,7 @@ import NatalChartSquare from '../components/NatalChartSquare';
 import NatalTable from '../components/NatalTable';
 import ProfileInfoBlock from '../components/ProfileInfoBlock';
 import { useUser } from '../context/UserContext';
+import { useLanguage } from '../context/LanguageContext';
 import { useEffect, useState } from 'react';
 import { getUserChart } from '../utils/api';
 import React from 'react';
@@ -12,6 +13,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 
 export default function Profile() {
   const { userData } = useUser();
+  const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState('map');
   const [chartData, setChartData] = useState(null);
   const [loading, setLoading] = useState(true); // Начинаем с true
@@ -28,7 +30,7 @@ export default function Profile() {
     
     // Создаем таймаут для запроса - увеличиваем до 60 секунд
     const timeoutId = setTimeout(() => {
-      setError('Построение карты занимает больше времени. Попробуйте позже или перейдите на другую страницу и вернитесь.');
+      setError(t('profile.error.timeout'));
       setLoading(false);
       setIsRequestInProgress(false);
     }, 60000); // 60 секунд таймаут
@@ -55,7 +57,7 @@ export default function Profile() {
 
   useEffect(() => {
     fetchChartData();
-  }, []);
+  }, [t]);
 
   // Массив изображений для объяснений
   const explanationImages = [
@@ -69,7 +71,10 @@ export default function Profile() {
   // Функция для получения названия знака по номеру rasi
   function getSignNameByRasi(rasi) {
     const signs = [
-      '', 'Овен', 'Телец', 'Близнецы', 'Рак', 'Лев', 'Дева', 'Весы', 'Скорпион', 'Стрелец', 'Козерог', 'Водолей', 'Рыбы'
+      '', t('profile.signs.aries'), t('profile.signs.taurus'), t('profile.signs.gemini'), 
+      t('profile.signs.cancer'), t('profile.signs.leo'), t('profile.signs.virgo'), 
+      t('profile.signs.libra'), t('profile.signs.scorpio'), t('profile.signs.sagittarius'), 
+      t('profile.signs.capricorn'), t('profile.signs.aquarius'), t('profile.signs.pisces')
     ];
     return signs[rasi] || '';
   }
@@ -101,7 +106,7 @@ export default function Profile() {
             {loading ? (
               <div className="text-center my-8">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-500 mx-auto"></div>
-                <p className="mt-4">Загрузка карты...</p>
+                <p className="mt-4">{t('profile.loading.chart')}</p>
               </div>
             ) : error ? (
               <div className="text-center my-8">
@@ -111,7 +116,7 @@ export default function Profile() {
                   onClick={fetchChartData}
                   disabled={isRequestInProgress}
                 >
-                  {isRequestInProgress ? 'Загрузка...' : 'Попробовать снова'}
+                  {isRequestInProgress ? t('common.loading') : t('profile.error.retry')}
                 </button>
               </div>
             ) : (
@@ -142,7 +147,7 @@ export default function Profile() {
             {loading ? (
               <div className="text-center my-8">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-500 mx-auto"></div>
-                <p className="mt-4">Загрузка данных...</p>
+                <p className="mt-4">{t('profile.loading.data')}</p>
               </div>
             ) : error ? (
               <div className="text-center my-8">
@@ -152,7 +157,7 @@ export default function Profile() {
                   onClick={fetchChartData}
                   disabled={isRequestInProgress}
                 >
-                  {isRequestInProgress ? 'Загрузка...' : 'Попробовать снова'}
+                  {isRequestInProgress ? t('common.loading') : t('profile.error.retry')}
                 </button>
               </div>
             ) : (

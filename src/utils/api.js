@@ -1,9 +1,29 @@
 
 
+function getHeaders() {
+  const token = localStorage.getItem('token');
+  const language = localStorage.getItem('language') || 'ru';
+  
+  const headers = {
+    'accept': 'application/json',
+    'Accept-Language': language,
+  };
+  
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+  
+  return headers;
+}
+
 export async function loginUser(testUserData) {
   const response = await fetch('https://astro-backend.odonta.burtimaxbot.ru/auth/login', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'accept': 'application/json' },
+    headers: { 
+      'Content-Type': 'application/json', 
+      'accept': 'application/json',
+      'Accept-Language': localStorage.getItem('language') || 'ru'
+    },
     body: JSON.stringify(testUserData),
   });
   if (!response.ok) throw new Error('Ошибка авторизации');
@@ -25,7 +45,7 @@ export async function updateUserProfile(profileData) {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
+      ...getHeaders(),
     },
     body: JSON.stringify(body),
   });
@@ -34,13 +54,10 @@ export async function updateUserProfile(profileData) {
 }
 
 export async function searchCity(keyword) {
-  const token = localStorage.getItem('token');
   const response = await fetch(
     `https://astro-backend.odonta.burtimaxbot.ru/location/search?keyword=${encodeURIComponent(keyword)}`,
     {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-      },
+      headers: getHeaders(),
     }
   );
   if (!response.ok) throw new Error('Ошибка поиска города');
@@ -49,13 +66,10 @@ export async function searchCity(keyword) {
 }
 
 export async function getCityUtc({ date, time, locationId }) {
-  const token = localStorage.getItem('token');
   const response = await fetch(
     `https://astro-backend.odonta.burtimaxbot.ru/location/utc?date=${encodeURIComponent(date)}&time=${encodeURIComponent(time)}&locationId=${encodeURIComponent(locationId)}`,
     {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-      },
+      headers: getHeaders(),
     }
   );
   if (!response.ok) throw new Error('Ошибка получения UTC');
@@ -64,28 +78,18 @@ export async function getCityUtc({ date, time, locationId }) {
 }
 
 export async function getUserChart() {
-  const token = localStorage.getItem('token');
-  if (!token) throw new Error('Нет токена');
   const response = await fetch('https://astro-backend.odonta.burtimaxbot.ru/user/chart', {
     method: 'GET',
-    headers: {
-      'accept': 'application/json',
-      'Authorization': `Bearer ${token}`,
-    },
+    headers: getHeaders(),
   });
   if (!response.ok) throw new Error('Ошибка получения данных натальной карты');
   return response.json();
 }
 
 export async function fetchUserProfile() {
-  const token = localStorage.getItem('token');
-  if (!token) throw new Error('Нет токена');
   const response = await fetch('https://astro-backend.odonta.burtimaxbot.ru/user/profile', {
     method: 'GET',
-    headers: {
-      'accept': 'application/json',
-      'Authorization': `Bearer ${token}`,
-    },
+    headers: getHeaders(),
   });
   if (!response.ok) throw new Error('Ошибка получения профиля');
   return response.json();

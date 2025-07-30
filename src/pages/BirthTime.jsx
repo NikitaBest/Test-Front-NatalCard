@@ -4,11 +4,13 @@ import StepWrapper from '../components/StepWrapper';
 import Input from '../components/Input';
 import Button from '../components/Button';
 import { useUser } from '../context/UserContext';
+import { useLanguage } from '../context/LanguageContext';
 import Picker from 'react-mobile-picker';
 import '../styles/picker.css';
 
 export default function BirthTime() {
   const { setUserData } = useUser();
+  const { t } = useLanguage();
   const navigate = useNavigate();
   // Список часов и минут
   const hours = Array.from({ length: 24 }, (_, i) => String(i).padStart(2, '0'));
@@ -35,7 +37,7 @@ export default function BirthTime() {
 
   return (
     <StepWrapper>
-      <h1 className="text-xl font-normal text-center mt-2 font-mono">Укажите время рождения</h1>
+      <h1 className="text-xl font-normal text-center mt-2 font-mono">{t('birthTime.title')}</h1>
       <div className="flex flex-col items-center justify-center flex-1">
         <div className="mb-6 w-full mt-8 flex justify-center">
           <div className="w-full max-w-[350px] h-[360px] bg-white/80 rounded-[28px] shadow-2xl flex items-center justify-center relative overflow-hidden picker-fade-mask">
@@ -99,7 +101,7 @@ export default function BirthTime() {
           </div>
         </div>
       </div>
-      <Button onClick={handleContinue} disabled={!pickerValue.hour || !pickerValue.minute} className="mx-auto">Продолжить</Button>
+      <Button onClick={handleContinue} disabled={!pickerValue.hour || !pickerValue.minute} className="mx-auto">{t('common.continue')}</Button>
     </StepWrapper>
   );
 }

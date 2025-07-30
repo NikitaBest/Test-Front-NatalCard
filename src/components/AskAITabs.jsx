@@ -1,12 +1,15 @@
 import React from 'react';
-
-const tabs = [
-  { label: 'Карьера', value: 'career' },
-  { label: 'Саморазвитие', value: 'self' },
-  { label: 'Любовь', value: 'love' },
-];
+import { useLanguage } from '../context/LanguageContext';
 
 export default function AskAITabs({ active = 'self', onChange }) {
+  const { t } = useLanguage();
+  
+  const tabs = [
+    { label: t('askAI.tabs.career'), value: 'career' },
+    { label: t('askAI.tabs.self'), value: 'self' },
+    { label: t('askAI.tabs.love'), value: 'love' },
+  ];
+
   return (
     <div className="ask-ai-tabs flex items-center justify-center gap-1 mt-2 select-none max-w-xs mx-auto" style={{ position: 'relative', zIndex: 10 }}>
       {tabs.map((tab, idx) => (

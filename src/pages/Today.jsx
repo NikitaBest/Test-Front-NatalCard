@@ -3,6 +3,7 @@ import UserProfileHeader from '../components/UserProfileHeader';
 import TodayCalendar from '../components/TodayCalendar';
 import TodayInfoBlock from '../components/TodayInfoBlock';
 import { useUser } from '../context/UserContext';
+import { useLanguage } from '../context/LanguageContext';
 import { useState, useEffect } from 'react';
 import { getUserChart } from '../utils/api';
 
@@ -30,6 +31,7 @@ function getSignNameByRasi(rasi) {
 
 export default function Today() {
   const { userData } = useUser();
+  const { t } = useLanguage();
   const [selectedDate, setSelectedDate] = useState(getToday);
   const [dailyData, setDailyData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -55,7 +57,7 @@ export default function Today() {
         // Формат даты для запроса: DD.MM.YYYY
         const dateStr = selectedDate.toLocaleDateString('ru-RU');
         const token = localStorage.getItem('token');
-        if (!token) throw new Error('Нет токена авторизации');
+        if (!token) throw new Error(t('today.noAuth'));
         const res = await fetch(
           `https://astro-backend.odonta.burtimaxbot.ru/user/daily-horoscope?date=${dateStr}`,
           {
@@ -65,10 +67,10 @@ export default function Today() {
             }
           }
         );
-        if (!res.ok) throw new Error('Ошибка загрузки');
+        if (!res.ok) throw new Error(t('today.loadError'));
         const data = await res.json();
         if (!data.value || !data.value.explanations || !data.value.explanations.length) {
-          throw new Error('Нет данных на выбранную дату');
+          throw new Error(t('today.noData'));
         }
         const explanations = data.value.explanations;
         setDailyData({
@@ -90,7 +92,7 @@ export default function Today() {
       }
     }
     fetchDaily();
-  }, [selectedDate]);
+  }, [selectedDate, t]);
 
   // Вычисляем знаки
   let ascSign = '', sunSign = '', moonSign = '';
@@ -111,9 +113,9 @@ export default function Today() {
       <TodayCalendar value={selectedDate} onChange={setSelectedDate} />
       <div className="border-t border-gray-300/60 w-full my-0" />
       <h2 className="text-center font-mono text-1xl font-normal text-gray-800 mb-6 mt-8">
-        Гороскоп на {selectedDate.toLocaleDateString('ru-RU')}
+        {t('today.title').replace('{date}', selectedDate.toLocaleDateString('ru-RU'))}
       </h2>
-      {loading && <div className="text-center text-gray-400">Загрузка...</div>}
+      {loading && <div className="text-center text-gray-400">{t('common.loading')}</div>}
       {error && <div className="text-center text-red-500">{error}</div>}
       {dailyData && (
         <TodayInfoBlock

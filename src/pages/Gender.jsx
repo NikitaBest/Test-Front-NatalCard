@@ -3,9 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import StepWrapper from '../components/StepWrapper';
 import Button from '../components/Button';
 import { useUser } from '../context/UserContext';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function Gender() {
   const { setUserData } = useUser();
+  const { t } = useLanguage();
   const [gender, setGender] = useState('');
   const navigate = useNavigate();
 
@@ -21,7 +23,7 @@ export default function Gender() {
 
   return (
     <StepWrapper>
-      <h1 className="text-xl font-normal text-center mt-2 font-mono">Укажите свой пол</h1>
+      <h1 className="text-xl font-normal text-center mt-2 font-mono">{t('gender.title')}</h1>
       <div className="flex flex-col items-center justify-center flex-1">
         <div className="flex justify-center w-full mt-12 gap-4">
           <button
@@ -30,7 +32,7 @@ export default function Gender() {
               gender === 'male' ? 'border-black font-semibold' : 'border-gray-300 text-gray-400'
             }`}
           >
-            Мужской
+            {t('gender.male')}
           </button>
           <button
             onClick={() => handleSelect('female')}
@@ -38,11 +40,11 @@ export default function Gender() {
               gender === 'female' ? 'border-black font-semibold' : 'border-gray-300 text-gray-400'
             }`}
           >
-            Женский
+            {t('gender.female')}
           </button>
         </div>
       </div>
-      <Button onClick={handleContinue} disabled={!gender} className="mx-auto">Продолжить</Button>
+      <Button onClick={handleContinue} disabled={!gender} className="mx-auto">{t('common.continue')}</Button>
     </StepWrapper>
   );
 }
