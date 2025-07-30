@@ -325,23 +325,25 @@ export default function Settings() {
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 p-4">
           <div className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-sm flex flex-col items-center">
-            <div className="text-lg font-normal text-center mb-6">{t('settings.confirmEditData')}</div>
-            <div className="flex gap-6">
+            <div className="text-lg font-normal text-center mb-8 font-mono">{t('settings.confirmEditData')}</div>
+            <div className="flex gap-4 w-full">
               <button
-                className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center text-2xl hover:bg-gray-300 transition"
+                className="flex-1 py-3 px-6 bg-gray-100 text-gray-700 rounded-xl text-base font-mono hover:bg-gray-200 transition-colors"
                 onClick={() => setShowModal(false)}
-                aria-label={t('common.cancel')}
-              >✕</button>
+              >
+                {t('common.no')}
+              </button>
               <button
-                className="w-12 h-12 rounded-full bg-green-200 flex items-center justify-center text-2xl hover:bg-green-300 transition"
+                className="flex-1 py-3 px-6 bg-black text-white rounded-xl text-base font-mono hover:bg-gray-800 transition-colors"
                 onClick={() => {
                   localStorage.removeItem('user');
                   setUserData({ name: '', gender: '', birthDate: '', birthTime: '', birthLocation: '' });
                   setShowModal(false);
                   navigate('/name');
                 }}
-                aria-label={t('common.confirm')}
-              >✔</button>
+              >
+                {t('common.yes')}
+              </button>
             </div>
           </div>
         </div>
