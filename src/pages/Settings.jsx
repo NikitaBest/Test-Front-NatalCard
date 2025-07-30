@@ -355,6 +355,7 @@ export default function Settings() {
 
 // --- ChatInputSection ---
 function ChatInputSection({ chatId, onMessageSent, disabled }) {
+  const { t } = useLanguage();
   const [inputValue, setInputValue] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -439,7 +440,7 @@ function ChatInputSection({ chatId, onMessageSent, disabled }) {
       <div className="flex items-center border-t border-gray-300 bg-white rounded-b-xl">
         <input
           className="flex-1 py-4 px-3 text-sm font-mono text-gray-400 bg-transparent outline-none border-none placeholder-gray-400"
-          placeholder="Введите сообщение..."
+          placeholder={t('settings.messagePlaceholder')}
           value={inputValue}
           onChange={e => setInputValue(e.target.value)}
           disabled={loading || disabled}

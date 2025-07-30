@@ -64,6 +64,7 @@
     "birthPlace": "Место рождения",
     "chatHistory": "История чата",
     "chatHistoryTitle": "История чатов",
+    "messagePlaceholder": "Введите сообщение...",
     "language": "Язык",
     "editData": "Изменить данные",
     "confirmEditData": "Вы уверены, что хотите изменить данные?",

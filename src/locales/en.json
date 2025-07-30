@@ -64,6 +64,7 @@
     "birthPlace": "Birth Place",
     "chatHistory": "Chat History",
     "chatHistoryTitle": "Chat History",
+    "messagePlaceholder": "Enter message...",
     "language": "Language",
     "editData": "Edit Data",
     "confirmEditData": "Are you sure you want to change the data?",
