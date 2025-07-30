@@ -1,6 +1,5 @@
 import React from 'react';
-
-const weekDays = ['вс', 'пн', 'вт', 'ср', 'чт', 'пт', 'сб'];
+import { useLanguage } from '../context/LanguageContext';
 
 function getDates() {
   const today = new Date();
@@ -15,7 +14,9 @@ function getDates() {
 }
 
 export default function TodayCalendar({ value = new Date(), onChange }) {
+  const { t } = useLanguage();
   const dates = getDates();
+  const weekDays = t('today.weekDays');
 
   return (
     <div className="w-full flex flex-col">

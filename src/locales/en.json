@@ -141,7 +141,8 @@
     "title": "Horoscope for {date}",
     "noData": "No data for selected date",
     "noAuth": "No authorization token",
-    "loadError": "Loading error"
+    "loadError": "Loading error",
+    "weekDays": ["sun", "mon", "tue", "wed", "thu", "fri", "sat"]
   },
   "splash": {
     "footer": "Accurate calculations based on Vedic astrology and current NASA data"
