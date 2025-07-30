@@ -7,8 +7,8 @@ export default function LanguageSelect({ variant = 'default' }) {
   const dropdownRef = useRef(null);
 
   const languages = [
-    { value: 'ru', label: 'Русский', flag: '🇷🇺' },
-    { value: 'en', label: 'English', flag: '🇺🇸' }
+    { value: 'ru', flag: '🇷🇺' },
+    { value: 'en', flag: '🇺🇸' }
   ];
 
   const currentLanguage = languages.find(lang => lang.value === language);
@@ -35,16 +35,16 @@ export default function LanguageSelect({ variant = 'default' }) {
   // Стили для разных вариантов
   const getButtonStyles = () => {
     if (variant === 'compact') {
-      return "flex items-center justify-between px-3 py-1 text-sm font-mono text-gray-700 bg-transparent border border-gray-300 rounded-lg outline-none cursor-pointer hover:bg-gray-50 transition-colors";
+      return "flex items-center justify-center w-10 h-10 bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 transition-colors";
     }
-    return "flex items-center justify-between w-full px-3 py-2 text-sm font-mono text-gray-700 bg-transparent border-none outline-none cursor-pointer hover:bg-gray-50 transition-colors rounded";
+    return "flex items-center justify-center w-10 h-10 bg-white border border-gray-300 rounded-lg shadow-sm hover:bg-gray-50 transition-colors";
   };
 
   const getDropdownStyles = () => {
     if (variant === 'compact') {
-      return "absolute right-0 top-full mt-1 w-40 bg-white border border-gray-200 rounded-lg shadow-lg z-50";
+      return "absolute right-0 top-full mt-2 w-16 bg-white border border-gray-200 rounded-lg shadow-lg z-50";
     }
-    return "absolute right-0 top-full mt-1 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-50";
+    return "absolute right-0 top-full mt-2 w-16 bg-white border border-gray-200 rounded-lg shadow-lg z-50";
   };
 
   return (
@@ -53,19 +53,23 @@ export default function LanguageSelect({ variant = 'default' }) {
         type="button"
         className={getButtonStyles()}
         onClick={() => setIsOpen(!isOpen)}
+        aria-label="Сменить язык"
       >
-        <span className="flex items-center">
-          <span className="mr-2">{currentLanguage?.flag}</span>
-          <span>{currentLanguage?.label}</span>
-        </span>
-        <svg
-          className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`}
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-        </svg>
+        <div className="flex flex-col items-center">
+          {/* Буквы языка */}
+          <span className="text-xs font-mono font-semibold text-gray-700">
+            {language.toUpperCase()}
+          </span>
+          {/* Стрелка-индикатор */}
+          <svg
+            className={`w-3 h-3 text-gray-500 transition-transform ${isOpen ? 'rotate-180' : ''}`}
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+          </svg>
+        </div>
       </button>
 
       {isOpen && (
@@ -74,20 +78,14 @@ export default function LanguageSelect({ variant = 'default' }) {
             <button
               key={lang.value}
               type="button"
-              className={`w-full flex items-center px-4 py-3 text-sm font-mono transition-colors ${
+              className={`w-full flex items-center justify-center py-3 transition-colors ${
                 language === lang.value
-                  ? 'bg-gray-100 text-gray-800 border-l-4 border-gray-400'
-                  : 'text-gray-700 hover:bg-gray-50'
+                  ? 'bg-gray-100'
+                  : 'hover:bg-gray-50'
               }`}
               onClick={() => handleLanguageChange(lang.value)}
             >
-              <span className="mr-3">{lang.flag}</span>
-              <span className="flex-1 text-left">{lang.label}</span>
-              {language === lang.value && (
-                <svg className="w-4 h-4 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                </svg>
-              )}
+              <span className="text-lg">{lang.flag}</span>
             </button>
           ))}
         </div>

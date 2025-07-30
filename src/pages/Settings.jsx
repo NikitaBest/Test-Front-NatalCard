@@ -305,8 +305,8 @@ export default function Settings() {
             {/* Язык — отдельная строка */}
             <div className="flex justify-between items-center w-full px-4 py-3 border-b border-gray-300 text-sm font-mono text-gray-700">
               <span className="text-left font-normal flex-1">{t('settings.language')}</span>
-              <div className="text-right font-normal flex-1">
-                <LanguageSelect />
+              <div className="text-right font-normal flex-1 flex justify-end">
+                <LanguageSelect variant="compact" />
               </div>
             </div>
           </div>
