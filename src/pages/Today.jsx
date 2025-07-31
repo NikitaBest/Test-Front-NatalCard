@@ -39,13 +39,6 @@ const explanationImages = [
   '/imm06.png',
 ];
 
-function getSignNameByRasi(rasi) {
-  const signs = [
-    '', 'Овен', 'Телец', 'Близнецы', 'Рак', 'Лев', 'Дева', 'Весы', 'Скорпион', 'Стрелец', 'Козерог', 'Водолей', 'Рыбы'
-  ];
-  return signs[rasi] || '';
-}
-
 export default function Today() {
   const { userData } = useUser();
   const { t } = useLanguage();
@@ -54,6 +47,17 @@ export default function Today() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [chartData, setChartData] = useState(null);
+
+  // Функция для получения названия знака по номеру rasi
+  function getSignNameByRasi(rasi) {
+    const signs = [
+      '', t('profile.signs.aries'), t('profile.signs.taurus'), t('profile.signs.gemini'), 
+      t('profile.signs.cancer'), t('profile.signs.leo'), t('profile.signs.virgo'), 
+      t('profile.signs.libra'), t('profile.signs.scorpio'), t('profile.signs.sagittarius'), 
+      t('profile.signs.capricorn'), t('profile.signs.aquarius'), t('profile.signs.pisces')
+    ];
+    return signs[rasi] || '';
+  }
 
   // Загрузка натальной карты для знаков
   useEffect(() => {
