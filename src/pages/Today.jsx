@@ -7,6 +7,23 @@ import { useLanguage } from '../context/LanguageContext';
 import { useState, useEffect } from 'react';
 import { getUserChart } from '../utils/api';
 
+// Импортируем функцию getHeaders из api.js
+function getHeaders() {
+  const token = localStorage.getItem('token');
+  const language = localStorage.getItem('language') || 'ru';
+  
+  const headers = {
+    'accept': 'application/json',
+    'Accept-Language': language,
+  };
+  
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+  
+  return headers;
+}
+
 function getToday() {
   const d = new Date();
   d.setHours(0,0,0,0);
@@ -54,17 +71,17 @@ export default function Today() {
       }, 100);
       
       try {
-        // Формат даты для запроса: DD.MM.YYYY
-        const dateStr = selectedDate.toLocaleDateString('ru-RU');
+        // Формат даты для запроса: YYYY-MM-DD (DateOnly формат)
+        const year = selectedDate.getFullYear();
+        const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
+        const day = String(selectedDate.getDate()).padStart(2, '0');
+        const dateStr = `${year}-${month}-${day}`;
         const token = localStorage.getItem('token');
         if (!token) throw new Error(t('today.noAuth'));
         const res = await fetch(
           `https://astro-backend.odonta.burtimaxbot.ru/user/daily-horoscope?date=${dateStr}`,
           {
-            headers: {
-              'accept': 'application/json',
-              'Authorization': `Bearer ${token}`,
-            }
+            headers: getHeaders(),
           }
         );
         if (!res.ok) throw new Error(t('today.loadError'));
