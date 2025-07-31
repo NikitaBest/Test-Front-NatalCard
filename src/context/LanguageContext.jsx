@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import ru from '../locales/ru.json';
 import en from '../locales/en.json';
-import { updateUserProfile, fetchUserProfile } from '../utils/api';
+import { updateUserProfile } from '../utils/api';
 
 const translations = { ru, en };
 
@@ -46,19 +46,6 @@ export function LanguageProvider({ children }) {
       const savedLang = localStorage.getItem('language');
       if (savedLang && translations[savedLang]) {
         setLanguage(savedLang);
-      }
-      
-      // Затем пытаемся получить язык с сервера (если пользователь авторизован)
-      try {
-        const userProfile = await fetchUserProfile();
-        if (userProfile.value && userProfile.value.languageCode && translations[userProfile.value.languageCode]) {
-          const serverLang = userProfile.value.languageCode;
-          setLanguage(serverLang);
-          localStorage.setItem('language', serverLang);
-        }
-      } catch (error) {
-        // Игнорируем ошибки, если пользователь не авторизован или сервер недоступен
-        console.warn('Не удалось получить язык с сервера:', error);
       }
     };
 
