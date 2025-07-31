@@ -27,8 +27,8 @@ export default function LanguageSelect({ variant = 'default' }) {
     };
   }, []);
 
-  const handleLanguageChange = (langValue) => {
-    changeLanguage(langValue);
+  const handleLanguageChange = async (langValue) => {
+    await changeLanguage(langValue);
     setIsOpen(false);
   };
 
