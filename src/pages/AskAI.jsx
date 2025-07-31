@@ -185,7 +185,7 @@ export default function AskAI() {
 
   return (
     <div 
-      className="min-h-screen bg-white pt-10 relative overflow-hidden"
+      className="min-h-screen bg-white pt-6 relative overflow-hidden"
       style={{
         backgroundImage: `url(${bgImage})`,
         backgroundSize: 'cover',
@@ -214,7 +214,7 @@ export default function AskAI() {
           </AnimatePresence>
         )}
         <div className="w-full flex flex-col items-center pb-[92px] flex-1 bg-white/80">
-          <h1 className="text-2xl font-normal text-center mt-2 font-mono">{t('askAI.title')}</h1>
+          <h1 className="text-2xl font-normal text-center mt-0 font-mono">{t('askAI.title')}</h1>
           <div className="flex flex-row items-center justify-start w-full max-w-xl mx-auto mb-2 px-4">
             <HamburgerIcon />
             <div className="text-left text-xs sm:text-sm md:text-base lg:text-lg font-normal text-gray-400 ml-4 w-[320px] truncate">{t('askAI.subtitle')}</div>
