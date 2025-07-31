@@ -137,6 +137,18 @@
       "capricorn": "Capricorn",
       "aquarius": "Aquarius",
       "pisces": "Pisces"
+    },
+    "planets": {
+      "sun": "Sun",
+      "moon": "Moon",
+      "mercury": "Mercury",
+      "venus": "Venus",
+      "mars": "Mars",
+      "jupiter": "Jupiter",
+      "saturn": "Saturn",
+      "uranus": "Uranus",
+      "neptune": "Neptune",
+      "pluto": "Pluto"
     }
   },
   "today": {

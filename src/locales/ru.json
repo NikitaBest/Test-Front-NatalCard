@@ -137,6 +137,18 @@
       "capricorn": "Козерог",
       "aquarius": "Водолей",
       "pisces": "Рыбы"
+    },
+    "planets": {
+      "sun": "Солнце",
+      "moon": "Луна",
+      "mercury": "Меркурий",
+      "venus": "Венера",
+      "mars": "Марс",
+      "jupiter": "Юпитер",
+      "saturn": "Сатурн",
+      "uranus": "Уран",
+      "neptune": "Нептун",
+      "pluto": "Плутон"
     }
   },
   "today": {
