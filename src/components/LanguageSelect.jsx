@@ -7,8 +7,8 @@ export default function LanguageSelect({ variant = 'default' }) {
   const dropdownRef = useRef(null);
 
   const languages = [
-    { value: 'ru', flag: '🇷🇺' },
-    { value: 'en', flag: '🇺🇸' }
+    { value: 'ru', flag: 'RU' },
+    { value: 'en', flag: 'EN' }
   ];
 
   const currentLanguage = languages.find(lang => lang.value === language);
