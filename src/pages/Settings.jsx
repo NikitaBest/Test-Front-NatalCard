@@ -7,6 +7,23 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import bgImage from '../assets/bg2.png';
 
+// Импортируем функцию getHeaders из api.js
+function getHeaders() {
+  const token = localStorage.getItem('token');
+  const language = localStorage.getItem('language') || 'ru';
+  
+  const headers = {
+    'accept': 'application/json',
+    'Accept-Language': language,
+  };
+  
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+  
+  return headers;
+}
+
 // Компонент анимированных точек загрузки
 function LoadingDots() {
   return (
@@ -100,12 +117,8 @@ export default function Settings() {
       setLoadingChats(true);
       setError(null);
       try {
-        const token = localStorage.getItem('token');
         const res = await fetch('https://astro-backend.odonta.burtimaxbot.ru/ai-chat/chats', {
-          headers: {
-            'accept': 'application/json',
-            'Authorization': `Bearer ${token}`,
-          }
+          headers: getHeaders(),
         });
         if (!res.ok) throw new Error('Ошибка загрузки чатов');
         const data = await res.json();
@@ -126,12 +139,8 @@ export default function Settings() {
       setLoadingHistory(true);
       setError(null);
       try {
-        const token = localStorage.getItem('token');
         const res = await fetch(`https://astro-backend.odonta.burtimaxbot.ru/ai-chat/history?chatId=${selectedChat.id}`, {
-          headers: {
-            'accept': 'application/json',
-            'Authorization': `Bearer ${token}`,
-          }
+          headers: getHeaders(),
         });
         if (!res.ok) throw new Error('Ошибка загрузки истории чата');
         const data = await res.json();
@@ -373,8 +382,7 @@ function ChatInputSection({ chatId, onMessageSent, disabled }) {
       const res = await fetch('https://astro-backend.odonta.burtimaxbot.ru/ai-chat/send-message', {
         method: 'POST',
         headers: {
-          'accept': 'application/json',
-          'Authorization': `Bearer ${token}`,
+          ...getHeaders(),
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
@@ -398,10 +406,7 @@ function ChatInputSection({ chatId, onMessageSent, disabled }) {
       
       // Получаем ответ ИИ
       const answerRes = await fetch(`https://astro-backend.odonta.burtimaxbot.ru/ai-chat/answer?dateTime=${encodeURIComponent(data.value.createdAt)}&chatId=${chatId}`, {
-        headers: {
-          'accept': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        }
+        headers: getHeaders(),
       });
       if (!answerRes.ok) throw new Error('Ошибка получения ответа ИИ');
       const answerData = await answerRes.json();
