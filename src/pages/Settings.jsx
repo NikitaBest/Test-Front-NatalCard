@@ -174,7 +174,7 @@ export default function Settings() {
         {/* Фиксированная шапка только если не выбран чат */}
         {!selectedChat && (
           <div className="fixed top-0 left-0 right-0 z-30 bg-white/90 w-full mt-4">
-            <div className="flex items-center px-4 py-4 border-b border-gray-300">
+            <div className="flex items-center px-4 py-2 border-b border-gray-300">
               <button
                 className="mr-2 flex items-center justify-center w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 transition"
                 onClick={() => setShowChatList(false)}
@@ -191,7 +191,7 @@ export default function Settings() {
           </div>
         )}
         {/* Список чатов */}
-        <div className="w-full bg-white/80 shadow-sm border border-gray-200 overflow-hidden pb-[56px] pt-[88px]">
+        <div className="w-full overflow-hidden pb-[56px] pt-[60px]">
           {error && <div className="text-red-500 text-center py-4 px-4">{error}</div>}
           <AnimatePresence mode="wait">
             {!selectedChat && (
@@ -244,7 +244,7 @@ export default function Settings() {
               >
                 {/* Фиксированная шапка */}
                 <div className="fixed top-0 left-0 right-0 z-30 bg-white/90 w-full mt-4">
-                  <div className="flex items-center px-4 py-4 border-b border-gray-300">
+                  <div className="flex items-center px-4 py-2 border-b border-gray-300">
                     <button
                       className="mr-2 flex items-center justify-center w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 transition"
                       onClick={() => selectedChat ? setSelectedChat(null) : setShowChatList(false)}
@@ -490,11 +490,13 @@ function ChatMessagesList({ messages, loading }) {
   return (
     <div
       ref={containerRef}
-      className="w-full bg-white/80 rounded-xl shadow-none mb-8 px-4 py-6 flex flex-col gap-6 overflow-y-auto"
+      className="w-full px-4 py-6 flex flex-col gap-6 overflow-y-auto"
       style={{
-        maxHeight: 'calc(100vh - 200px)', // Уменьшено для мобильных
+        maxHeight: 'calc(100vh - 120px)', // Увеличено для захода за поле ввода
         minHeight: '200px',
-        marginTop: '88px', // отступ под фиксированный хедер
+        marginBottom: '0px', // убираем нижний отступ
+        paddingBottom: '80px', // отступ для захода за поле ввода
+        paddingTop: '70px', // отступ сверху чтобы текст не срезался шапкой
       }}
     >
       {loading ? (
