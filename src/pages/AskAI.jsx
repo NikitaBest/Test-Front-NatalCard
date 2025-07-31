@@ -291,7 +291,17 @@ export default function AskAI() {
                 onKeyDown={e => { if (e.key === 'Enter' && !dialogStarted) handleSend(); }}
               />
               <button className="p-2 flex items-center justify-center" type="button" onClick={handleSend} disabled={!inputValue.trim() || loading}>
-                <svg width="28" height="28" fill="none" viewBox="0 0 28 28"><circle cx="14" cy="14" r="14" fill="#F3F4F6"/><path d="M10.5 14h7m0 0-2.5-2.5M17.5 14l-2.5 2.5" stroke="#A1A1AA" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                {inputValue.trim() ? (
+                  <svg width="28" height="28" fill="none" viewBox="0 0 28 28">
+                    <circle cx="14" cy="14" r="14" fill="#1A1A1A"/>
+                    <path d="M10.5 14h7m0 0-2.5-2.5M17.5 14l-2.5 2.5" stroke="#FFFFFF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                ) : (
+                  <svg width="28" height="28" fill="none" viewBox="0 0 28 28">
+                    <circle cx="14" cy="14" r="14" fill="#F3F4F6"/>
+                    <path d="M10.5 14h7m0 0-2.5-2.5M17.5 14l-2.5 2.5" stroke="#A1A1AA" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                )}
               </button>
             </div>
           </div>

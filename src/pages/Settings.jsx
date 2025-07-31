@@ -452,7 +452,17 @@ function ChatInputSection({ chatId, onMessageSent, disabled }) {
           onKeyDown={e => { if (e.key === 'Enter') handleSend(); }}
         />
         <button className="p-2 flex items-center justify-center" type="button" onClick={handleSend} disabled={!inputValue.trim() || loading || disabled}>
-          <svg width="24" height="24" fill="none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="12" fill="#F3F4F6"/><path d="M9 12h6m0 0-2-2m2 2-2 2" stroke="#A1A1AA" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+          {inputValue.trim() ? (
+            <svg width="24" height="24" fill="none" viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="12" fill="#1A1A1A"/>
+              <path d="M9 12h6m0 0-2-2m2 2-2 2" stroke="#FFFFFF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          ) : (
+            <svg width="24" height="24" fill="none" viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="12" fill="#F3F4F6"/>
+              <path d="M9 12h6m0 0-2-2m2 2-2 2" stroke="#A1A1AA" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          )}
         </button>
         {error && <div className="text-red-500 text-xs ml-2 px-2">{error}</div>}
       </div>
