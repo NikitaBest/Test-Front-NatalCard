@@ -305,11 +305,16 @@ export default function Settings() {
             ))}
             {/* История чата — отдельная строка */}
             <button
-              className="flex justify-between items-center w-full px-4 py-3 border-b border-gray-300 text-sm font-mono text-gray-700 hover:bg-gray-100 transition"
+              className="flex justify-between items-center w-full px-4 py-3 border-b border-gray-300 text-sm font-mono text-gray-700 hover:bg-gray-100 active:bg-gray-200 focus:bg-gray-100 focus:outline-none transition-colors cursor-pointer"
               onClick={() => setShowChatList(true)}
             >
               <span className="text-left font-normal flex-1">{t('settings.chatHistory')}</span>
-              <span className="text-right font-normal flex-1 text-gray-400">{loadingChats ? '...' : chats.length ? `${chats.length} ${getChatPluralTranslated(chats.length)}` : ''}</span>
+              <div className="flex items-center space-x-2">
+                <span className="text-right font-normal text-gray-400">{loadingChats ? '...' : chats.length ? `${chats.length} ${getChatPluralTranslated(chats.length)}` : ''}</span>
+                <svg width="16" height="16" fill="none" viewBox="0 0 16 16" className="text-gray-400">
+                  <path d="M6 12l4-4-4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </div>
             </button>
             {/* Язык — отдельная строка */}
             <div className="flex justify-between items-center w-full px-4 py-3 border-b border-gray-300 text-sm font-mono text-gray-700">
