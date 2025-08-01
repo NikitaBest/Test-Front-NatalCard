@@ -59,15 +59,6 @@ export default function Profile() {
     fetchChartData();
   }, [t]);
 
-  // Массив изображений для объяснений
-  const explanationImages = [
-    '/img_11.png',
-    '/image 313.png',
-    '/img_12.png',
-    '/imm11.png',
-    '/imm06.png',
-  ];
-
   // Функция для получения названия знака по номеру rasi
   function getSignNameByRasi(rasi) {
     const signs = [
@@ -126,8 +117,7 @@ export default function Profile() {
                 {chartData && chartData.value && chartData.value.chart && Array.isArray(chartData.value.chart.explanations) && chartData.value.chart.explanations.length > 0 && (
                   chartData.value.chart.explanations.map((ex, idx) => (
                     <React.Fragment key={ex.id || idx}>
-                      <ProfileInfoBlock title={ex.title} text={ex.description}>
-                        <img src={explanationImages[idx % explanationImages.length]} alt="symbol" className="w-24 h-24 object-contain rounded-full" />
+                      <ProfileInfoBlock title={ex.title} text={ex.description} index={idx}>
                       </ProfileInfoBlock>
                     </React.Fragment>
                   ))
@@ -167,8 +157,7 @@ export default function Profile() {
                 {chartData && chartData.value && chartData.value.chart && Array.isArray(chartData.value.chart.explanations) && chartData.value.chart.explanations.length > 0 && (
                   chartData.value.chart.explanations.map((ex, idx) => (
                     <React.Fragment key={ex.id || idx}>
-                      <ProfileInfoBlock title={ex.title} text={ex.description}>
-                        <img src={explanationImages[idx % explanationImages.length]} alt="symbol" className="w-24 h-24 object-contain rounded-full" />
+                      <ProfileInfoBlock title={ex.title} text={ex.description} index={idx}>
                       </ProfileInfoBlock>
                     </React.Fragment>
                   ))
