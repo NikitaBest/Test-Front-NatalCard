@@ -28,8 +28,8 @@ export default function NatalTable({ chartData }) {
   };
   
   const planetSymbols = {
-    1: `☉ ${planetNames[1]}`, 2: `☽ ${planetNames[2]}`, 3: `☿ ${planetNames[3]}`, 4: `♀ ${planetNames[4]}`, 5: `♂ ${planetNames[5]}`, 
-    6: `♃ ${planetNames[6]}`, 7: `♄ ${planetNames[7]}`, 8: `♅ ${planetNames[8]}`, 9: `♆ ${planetNames[9]}`, 10: `♇ ${planetNames[10]}`
+    1: `${planetNames[1]} ☉`, 2: `${planetNames[2]} ☽`, 3: `${planetNames[3]} ☿`, 4: `${planetNames[4]} ♀`, 5: `${planetNames[5]} ♂`, 
+    6: `${planetNames[6]} ♃`, 7: `${planetNames[7]} ♄`, 8: `${planetNames[8]} ♅`, 9: `${planetNames[9]} ♆`, 10: `${planetNames[10]} ♇`
   };
 
   let tableRows = null;
@@ -61,17 +61,17 @@ export default function NatalTable({ chartData }) {
       .sort((a, b) => a.house - b.house) // Сортируем по номеру дома
       .map((houseData, i) => (
         <tr key={i}>
-          <td className="border border-gray-400 px-2 py-1 w-1/6 text-left align-middle">
+          <td className="border border-gray-400 px-2 py-1 w-1/6 text-center align-middle font-poppins text-sm">
             {houseData.house}
           </td>
-          <td className="border border-gray-400 px-2 py-1 w-1/3 text-left align-middle">
+          <td className="border border-gray-400 px-2 py-1 w-1/3 text-center align-middle font-poppins text-sm">
             {houseData.zodiacSign ? (typeof zodiacSigns[houseData.zodiacSign] === 'string' ? zodiacSigns[houseData.zodiacSign] : '') : ''}
           </td>
-          <td className="px-2 py-1 w-1/3 text-left align-middle bg-gray-100">
+          <td className="px-2 py-1 w-1/3 text-center align-middle bg-gray-100">
             {houseData.planets.length > 0 ? (
-              <div className="flex flex-col gap-1">
+              <div className="flex flex-col gap-1 items-center">
                 {houseData.planets.map((planet, planetIndex) => (
-                  <div key={planetIndex} className="text-sm">
+                  <div key={planetIndex} className="text-sm font-poppins">
                     {planet}
                   </div>
                 ))}
@@ -87,7 +87,7 @@ export default function NatalTable({ chartData }) {
       <div className="flex w-full max-w-2xl">
         {/* Левая верхняя подпись */}
         <div className="flex flex-col justify-start items-start w-1/3">
-          <span className="font-normal text-gray-400 text-lg pl-1 mb-1">
+          <span className="font-poppins font-light text-gray-400 text-lg pl-1 mb-1">
             {language === 'en' ? 'H o u s e s' : 'Д о м а'}
           </span>
         </div>
@@ -98,14 +98,14 @@ export default function NatalTable({ chartData }) {
             {tableRows && tableRows.length > 0 ? (
               tableRows
             ) : (
-              <tr><td colSpan={3} className="text-center py-4 text-gray-400">{safeTranslate('profile.noData', 'Нет данных для таблицы')}</td></tr>
+              <tr><td colSpan={3} className="text-center py-4 text-gray-400 font-poppins font-light">{safeTranslate('profile.noData', 'Нет данных для таблицы')}</td></tr>
             )}
           </tbody>
         </table>
       </div>
       <div className="flex w-full max-w-2xl">
         <div className="flex flex-col justify-end items-end w-full">
-          <span className="font-normal text-gray-400 text-lg pr-1 mt-1">
+          <span className="font-poppins font-light text-gray-400 text-lg pr-1 mt-1">
             {language === 'en' ? 'P l a n e t s' : 'П л а н е т ы'}
           </span>
         </div>
