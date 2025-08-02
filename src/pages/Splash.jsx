@@ -15,9 +15,11 @@ export default function Splash({ fadeOut = false }) {
       />
       <div className="relative z-10 flex flex-col min-h-screen">
         <div className="flex-1" />
-        <p className="w-auto max-w-md mx-auto mb-4 text-center font-sans text-xs sm:text-sm font-normal leading-none text-[#1A1A1A]/60">
-          {t('splash.footer')}
-        </p>
+        <div className="mb-16">
+          <p className="w-full max-w-[320px] mx-auto text-center font-sans text-sm font-normal leading-none text-[#1A1A1A]/60">
+            {t('splash.footer')}
+          </p>
+        </div>
       </div>
     </div>
   );

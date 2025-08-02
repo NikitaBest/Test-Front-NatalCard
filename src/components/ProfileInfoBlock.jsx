@@ -32,9 +32,9 @@ export default function ProfileInfoBlock({ title, text, children, index = 0 }) {
       
       {/* Максимально прозрачный матовый блок с текстом */}
       <div className="relative z-10 w-full backdrop-blur-sm bg-white/5 rounded-xl p-6">
-        <h2 className="font-mono text-2xl font-normal text-gray-800 mb-4 w-full text-left">{title}</h2>
+        <h2 className="font-poppins text-2xl font-light text-gray-800 mb-4 w-full text-left">{title}</h2>
         <div
-          className="text-base text-gray-900 font-sans w-full text-left"
+          className="text-base text-gray-900 font-poppins font-light w-full text-left"
           dangerouslySetInnerHTML={{ __html: text }}
         />
         {children && <div className="mt-6 w-full flex justify-center">{children}</div>}

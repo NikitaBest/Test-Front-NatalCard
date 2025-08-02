@@ -21,7 +21,7 @@
     "title": "Discover the secrets of your natal chart",
     "subtitle": "Your personal guide to the stars.",
     "startButton": "Start",
-    "footer": "Accurate calculations based on Vedic astrology and current NASA data"
+    "footer": "Next-generation astrology: ancient self-knowledge system, current NASA data and artificial intelligence — all in one tool to help you better understand yourself and your purpose"
   },
   "name": {
     "title": "What's your name?",
@@ -159,6 +159,6 @@
     "weekDays": ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"]
   },
   "splash": {
-    "footer": "Accurate calculations based on Vedic astrology and current NASA data"
+    "footer": "Next-generation astrology: ancient self-knowledge system, current NASA data and artificial intelligence — all in one tool to help you better understand yourself and your purpose"
   }
 } 

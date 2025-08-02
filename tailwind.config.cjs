@@ -11,6 +11,7 @@ module.exports = {
       fontFamily: {
         sans: ['Poppins', ...defaultTheme.fontFamily.sans],
         mono: ['Anonymous Pro', ...defaultTheme.fontFamily.mono],
+        poppins: ['Poppins', 'sans-serif'],
       },
     },
   },
