@@ -31,17 +31,17 @@ export default function TodayCalendar({ value = new Date(), onChange }) {
               type="button"
             >
               <span className={
-                'text-lg mb-1 ' +
+                'text-sm mb-1 ' +
                 (isSelected ? 'text-black font-bold' : 'text-gray-600 font-normal')
               }>
                 {weekDays[date.getDay()]}
               </span>
               {isSelected ? (
-                <span className="w-10 h-10 flex items-center justify-center rounded-full text-lg font-bold bg-gray-800 text-white transition">
+                <span className="w-8 h-8 flex items-center justify-center rounded-full text-sm font-bold bg-gray-800 text-white transition">
                   {date.getDate()}
                 </span>
               ) : (
-                <span className="text-lg text-gray-700">{date.getDate()}</span>
+                <span className="text-sm text-gray-700">{date.getDate()}</span>
               )}
             </button>
           );
