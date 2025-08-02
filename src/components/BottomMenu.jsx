@@ -2,13 +2,13 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 
-export default function BottomMenu({ activeIndex = 2 }) {
+export default function BottomMenu({ activeIndex = 0 }) {
   const navigate = useNavigate();
   const { t } = useLanguage();
   
   const menu = [
-    { label: t('navigation.askAI'), path: '/ask-ai' },
     { label: t('navigation.settings'), path: '/settings' },
+    { label: 'AURI', path: '/ask-ai' },
     { label: t('navigation.profile'), path: '/profile' },
     { label: t('navigation.today'), path: '/today' },
   ];

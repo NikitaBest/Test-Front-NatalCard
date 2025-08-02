@@ -271,7 +271,7 @@ export default function Settings() {
             )}
           </AnimatePresence>
         </div>
-        <BottomMenu activeIndex={1} />
+        <BottomMenu activeIndex={0} />
       </div>
     );
   }
@@ -362,7 +362,7 @@ export default function Settings() {
           </div>
         </div>
       )}
-      <BottomMenu activeIndex={1} />
+      <BottomMenu activeIndex={0} />
     </div>
   );
 }

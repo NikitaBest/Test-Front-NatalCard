@@ -12,10 +12,10 @@
     "no": "No"
   },
   "navigation": {
-    "askAI": "Ask AI",
-    "settings": "Settings",
-    "profile": "Profile",
-    "today": "Today"
+    "askAI": "AURI",
+    "settings": "settings",
+    "profile": "chart",
+    "today": "horoscope"
   },
   "start": {
     "title": "Discover the secrets of your natal chart",

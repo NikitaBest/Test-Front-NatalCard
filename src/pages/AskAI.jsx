@@ -306,7 +306,7 @@ export default function AskAI() {
             </div>
           </div>
         </div>
-        <BottomMenu activeIndex={0} />
+        <BottomMenu activeIndex={1} />
       </div>
     </div>
   );
