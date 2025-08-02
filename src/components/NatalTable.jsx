@@ -71,7 +71,7 @@ export default function NatalTable({ chartData }) {
             {houseData.planets.length > 0 ? (
               <div className="flex flex-col gap-1 items-center">
                 {houseData.planets.map((planet, planetIndex) => (
-                  <div key={planetIndex} className="text-sm font-poppins">
+                  <div key={planetIndex} className="text-sm font-poppins flex items-center justify-center">
                     {planet}
                   </div>
                 ))}
