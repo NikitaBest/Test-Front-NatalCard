@@ -47,7 +47,7 @@ function LoadingDots() {
 }
 
 // Компонент эффекта печатания
-function TypewriterEffect({ text, onComplete }) {
+function TypewriterEffect({ text, onComplete, formatText }) {
   const [displayedText, setDisplayedText] = useState('');
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -71,7 +71,11 @@ function TypewriterEffect({ text, onComplete }) {
 
   return (
     <div className="rounded-xl px-4 py-3 max-w-[80%] text-base font-sans bg-gray-100 text-gray-900">
-      {displayedText}
+      <div 
+        dangerouslySetInnerHTML={{ 
+          __html: formatText(displayedText) 
+        }}
+      />
       {currentIndex < text.length && (
         <span className="animate-pulse">|</span>
       )}
@@ -99,6 +103,17 @@ export default function AskAI() {
   const [error, setError] = useState(null);
   const [selectedQuestion, setSelectedQuestion] = useState(null);
   const [dialogStarted, setDialogStarted] = useState(false);
+
+  // Функция для форматирования текста
+  const formatText = (text) => {
+    return text
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // Заменяем **текст** на <strong>
+      .replace(/\*(.*?)\*/g, '<em>$1</em>') // Заменяем *текст* на <em>
+      .replace(/\n/g, '<br>') // Заменяем переносы строк на <br>
+      .replace(/(\d+\.\s)/g, '<br><strong>$1</strong>') // Форматируем нумерованные списки
+      .replace(/([.!?])\s+/g, '$1<br><br>') // Добавляем двойные переносы после предложений
+      .replace(/<br><br><br>/g, '<br><br>'); // Убираем лишние переносы
+  };
 
   // Получаем вопросы из переводов
   const getQuestions = () => {
@@ -263,7 +278,7 @@ export default function AskAI() {
                           {msg.content}
                         </div>
                       ) : (
-                        <TypewriterEffect text={msg.content} />
+                        <TypewriterEffect text={msg.content} formatText={formatText} />
                       )}
                     </div>
                   ))}

@@ -49,7 +49,7 @@ function LoadingDots() {
 }
 
 // Компонент эффекта печатания
-function TypewriterEffect({ text, onComplete }) {
+function TypewriterEffect({ text, onComplete, formatText }) {
   const [displayedText, setDisplayedText] = useState('');
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -73,7 +73,11 @@ function TypewriterEffect({ text, onComplete }) {
 
   return (
     <div className="rounded-xl px-4 py-3 max-w-[80%] text-base font-sans bg-gray-100 text-gray-900">
-      {displayedText}
+      <div 
+        dangerouslySetInnerHTML={{ 
+          __html: formatText(displayedText) 
+        }}
+      />
       {currentIndex < text.length && (
         <span className="animate-pulse">|</span>
       )}
@@ -93,6 +97,17 @@ export default function Settings() {
   const [error, setError] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
+
+  // Функция для форматирования текста
+  const formatText = (text) => {
+    return text
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // Заменяем **текст** на <strong>
+      .replace(/\*(.*?)\*/g, '<em>$1</em>') // Заменяем *текст* на <em>
+      .replace(/\n/g, '<br>') // Заменяем переносы строк на <br>
+      .replace(/(\d+\.\s)/g, '<br><strong>$1</strong>') // Форматируем нумерованные списки
+      .replace(/([.!?])\s+/g, '$1<br><br>') // Добавляем двойные переносы после предложений
+      .replace(/<br><br><br>/g, '<br><br>'); // Убираем лишние переносы
+  };
 
   // Функция для получения правильного множественного числа чатов
   const getChatPluralTranslated = (count) => {
@@ -260,11 +275,11 @@ export default function Settings() {
                   </div>
                 </div>
                 {/* Контейнер сообщений */}
-                <ChatMessagesList messages={messages} loading={loadingHistory} />
+                <ChatMessagesList messages={messages} loading={loadingHistory} formatText={formatText} />
                 {/* Фиксированное поле ввода */}
                 <div className="fixed left-0 right-0 bottom-[55px] z-50 w-full flex justify-center pointer-events-none px-2">
                   <div className="w-full pointer-events-auto">
-                    <ChatInputSection chatId={selectedChat.id} onMessageSent={msg => setMessages(prev => [...prev, msg])} disabled={loadingHistory} />
+                    <ChatInputSection chatId={selectedChat.id} onMessageSent={msg => setMessages(prev => [...prev, msg])} disabled={loadingHistory} formatText={formatText} />
                   </div>
                 </div>
               </motion.div>
@@ -368,7 +383,7 @@ export default function Settings() {
 }
 
 // --- ChatInputSection ---
-function ChatInputSection({ chatId, onMessageSent, disabled }) {
+function ChatInputSection({ chatId, onMessageSent, disabled, formatText }) {
   const { t } = useLanguage();
   const [inputValue, setInputValue] = useState("");
   const [loading, setLoading] = useState(false);
@@ -476,7 +491,7 @@ function ChatInputSection({ chatId, onMessageSent, disabled }) {
 }
 
 // --- ChatMessagesList ---
-function ChatMessagesList({ messages, loading }) {
+function ChatMessagesList({ messages, loading, formatText }) {
   const messagesEndRef = useRef(null);
   const containerRef = useRef(null);
 
@@ -510,14 +525,16 @@ function ChatMessagesList({ messages, loading }) {
               <div className="rounded-xl px-3 py-2 max-w-[85%] text-sm font-sans bg-black text-white">
                 {msg.content}
               </div>
+            ) : msg.isNew ? (
+              <TypewriterEffect text={msg.content} formatText={formatText} />
             ) : (
-              msg.isNew ? (
-                <TypewriterEffect text={msg.content} />
-              ) : (
-                <div className="rounded-xl px-3 py-2 max-w-[85%] text-sm font-sans bg-gray-100 text-gray-900">
-                  {msg.content}
-                </div>
-              )
+              <div className="rounded-xl px-3 py-2 max-w-[85%] text-sm font-sans bg-gray-100 text-gray-900">
+                <div 
+                  dangerouslySetInnerHTML={{ 
+                    __html: formatText(msg.content) 
+                  }}
+                />
+              </div>
             )}
           </div>
         ))
