@@ -17,13 +17,13 @@ export default function UserProfileHeader({ name, username, photoUrl, ascSign, s
           </div>
           <div className="flex flex-wrap gap-2 sm:gap-6 mt-2 sm:mt-3 w-full">
             <span className="flex items-center gap-1 text-gray-700 text-xs sm:text-lg whitespace-nowrap">
+              <span className="text-base sm:text-xl">↑</span> {ascSign}
+            </span>
+            <span className="flex items-center gap-1 text-gray-700 text-xs sm:text-lg whitespace-nowrap">
               <span className="text-base sm:text-xl">☽</span> {moonSign}
             </span>
             <span className="flex items-center gap-1 text-gray-700 text-xs sm:text-lg whitespace-nowrap">
               <span className="text-base sm:text-xl">☉</span> {sunSign}
-            </span>
-            <span className="flex items-center gap-1 text-gray-700 text-xs sm:text-lg whitespace-nowrap">
-              <span className="text-base sm:text-xl">↑</span> {ascSign}
             </span>
           </div>
         </div>
