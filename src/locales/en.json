@@ -12,7 +12,7 @@
     "no": "No"
   },
   "navigation": {
-    "askAI": "AURI",
+    "askAI": "LIA",
     "settings": "settings",
     "profile": "chart",
     "today": "horoscope"
@@ -73,7 +73,7 @@
     "chata": "chats"
   },
   "askAI": {
-    "title": "Ask AI",
+    "title": "Ask LIA",
     "subtitle": "Get answers to the most important questions",
     "placeholder": "Ask your question...",
     "messagePlaceholder": "Enter message...",

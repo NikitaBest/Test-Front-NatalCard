@@ -12,7 +12,7 @@
     "no": "Нет"
   },
   "navigation": {
-    "askAI": "AURI",
+    "askAI": "LIA",
     "settings": "настройки",
     "profile": "карта",
     "today": "гороскоп"
@@ -73,7 +73,7 @@
     "chata": "чата"
   },
   "askAI": {
-    "title": "Вопрос AI",
+    "title": "Вопрос LIA",
     "subtitle": "Получи ответы на самые важные вопросы",
     "placeholder": "Задай свой вопрос...",
     "messagePlaceholder": "Введите сообщение...",

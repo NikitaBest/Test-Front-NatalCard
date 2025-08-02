@@ -8,7 +8,7 @@ export default function BottomMenu({ activeIndex = 0 }) {
   
   const menu = [
     { label: t('navigation.settings'), path: '/settings' },
-    { label: 'AURI', path: '/ask-ai' },
+    { label: 'LIA', path: '/ask-ai' },
     { label: t('navigation.profile'), path: '/profile' },
     { label: t('navigation.today'), path: '/today' },
   ];
