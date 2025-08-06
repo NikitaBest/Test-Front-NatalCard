@@ -156,7 +156,13 @@
     "noData": "No data for selected date",
     "noAuth": "No authorization token",
     "loadError": "Loading error",
-    "weekDays": ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"]
+    "weekDays": ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"],
+    "headers": {
+      "inResource": "In resource",
+      "focusDay": "Focus of the day",
+      "payAttention": "Pay attention",
+      "affirmation": "Affirmation of the day"
+    }
   },
   "splash": {
     "footer": "Next-generation astrology: ancient self-knowledge system, current NASA data and artificial intelligence — all in one tool to help you better understand yourself and your purpose"

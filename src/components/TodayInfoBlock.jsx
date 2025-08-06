@@ -8,12 +8,22 @@ export default function TodayInfoBlock({ blocks = [] }) {
           <h2 className="font-poppins text-xl font-light text-gray-800 mb-4 mt-6 text-left">{block.title}</h2>
           {block.tips && block.tips.length > 0 && (
             <ul className="mb-4">
-              {block.tips.map((tip, j) => (
-                <li key={j} className="flex items-center gap-2 text-sm mb-2 text-gray-900 font-poppins font-light">
-                  <span className="text-lg">{tip.icon}</span>
-                  <span>{tip.text}</span>
-                </li>
-              ))}
+              {block.tips.map((tip, j) => {
+                // Разделяем текст на заголовок и основной текст
+                const textParts = tip.text.split(': ');
+                const header = textParts[0] + ': ';
+                const content = textParts.slice(1).join(': ');
+                
+                return (
+                  <li key={j} className="flex items-start gap-2 text-sm mb-4 text-gray-900 font-poppins font-light">
+                    <span className="text-lg flex-shrink-0 mt-0.5">{tip.icon}</span>
+                    <div className="flex-1">
+                      <span className="font-bold">{header}</span>
+                      <span>{content}</span>
+                    </div>
+                  </li>
+                );
+              })}
             </ul>
           )}
           {block.image && (

@@ -97,10 +97,34 @@ export default function Today() {
         setDailyData({
           blocks: explanations.map((explanation, idx) => ({
             title: explanation.title,
-            tips: (explanation.sub_titles || []).map((sub, i) => ({
-              icon: i === 0 ? '⭐' : '🌱',
-              text: sub
-            })),
+            tips: (explanation.sub_titles || []).map((sub, i) => {
+              let icon, prefix;
+              switch(i) {
+                case 0:
+                  icon = '🟢';
+                  prefix = t('today.headers.inResource') + ': ';
+                  break;
+                case 1:
+                  icon = '🟡';
+                  prefix = t('today.headers.focusDay') + ': ';
+                  break;
+                case 2:
+                  icon = '🔴';
+                  prefix = t('today.headers.payAttention') + ': ';
+                  break;
+                case 3:
+                  icon = '💫';
+                  prefix = t('today.headers.affirmation') + ': ';
+                  break;
+                default:
+                  icon = '🌱';
+                  prefix = '';
+              }
+              return {
+                icon: icon,
+                text: prefix + sub
+              };
+            }),
             image: explanationImages[idx % explanationImages.length],
             text: explanation.description
           }))
