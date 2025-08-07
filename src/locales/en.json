@@ -167,6 +167,13 @@
       "focusDay": "Focus of the day",
       "payAttention": "Pay attention",
       "affirmation": "Affirmation of the day"
+    },
+    "loading": {
+      "calculating": "Calculating planetary positions...",
+      "analyzing": "Analyzing aspects...",
+      "building": "Building horoscope...",
+      "finalizing": "Forming forecast...",
+      "warning": "Please wait, the formation of the horoscope may take up to 1 minute"
     }
   },
   "splash": {

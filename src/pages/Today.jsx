@@ -2,6 +2,7 @@ import BottomMenu from '../components/BottomMenu';
 import UserProfileHeader from '../components/UserProfileHeader';
 import TodayCalendar from '../components/TodayCalendar';
 import TodayInfoBlock from '../components/TodayInfoBlock';
+import HoroscopeLoadingAnimation from '../components/HoroscopeLoadingAnimation';
 import { useUser } from '../context/UserContext';
 import { useLanguage } from '../context/LanguageContext';
 import { useState, useEffect } from 'react';
@@ -154,7 +155,7 @@ export default function Today() {
       <h2 className="text-center font-mono text-1xl font-normal text-gray-800 mb-6 mt-8">
         {t('today.title').replace('{date}', selectedDate.toLocaleDateString('ru-RU'))}
       </h2>
-      {loading && <div className="text-center text-gray-400">{t('common.loading')}</div>}
+      {loading && <HoroscopeLoadingAnimation />}
       {error && <div className="text-center text-red-500">{error}</div>}
       {dailyData && (
         <TodayInfoBlock
