@@ -123,7 +123,7 @@
       "analyzing": "Analyzing aspects...",
       "building": "Building natal chart...",
       "finalizing": "Forming interpretation...",
-      "warning": "Creating natal chart may take up to 2 minutes"
+      "warning": "Please wait, the formation of the natal chart may take up to 2 minutes"
     },
     "error": {
       "timeout": "Building the chart takes more time. Try later or go to another page and come back.",
