@@ -7,6 +7,21 @@
   box-sizing: border-box;
 }
 
+/* Исправление проблем со скроллом */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+/* Предотвращение проблем с высотой при динамической загрузке контента */
+.min-h-screen {
+  min-height: 100vh;
+  height: auto;
+}
+
 /* Явные стили для кнопок вопросов */
 .ask-ai-question {
   display: block !important;
@@ -38,4 +53,15 @@
 .overflow-fix {
   overflow: visible !important;
   position: relative !important;
+}
+
+/* Исправление для Profile страницы - предотвращение проблем со скроллом */
+.profile-scroll-fix {
+  overflow-x: hidden;
+  will-change: scroll-position;
+}
+
+/* Предотвращение проблем с абсолютно позиционированными элементами */
+.profile-info-block {
+  contain: layout;
 }

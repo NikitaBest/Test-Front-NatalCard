@@ -13,7 +13,7 @@ export default function ProfileInfoBlock({ title, text, children, index = 0 }) {
   const size = sizes[index % 2];
   
   return (
-    <div className="w-full flex flex-col items-center mt-40 mb-40 px-4 relative overflow-visible">
+    <div className="profile-info-block w-full flex flex-col items-center mt-40 mb-40 px-4 relative overflow-visible">
       {/* Фоновое изображение - выходит за границы блока */}
       <div 
         className="absolute w-full h-full opacity-40 pointer-events-none"
