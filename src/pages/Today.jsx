@@ -5,7 +5,7 @@ import TodayInfoBlock from '../components/TodayInfoBlock';
 import { useUser } from '../context/UserContext';
 import { useLanguage } from '../context/LanguageContext';
 import { useState, useEffect } from 'react';
-import { getUserChart } from '../utils/api';
+import { getUserChart, getDailyHoroscope } from '../utils/api';
 
 // Импортируем функцию getHeaders из api.js
 function getHeaders() {
@@ -80,19 +80,13 @@ export default function Today() {
         const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
         const day = String(selectedDate.getDate()).padStart(2, '0');
         const dateStr = `${year}-${month}-${day}`;
-        const token = localStorage.getItem('token');
-        if (!token) throw new Error(t('today.noAuth'));
-        const res = await fetch(
-          `https://astro-backend.odonta.burtimaxbot.ru/user/daily-horoscope?date=${dateStr}`,
-          {
-            headers: getHeaders(),
-          }
-        );
-        if (!res.ok) throw new Error(t('today.loadError'));
-        const data = await res.json();
+        
+        const data = await getDailyHoroscope(dateStr);
+        
         if (!data.value || !data.value.explanations || !data.value.explanations.length) {
           throw new Error(t('today.noData'));
         }
+        
         const explanations = data.value.explanations;
         setDailyData({
           blocks: explanations.map((explanation, idx) => ({

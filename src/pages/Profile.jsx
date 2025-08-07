@@ -28,21 +28,12 @@ export default function Profile() {
     setChartData(null); // Очищаем старые данные при каждом новом запросе
     setIsRequestInProgress(true);
     
-    // Создаем таймаут для запроса - увеличиваем до 60 секунд
-    const timeoutId = setTimeout(() => {
-      setError(t('profile.error.timeout'));
-      setLoading(false);
-      setIsRequestInProgress(false);
-    }, 60000); // 60 секунд таймаут
-    
     getUserChart()
       .then(data => {
-        clearTimeout(timeoutId);
         setChartData(data);
         setError(null);
       })
       .catch(err => {
-        clearTimeout(timeoutId);
         setError(err.message);
         setChartData(null);
       })
@@ -50,9 +41,6 @@ export default function Profile() {
         setLoading(false);
         setIsRequestInProgress(false);
       });
-      
-    // Очистка таймаута при размонтировании
-    return () => clearTimeout(timeoutId);
   };
 
   useEffect(() => {

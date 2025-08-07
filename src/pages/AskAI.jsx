@@ -3,6 +3,7 @@ import AskAITabs from '../components/AskAITabs';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLanguage } from '../context/LanguageContext';
+import { sendAIMessage, getAIAnswer } from '../utils/api';
 import bgImage from '../assets/bg2.png';
 
 // Импортируем функцию getHeaders из api.js
@@ -98,11 +99,11 @@ export default function AskAI() {
   const [activeTab, setActiveTab] = useState('self');
   const [inputValue, setInputValue] = useState('');
   const [loading, setLoading] = useState(false);
-  const [messages, setMessages] = useState([]); // {isUser, content, createdAt}
-  const [chatId, setChatId] = useState(0); // 0 для нового чата
   const [error, setError] = useState(null);
-  const [selectedQuestion, setSelectedQuestion] = useState(null);
+  const [messages, setMessages] = useState([]);
   const [dialogStarted, setDialogStarted] = useState(false);
+  const [chatId, setChatId] = useState(0);
+  const [selectedQuestion, setSelectedQuestion] = useState(null);
 
   // Функция для форматирования текста
   const formatText = (text) => {
@@ -115,19 +116,15 @@ export default function AskAI() {
       .replace(/<br><br><br>/g, '<br><br>'); // Убираем лишние переносы
   };
 
-  // Получаем вопросы из переводов
   const getQuestions = () => {
-    return {
-      career: t('askAI.questions.career'),
-      self: t('askAI.questions.self'),
-      love: t('askAI.questions.love')
-    };
+    return t(`askAI.questions.${activeTab}`);
   };
 
   const handleQuestionClick = (q, idx) => {
-    setInputValue(q);
     setSelectedQuestion(idx);
+    setInputValue(q);
   };
+
   const handleInputChange = (e) => {
     setInputValue(e.target.value);
     setSelectedQuestion(null);
@@ -137,28 +134,18 @@ export default function AskAI() {
     if (!inputValue.trim()) return;
     setLoading(true);
     setError(null);
-    const token = localStorage.getItem('token');
     const now = new Date();
     const dateTime = now.toISOString();
+    
     try {
       // 1. Отправляем сообщение пользователя
-      const res = await fetch('https://astro-backend.odonta.burtimaxbot.ru/ai-chat/send-message', {
-        method: 'POST',
-        headers: {
-          ...getHeaders(),
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          dateTime,
-          chatId,
-          content: inputValue.trim(),
-        })
-      });
-      if (!res.ok) throw new Error('Ошибка отправки сообщения');
-      const data = await res.json();
+      const data = await sendAIMessage(dateTime, chatId, inputValue.trim());
+      
       if (!data.value) throw new Error('Нет ответа от сервера');
+      
       // Сохраняем chatId, если новый
       if (data.value.chatId && chatId !== data.value.chatId) setChatId(data.value.chatId);
+      
       // Добавляем сообщение пользователя в историю
       setMessages(prev => [...prev, {
         isUser: true,
@@ -167,12 +154,10 @@ export default function AskAI() {
       }]);
       setInputValue('');
       setDialogStarted(true);
+      
       // 2. Получаем ответ ИИ
-      const answerRes = await fetch(`https://astro-backend.odonta.burtimaxbot.ru/ai-chat/answer?dateTime=${encodeURIComponent(data.value.createdAt)}&chatId=${data.value.chatId}`, {
-        headers: getHeaders(),
-      });
-      if (!answerRes.ok) throw new Error('Ошибка получения ответа ИИ');
-      const answerData = await answerRes.json();
+      const answerData = await getAIAnswer(data.value.createdAt, data.value.chatId);
+      
       if (answerData.value && answerData.value.content) {
         setMessages(prev => [...prev, {
           isUser: false,
@@ -195,8 +180,6 @@ export default function AskAI() {
     setChatId(0);
     setError(null);
   };
-
-  const questions = getQuestions();
 
   return (
     <div 
@@ -243,7 +226,7 @@ export default function AskAI() {
           {/* Вопросы только до начала диалога */}
           {!dialogStarted && (
             <div className="flex flex-col items-center w-full max-w-md mx-auto mb-8 px-4 overflow-fix" style={{ minHeight: '200px' }}>
-              {questions[activeTab].map((q, i) => (
+              {getQuestions().map((q, i) => (
                 <button
                   key={i}
                   className={`ask-ai-question font-mono text-base transition mb-8 focus:outline-none text-center w-full max-w-sm ${

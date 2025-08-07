@@ -5,6 +5,7 @@ import LanguageSelect from '../components/LanguageSelect';
 import { useState, useEffect, useRef } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { getAIChats, getAIChatHistory, sendAIMessage, getAIAnswer } from '../utils/api';
 import bgImage from '../assets/bg2.png';
 
 // Импортируем функцию getHeaders из api.js
@@ -132,11 +133,7 @@ export default function Settings() {
       setLoadingChats(true);
       setError(null);
       try {
-        const res = await fetch('https://astro-backend.odonta.burtimaxbot.ru/ai-chat/chats', {
-          headers: getHeaders(),
-        });
-        if (!res.ok) throw new Error('Ошибка загрузки чатов');
-        const data = await res.json();
+        const data = await getAIChats();
         setChats(data.value || []);
       } catch (e) {
         setError(e.message);
@@ -154,11 +151,7 @@ export default function Settings() {
       setLoadingHistory(true);
       setError(null);
       try {
-        const res = await fetch(`https://astro-backend.odonta.burtimaxbot.ru/ai-chat/history?chatId=${selectedChat.id}`, {
-          headers: getHeaders(),
-        });
-        if (!res.ok) throw new Error('Ошибка загрузки истории чата');
-        const data = await res.json();
+        const data = await getAIChatHistory(selectedChat.id);
         setMessages(data.value || []);
       } catch (e) {
         setError(e.message);
@@ -394,25 +387,11 @@ function ChatInputSection({ chatId, onMessageSent, disabled, formatText }) {
     if (!inputValue.trim()) return;
     setLoading(true);
     setError(null);
-    const token = localStorage.getItem('token');
     const now = new Date();
     const dateTime = now.toISOString();
     try {
       // Отправляем сообщение пользователя
-      const res = await fetch('https://astro-backend.odonta.burtimaxbot.ru/ai-chat/send-message', {
-        method: 'POST',
-        headers: {
-          ...getHeaders(),
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          dateTime,
-          chatId,
-          content: inputValue.trim(),
-        })
-      });
-      if (!res.ok) throw new Error('Ошибка отправки сообщения');
-      const data = await res.json();
+      const data = await sendAIMessage(dateTime, chatId, inputValue.trim());
       if (!data.value) throw new Error('Нет ответа от сервера');
       
       // Добавляем сообщение пользователя в историю (отображается сразу)
@@ -425,11 +404,7 @@ function ChatInputSection({ chatId, onMessageSent, disabled, formatText }) {
       setInputValue("");
       
       // Получаем ответ ИИ
-      const answerRes = await fetch(`https://astro-backend.odonta.burtimaxbot.ru/ai-chat/answer?dateTime=${encodeURIComponent(data.value.createdAt)}&chatId=${chatId}`, {
-        headers: getHeaders(),
-      });
-      if (!answerRes.ok) throw new Error('Ошибка получения ответа ИИ');
-      const answerData = await answerRes.json();
+      const answerData = await getAIAnswer(data.value.createdAt, chatId);
       if (answerData.value && answerData.value.content) {
         // Добавляем ответ ИИ как новое сообщение (будет печататься)
         const aiMessage = {
