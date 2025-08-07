@@ -4,6 +4,7 @@ import ProfileTabs from '../components/ProfileTabs';
 import NatalChartSquare from '../components/NatalChartSquare';
 import NatalTable from '../components/NatalTable';
 import ProfileInfoBlock from '../components/ProfileInfoBlock';
+import ChartLoadingAnimation from '../components/ChartLoadingAnimation';
 import { useUser } from '../context/UserContext';
 import { useLanguage } from '../context/LanguageContext';
 import { useEffect, useState } from 'react';
@@ -83,10 +84,7 @@ export default function Profile() {
             transition={{ duration: 0.25 }}
           >
             {loading ? (
-              <div className="text-center my-8">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-500 mx-auto"></div>
-                <p className="mt-4">{t('profile.loading.chart')}</p>
-              </div>
+              <ChartLoadingAnimation />
             ) : error ? (
               <div className="text-center my-8">
                 <div className="text-red-500 mb-4">{error}</div>
@@ -123,10 +121,7 @@ export default function Profile() {
             transition={{ duration: 0.25 }}
           >
             {loading ? (
-              <div className="text-center my-8">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-500 mx-auto"></div>
-                <p className="mt-4">{t('profile.loading.data')}</p>
-              </div>
+              <ChartLoadingAnimation />
             ) : error ? (
               <div className="text-center my-8">
                 <div className="text-red-500 mb-4">{error}</div>
