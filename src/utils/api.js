@@ -127,7 +127,7 @@ export async function sendAIMessage(dateTime, chatId, content) {
       chatId,
       content: content.trim(),
     })
-  }, 30000); // 30 секунд для отправки сообщения
+  }, 60000); // 60 секунд для отправки сообщения (увеличено с 30)
   
   if (!response.ok) throw new Error('Ошибка отправки сообщения');
   return response.json();
@@ -139,7 +139,7 @@ export async function getAIAnswer(dateTime, chatId) {
     {
       headers: getHeaders(),
     },
-    120000 // 2 минуты для получения ответа ИИ (может быть долгим)
+    300000 // 5 минут для получения ответа ИИ (увеличено с 2 минут)
   );
   
   if (!response.ok) throw new Error('Ошибка получения ответа ИИ');

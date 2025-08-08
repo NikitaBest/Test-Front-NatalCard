@@ -86,6 +86,68 @@ function TypewriterEffect({ text, onComplete, formatText }) {
   );
 }
 
+// Компонент анимированного сообщения загрузки
+function LoadingMessage() {
+  const { t } = useLanguage();
+  const [currentStep, setCurrentStep] = useState(0);
+  const [dots, setDots] = useState('');
+  
+  const loadingSteps = [
+    { text: t('askAI.loading.thinking'), symbol: '●' },
+    { text: t('askAI.loading.analyzing'), symbol: '◆' },
+    { text: t('askAI.loading.chart'), symbol: '▲' },
+    { text: t('askAI.loading.planets'), symbol: '◉' },
+    { text: t('askAI.loading.aspects'), symbol: '○' },
+    { text: t('askAI.loading.forming'), symbol: '◇' }
+  ];
+
+  useEffect(() => {
+    const stepInterval = setInterval(() => {
+      setCurrentStep((prev) => (prev + 1) % loadingSteps.length);
+    }, 2500); // Уменьшил время для более динамичной смены
+
+    const dotsInterval = setInterval(() => {
+      setDots(prev => prev.length >= 3 ? '' : prev + '.');
+    }, 400); // Ускорил анимацию точек
+
+    return () => {
+      clearInterval(stepInterval);
+      clearInterval(dotsInterval);
+    };
+  }, [loadingSteps.length]);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="flex justify-start"
+    >
+      <div className="rounded-xl px-4 py-3 max-w-[80%] text-sm font-sans bg-gray-50 text-gray-500 border border-gray-200">
+        <motion.div
+          key={currentStep}
+          initial={{ opacity: 0, x: -10 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.3 }}
+          className="flex items-center gap-2"
+        >
+          <motion.span
+            key={`symbol-${currentStep}`}
+            initial={{ scale: 0, rotate: -180 }}
+            animate={{ scale: 1, rotate: 0 }}
+            transition={{ duration: 0.4, delay: 0.1 }}
+            className="text-base text-gray-400"
+          >
+            {loadingSteps[currentStep].symbol}
+          </motion.span>
+          <span className="font-mono text-gray-500 text-sm">
+            {loadingSteps[currentStep].text.replace('и три точки', dots).replace('and three dots', dots)}
+          </span>
+        </motion.div>
+      </div>
+    </motion.div>
+  );
+}
+
 export default function Settings() {
   const { userData, setUserData } = useUser();
   const { t, language, changeLanguage } = useLanguage();
@@ -95,6 +157,7 @@ export default function Settings() {
   const [selectedChat, setSelectedChat] = useState(null);
   const [messages, setMessages] = useState([]);
   const [loadingHistory, setLoadingHistory] = useState(false);
+  const [loadingAI, setLoadingAI] = useState(false);
   const [error, setError] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
@@ -268,11 +331,17 @@ export default function Settings() {
                   </div>
                 </div>
                 {/* Контейнер сообщений */}
-                <ChatMessagesList messages={messages} loading={loadingHistory} formatText={formatText} />
+                <ChatMessagesList messages={messages} loading={loadingHistory} loadingAI={loadingAI} formatText={formatText} />
                 {/* Фиксированное поле ввода */}
                 <div className="fixed left-0 right-0 bottom-[55px] z-50 w-full flex justify-center pointer-events-none px-2">
                   <div className="w-full pointer-events-auto">
-                    <ChatInputSection chatId={selectedChat.id} onMessageSent={msg => setMessages(prev => [...prev, msg])} disabled={loadingHistory} formatText={formatText} />
+                    <ChatInputSection 
+                      chatId={selectedChat.id} 
+                      onMessageSent={msg => setMessages(prev => [...prev, msg])} 
+                      disabled={loadingHistory} 
+                      formatText={formatText}
+                      onLoadingChange={setLoadingAI}
+                    />
                   </div>
                 </div>
               </motion.div>
@@ -376,32 +445,37 @@ export default function Settings() {
 }
 
 // --- ChatInputSection ---
-function ChatInputSection({ chatId, onMessageSent, disabled, formatText }) {
+function ChatInputSection({ chatId, onMessageSent, disabled, formatText, onLoadingChange }) {
   const { t } = useLanguage();
   const [inputValue, setInputValue] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [newMessages, setNewMessages] = useState([]); // Отслеживаем новые сообщения
 
   const handleSend = async () => {
     if (!inputValue.trim()) return;
-    setLoading(true);
-    setError(null);
+    
+    const userMessage = inputValue.trim();
     const now = new Date();
     const dateTime = now.toISOString();
+    
+    // Сразу добавляем сообщение пользователя в чат
+    const userMessageObj = {
+      isUser: true,
+      content: userMessage,
+      createdAt: dateTime,
+    };
+    onMessageSent(userMessageObj);
+    setInputValue("");
+    
+    // Начинаем загрузку
+    setLoading(true);
+    onLoadingChange?.(true);
+    setError(null);
+    
     try {
       // Отправляем сообщение пользователя
-      const data = await sendAIMessage(dateTime, chatId, inputValue.trim());
+      const data = await sendAIMessage(dateTime, chatId, userMessage);
       if (!data.value) throw new Error('Нет ответа от сервера');
-      
-      // Добавляем сообщение пользователя в историю (отображается сразу)
-      const userMessage = {
-        isUser: true,
-        content: inputValue.trim(),
-        createdAt: data.value.createdAt,
-      };
-      onMessageSent(userMessage);
-      setInputValue("");
       
       // Получаем ответ ИИ
       const answerData = await getAIAnswer(data.value.createdAt, chatId);
@@ -419,54 +493,40 @@ function ChatInputSection({ chatId, onMessageSent, disabled, formatText }) {
       setError(e.message);
     } finally {
       setLoading(false);
+      onLoadingChange?.(false);
     }
   };
 
   return (
-    <>
-      {loading && (
-        <AnimatePresence>
-          <motion.div
-            className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-white/80"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-          >
-            <LoadingDots />
-          </motion.div>
-        </AnimatePresence>
-      )}
-      <div className="flex items-center border-t border-gray-300 bg-white rounded-b-xl">
-        <input
-          className="flex-1 py-4 px-3 text-sm font-mono text-gray-400 bg-transparent outline-none border-none placeholder-gray-400"
-          placeholder={t('settings.messagePlaceholder')}
-          value={inputValue}
-          onChange={e => setInputValue(e.target.value)}
-          disabled={loading || disabled}
-          onKeyDown={e => { if (e.key === 'Enter') handleSend(); }}
-        />
-        <button className="p-2 flex items-center justify-center" type="button" onClick={handleSend} disabled={!inputValue.trim() || loading || disabled}>
-          {inputValue.trim() ? (
-            <svg width="24" height="24" fill="none" viewBox="0 0 24 24">
-              <circle cx="12" cy="12" r="12" fill="#1A1A1A"/>
-              <path d="M9 12h6m0 0-2-2m2 2-2 2" stroke="#FFFFFF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          ) : (
-            <svg width="24" height="24" fill="none" viewBox="0 0 24 24">
-              <circle cx="12" cy="12" r="12" fill="#F3F4F6"/>
-              <path d="M9 12h6m0 0-2-2m2 2-2 2" stroke="#A1A1AA" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          )}
-        </button>
-        {error && <div className="text-red-500 text-xs ml-2 px-2">{error}</div>}
-      </div>
-    </>
+    <div className="flex items-center border-t border-gray-300 bg-white rounded-b-xl">
+      <input
+        className="flex-1 py-4 px-3 text-sm font-mono text-gray-400 bg-transparent outline-none border-none placeholder-gray-400"
+        placeholder={t('settings.messagePlaceholder')}
+        value={inputValue}
+        onChange={e => setInputValue(e.target.value)}
+        disabled={loading || disabled}
+        onKeyDown={e => { if (e.key === 'Enter') handleSend(); }}
+      />
+      <button className="p-2 flex items-center justify-center" type="button" onClick={handleSend} disabled={!inputValue.trim() || loading || disabled}>
+        {inputValue.trim() ? (
+          <svg width="24" height="24" fill="none" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="12" fill="#1A1A1A"/>
+            <path d="M9 12h6m0 0-2-2m2 2-2 2" stroke="#FFFFFF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        ) : (
+          <svg width="24" height="24" fill="none" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="12" fill="#F3F4F6"/>
+            <path d="M9 12h6m0 0-2-2m2 2-2 2" stroke="#A1A1AA" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        )}
+      </button>
+      {error && <div className="text-red-500 text-xs ml-2 px-2">{error}</div>}
+    </div>
   );
 }
 
 // --- ChatMessagesList ---
-function ChatMessagesList({ messages, loading, formatText }) {
+function ChatMessagesList({ messages, loading, loadingAI, formatText }) {
   const messagesEndRef = useRef(null);
   const containerRef = useRef(null);
 
@@ -494,25 +554,29 @@ function ChatMessagesList({ messages, loading, formatText }) {
       ) : messages.length === 0 ? (
         <div className="text-center py-8 text-gray-400">Нет сообщений в чате</div>
       ) : (
-        messages.map((msg, i) => (
-          <div key={i} className={`flex ${msg.isUser ? 'justify-end' : 'justify-start'}`}>
-            {msg.isUser ? (
-              <div className="rounded-xl px-3 py-2 max-w-[85%] text-sm font-sans bg-black text-white">
-                {msg.content}
-              </div>
-            ) : msg.isNew ? (
-              <TypewriterEffect text={msg.content} formatText={formatText} />
-            ) : (
-              <div className="rounded-xl px-3 py-2 max-w-[85%] text-sm font-sans bg-gray-100 text-gray-900">
-                <div 
-                  dangerouslySetInnerHTML={{ 
-                    __html: formatText(msg.content) 
-                  }}
-                />
-              </div>
-            )}
-          </div>
-        ))
+        <>
+          {messages.map((msg, i) => (
+            <div key={i} className={`flex ${msg.isUser ? 'justify-end' : 'justify-start'}`}>
+              {msg.isUser ? (
+                <div className="rounded-xl px-3 py-2 max-w-[85%] text-sm font-sans bg-black text-white">
+                  {msg.content}
+                </div>
+              ) : msg.isNew ? (
+                <TypewriterEffect text={msg.content} formatText={formatText} />
+              ) : (
+                <div className="rounded-xl px-3 py-2 max-w-[85%] text-sm font-sans bg-gray-100 text-gray-900">
+                  <div 
+                    dangerouslySetInnerHTML={{ 
+                      __html: formatText(msg.content) 
+                    }}
+                  />
+                </div>
+              )}
+            </div>
+          ))}
+          {/* Анимированное сообщение загрузки */}
+          {loadingAI && <LoadingMessage />}
+        </>
       )}
       <div ref={messagesEndRef} />
     </div>

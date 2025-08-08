@@ -23,27 +23,65 @@ function getHeaders() {
   return headers;
 }
 
-// Компонент анимированных точек загрузки
-function LoadingDots() {
+// Компонент анимированного сообщения загрузки
+function LoadingMessage() {
+  const { t } = useLanguage();
+  const [currentStep, setCurrentStep] = useState(0);
+  const [dots, setDots] = useState('');
+  
+  const loadingSteps = [
+    { text: t('askAI.loading.thinking'), symbol: '●' },
+    { text: t('askAI.loading.analyzing'), symbol: '◆' },
+    { text: t('askAI.loading.chart'), symbol: '▲' },
+    { text: t('askAI.loading.planets'), symbol: '◉' },
+    { text: t('askAI.loading.aspects'), symbol: '○' },
+    { text: t('askAI.loading.forming'), symbol: '◇' }
+  ];
+
+  useEffect(() => {
+    const stepInterval = setInterval(() => {
+      setCurrentStep((prev) => (prev + 1) % loadingSteps.length);
+    }, 2500); // Уменьшил время для более динамичной смены
+
+    const dotsInterval = setInterval(() => {
+      setDots(prev => prev.length >= 3 ? '' : prev + '.');
+    }, 400); // Ускорил анимацию точек
+
+    return () => {
+      clearInterval(stepInterval);
+      clearInterval(dotsInterval);
+    };
+  }, [loadingSteps.length]);
+
   return (
-    <div className="flex space-x-2">
-      {[0, 1, 2].map((i) => (
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="flex justify-start"
+    >
+      <div className="rounded-xl px-4 py-3 max-w-[80%] text-sm font-sans bg-gray-50 text-gray-500 border border-gray-200">
         <motion.div
-          key={i}
-          className="w-3 h-3 bg-gray-600 rounded-full"
-          animate={{
-            scale: [1, 1.2, 1],
-            opacity: [0.5, 1, 0.5],
-          }}
-          transition={{
-            duration: 1.2,
-            repeat: Infinity,
-            delay: i * 0.2,
-            ease: "easeInOut"
-          }}
-        />
-      ))}
-    </div>
+          key={currentStep}
+          initial={{ opacity: 0, x: -10 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.3 }}
+          className="flex items-center gap-2"
+        >
+          <motion.span
+            key={`symbol-${currentStep}`}
+            initial={{ scale: 0, rotate: -180 }}
+            animate={{ scale: 1, rotate: 0 }}
+            transition={{ duration: 0.4, delay: 0.1 }}
+            className="text-base text-gray-400"
+          >
+            {loadingSteps[currentStep].symbol}
+          </motion.span>
+          <span className="font-mono text-gray-500 text-sm">
+            {loadingSteps[currentStep].text.replace('и три точки', dots).replace('and three dots', dots)}
+          </span>
+        </motion.div>
+      </div>
+    </motion.div>
   );
 }
 
@@ -132,28 +170,32 @@ export default function AskAI() {
 
   const handleSend = async () => {
     if (!inputValue.trim()) return;
-    setLoading(true);
-    setError(null);
+    
+    const userMessage = inputValue.trim();
     const now = new Date();
     const dateTime = now.toISOString();
     
+    // Сразу добавляем сообщение пользователя в чат
+    setMessages(prev => [...prev, {
+      isUser: true,
+      content: userMessage,
+      createdAt: dateTime,
+    }]);
+    setInputValue('');
+    setDialogStarted(true);
+    
+    // Начинаем загрузку
+    setLoading(true);
+    setError(null);
+    
     try {
       // 1. Отправляем сообщение пользователя
-      const data = await sendAIMessage(dateTime, chatId, inputValue.trim());
+      const data = await sendAIMessage(dateTime, chatId, userMessage);
       
       if (!data.value) throw new Error('Нет ответа от сервера');
       
       // Сохраняем chatId, если новый
       if (data.value.chatId && chatId !== data.value.chatId) setChatId(data.value.chatId);
-      
-      // Добавляем сообщение пользователя в историю
-      setMessages(prev => [...prev, {
-        isUser: true,
-        content: inputValue.trim(),
-        createdAt: data.value.createdAt,
-      }]);
-      setInputValue('');
-      setDialogStarted(true);
       
       // 2. Получаем ответ ИИ
       const answerData = await getAIAnswer(data.value.createdAt, data.value.chatId);
@@ -166,7 +208,22 @@ export default function AskAI() {
         }]);
       }
     } catch (e) {
-      setError(e.message);
+      // Улучшенная обработка ошибок
+      let errorMessage = 'Произошла ошибка при обработке запроса';
+      
+      if (e.message.includes('превысил время ожидания') || e.message.includes('timeout')) {
+        errorMessage = 'Сервер долго отвечает. Попробуйте еще раз через минуту.';
+      } else if (e.message.includes('Failed to fetch') || e.message.includes('NetworkError')) {
+        errorMessage = 'Проблема с подключением к серверу. Проверьте интернет и попробуйте снова.';
+      } else if (e.message.includes('Ошибка отправки сообщения')) {
+        errorMessage = 'Не удалось отправить сообщение. Попробуйте еще раз.';
+      } else if (e.message.includes('Ошибка получения ответа ИИ')) {
+        errorMessage = 'ИИ обрабатывает ваш вопрос. Попробуйте еще раз через минуту.';
+      } else if (e.message) {
+        errorMessage = e.message;
+      }
+      
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -198,19 +255,6 @@ export default function AskAI() {
         style={{ opacity: 1, filter: 'drop-shadow(0 0 10px #000) brightness(0.5) contrast(2.5)' }}
       />
       <div className="relative z-10 min-h-screen flex flex-col">
-        {loading && (
-          <AnimatePresence>
-            <motion.div
-              className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-white/80"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.3 }}
-            >
-              <LoadingDots />
-            </motion.div>
-          </AnimatePresence>
-        )}
         <div className="w-full flex flex-col items-center pb-[92px] flex-1 bg-white/80">
           <h1 className="text-2xl font-normal text-center mt-0 font-mono">{t('askAI.title')}</h1>
           <div className="flex flex-row items-center justify-start w-full max-w-xl mx-auto mb-2 px-4">
@@ -265,6 +309,8 @@ export default function AskAI() {
                       )}
                     </div>
                   ))}
+                  {/* Анимированное сообщение загрузки */}
+                  {loading && <LoadingMessage />}
                 </div>
               )}
               {error && <div className="text-center text-red-500 mb-4">{error}</div>}

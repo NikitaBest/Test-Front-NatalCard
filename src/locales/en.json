@@ -78,6 +78,14 @@
     "placeholder": "Ask your question...",
     "messagePlaceholder": "Enter message...",
     "exitChat": "Exit Chat",
+    "loading": {
+      "thinking": "Thinking and three dots",
+      "analyzing": "Analyzing your question and three dots",
+      "chart": "Looking at your natal chart and three dots",
+      "planets": "Studying planetary positions and three dots",
+      "aspects": "Calculating astrological aspects and three dots",
+      "forming": "Forming personal answer and three dots"
+    },
     "tabs": {
       "career": "Career",
       "self": "Self-Development",
