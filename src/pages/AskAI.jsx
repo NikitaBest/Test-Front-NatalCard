@@ -142,6 +142,27 @@ export default function AskAI() {
   const [dialogStarted, setDialogStarted] = useState(false);
   const [chatId, setChatId] = useState(0);
   const [selectedQuestion, setSelectedQuestion] = useState(null);
+  const [keyboardVisible, setKeyboardVisible] = useState(false);
+
+  // Хук для отслеживания виртуальной клавиатуры
+  useEffect(() => {
+    const handleResize = () => {
+      const visualViewport = window.visualViewport;
+      if (visualViewport) {
+        const keyboardHeight = window.innerHeight - visualViewport.height;
+        setKeyboardVisible(keyboardHeight > 150); // Если клавиатура больше 150px
+      }
+    };
+
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', handleResize);
+      return () => window.visualViewport.removeEventListener('resize', handleResize);
+    } else {
+      // Fallback для браузеров без visualViewport
+      window.addEventListener('resize', handleResize);
+      return () => window.removeEventListener('resize', handleResize);
+    }
+  }, []);
 
   // Функция для форматирования текста
   const formatText = (text) => {
@@ -255,7 +276,11 @@ export default function AskAI() {
         style={{ opacity: 1, filter: 'drop-shadow(0 0 10px #000) brightness(0.5) contrast(2.5)' }}
       />
       <div className="relative z-10 min-h-screen flex flex-col">
-        <div className="w-full flex flex-col items-center pb-[92px] flex-1 bg-white/80">
+        <div className="w-full flex flex-col items-center flex-1 bg-white/80"
+             style={{
+               paddingBottom: keyboardVisible ? '120px' : '115px', // Вплотную к меню без клавиатуры
+               transition: 'padding-bottom 0.3s ease-in-out'
+             }}>
           <h1 className="text-2xl font-normal text-center mt-0 font-mono">{t('askAI.title')}</h1>
           <div className="flex flex-row items-center justify-start w-full max-w-xl mx-auto mb-2 px-4">
             <HamburgerIcon />
@@ -323,9 +348,17 @@ export default function AskAI() {
             </div>
           )}
         </div>
-        <div className="fixed left-0 right-0 bottom-[55px] z-50 w-full flex justify-center pointer-events-none">
+        <div className="fixed left-0 right-0 z-50 w-full flex justify-center pointer-events-none"
+             style={{
+               bottom: keyboardVisible ? '60px' : '55px', // Вплотную к меню без клавиатуры
+               transition: 'bottom 0.3s ease-in-out'
+             }}>
           <div className="w-full max-w-md mx-auto px-2 pointer-events-auto">
-            <div className="flex items-center border-t border-gray-300 bg-white">
+            <div className="flex items-center border-t border-gray-300 bg-white rounded-t-xl shadow-lg"
+                 style={{
+                   paddingBottom: keyboardVisible ? '10px' : '0px',
+                   transition: 'padding-bottom 0.3s ease-in-out'
+                 }}>
               <input
                 className="flex-1 py-5 px-3 text-base font-mono text-gray-400 bg-transparent outline-none border-none placeholder-gray-400"
                 placeholder={dialogStarted ? t('askAI.messagePlaceholder') : t('askAI.placeholder')}
@@ -333,6 +366,8 @@ export default function AskAI() {
                 onChange={handleInputChange}
                 disabled={loading}
                 onKeyDown={e => { if (e.key === 'Enter' && !dialogStarted) handleSend(); }}
+                onFocus={() => setKeyboardVisible(true)}
+                onBlur={() => setKeyboardVisible(false)}
               />
               <button className="p-2 flex items-center justify-center" type="button" onClick={handleSend} disabled={!inputValue.trim() || loading}>
                 {inputValue.trim() ? (

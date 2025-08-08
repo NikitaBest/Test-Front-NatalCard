@@ -160,7 +160,28 @@ export default function Settings() {
   const [loadingAI, setLoadingAI] = useState(false);
   const [error, setError] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [keyboardVisible, setKeyboardVisible] = useState(false);
   const navigate = useNavigate();
+
+  // Хук для отслеживания виртуальной клавиатуры
+  useEffect(() => {
+    const handleResize = () => {
+      const visualViewport = window.visualViewport;
+      if (visualViewport) {
+        const keyboardHeight = window.innerHeight - visualViewport.height;
+        setKeyboardVisible(keyboardHeight > 150); // Если клавиатура больше 150px
+      }
+    };
+
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', handleResize);
+      return () => window.visualViewport.removeEventListener('resize', handleResize);
+    } else {
+      // Fallback для браузеров без visualViewport
+      window.addEventListener('resize', handleResize);
+      return () => window.removeEventListener('resize', handleResize);
+    }
+  }, []);
 
   // Функция для форматирования текста
   const formatText = (text) => {
@@ -262,7 +283,11 @@ export default function Settings() {
           </div>
         )}
         {/* Список чатов */}
-        <div className="w-full overflow-hidden pb-[56px] pt-[60px]">
+        <div className="w-full overflow-hidden pb-[56px] pt-[60px]"
+             style={{
+               paddingBottom: keyboardVisible ? '120px' : '115px', // Вплотную к меню без клавиатуры
+               transition: 'padding-bottom 0.3s ease-in-out'
+             }}>
           {error && <div className="text-red-500 text-center py-4 px-4">{error}</div>}
           <AnimatePresence mode="wait">
             {!selectedChat && (
@@ -333,7 +358,11 @@ export default function Settings() {
                 {/* Контейнер сообщений */}
                 <ChatMessagesList messages={messages} loading={loadingHistory} loadingAI={loadingAI} formatText={formatText} />
                 {/* Фиксированное поле ввода */}
-                <div className="fixed left-0 right-0 bottom-[55px] z-50 w-full flex justify-center pointer-events-none px-2">
+                <div className="fixed left-0 right-0 z-50 w-full flex justify-center pointer-events-none px-2"
+                     style={{
+                       bottom: keyboardVisible ? '60px' : '55px', // Вплотную к меню без клавиатуры
+                       transition: 'bottom 0.3s ease-in-out'
+                     }}>
                   <div className="w-full pointer-events-auto">
                     <ChatInputSection 
                       chatId={selectedChat.id} 
@@ -341,6 +370,7 @@ export default function Settings() {
                       disabled={loadingHistory} 
                       formatText={formatText}
                       onLoadingChange={setLoadingAI}
+                      keyboardVisible={keyboardVisible}
                     />
                   </div>
                 </div>
@@ -445,7 +475,7 @@ export default function Settings() {
 }
 
 // --- ChatInputSection ---
-function ChatInputSection({ chatId, onMessageSent, disabled, formatText, onLoadingChange }) {
+function ChatInputSection({ chatId, onMessageSent, disabled, formatText, onLoadingChange, keyboardVisible }) {
   const { t } = useLanguage();
   const [inputValue, setInputValue] = useState("");
   const [loading, setLoading] = useState(false);
@@ -498,7 +528,11 @@ function ChatInputSection({ chatId, onMessageSent, disabled, formatText, onLoadi
   };
 
   return (
-    <div className="flex items-center border-t border-gray-300 bg-white rounded-b-xl">
+    <div className="flex items-center border-t border-gray-300 bg-white rounded-t-xl shadow-lg"
+         style={{
+           paddingBottom: keyboardVisible ? '10px' : '0px',
+           transition: 'padding-bottom 0.3s ease-in-out'
+         }}>
       <input
         className="flex-1 py-4 px-3 text-sm font-mono text-gray-400 bg-transparent outline-none border-none placeholder-gray-400"
         placeholder={t('settings.messagePlaceholder')}
@@ -542,11 +576,11 @@ function ChatMessagesList({ messages, loading, loadingAI, formatText }) {
       ref={containerRef}
       className="w-full px-4 py-6 flex flex-col gap-6 overflow-y-auto"
       style={{
-        maxHeight: 'calc(100vh - 120px)', // Увеличено для захода за поле ввода
+        maxHeight: 'calc(100vh - 180px)', // Увеличил отступ
         minHeight: '200px',
-        marginBottom: '0px', // убираем нижний отступ
-        paddingBottom: '80px', // отступ для захода за поле ввода
-        paddingTop: '70px', // отступ сверху чтобы текст не срезался шапкой
+        marginBottom: '0px',
+        paddingBottom: '120px', // Уменьшил отступ чтобы поле было вплотную к меню
+        paddingTop: '70px',
       }}
     >
       {loading ? (
