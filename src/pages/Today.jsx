@@ -96,23 +96,23 @@ export default function Today() {
               let icon, prefix;
               switch(i) {
                 case 0:
-                  icon = '🟢';
+                  icon = '🪙 ';
                   prefix = t('today.headers.inResource') + ': ';
                   break;
                 case 1:
-                  icon = '🟡';
+                  icon = '👁️‍🗨️ ';
                   prefix = t('today.headers.focusDay') + ': ';
                   break;
                 case 2:
-                  icon = '🔴';
+                  icon = '❗';
                   prefix = t('today.headers.payAttention') + ': ';
                   break;
                 case 3:
-                  icon = '💫';
+                  icon = '🧿';
                   prefix = t('today.headers.affirmation') + ': ';
                   break;
                 default:
-                  icon = '🌱';
+                  icon = '○';
                   prefix = '';
               }
               return {
