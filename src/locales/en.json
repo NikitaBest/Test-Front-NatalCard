@@ -11,6 +11,11 @@
     "yes": "Yes",
     "no": "No"
   },
+  "languageSelect": {
+    "title": "Choose language",
+    "russian": "Русский",
+    "english": "English"
+  },
   "navigation": {
     "askAI": "LIA",
     "settings": "settings",

@@ -3,7 +3,6 @@ import Button from '../components/Button';
 import { useEffect } from 'react';
 import { useUser } from '../context/UserContext';
 import { useLanguage } from '../context/LanguageContext';
-import LanguageSelect from '../components/LanguageSelect';
 import Splash from './Splash';
 
 export default function Start() {
@@ -25,11 +24,6 @@ export default function Start() {
 
   return (
     <div className="flex flex-col justify-between h-screen px-6 py-10 bg-white text-center">
-      {/* Переключатель языка в правом верхнем углу */}
-      <div className="absolute top-4 right-4">
-        <LanguageSelect variant="compact" />
-      </div>
-
       {/* Этот div используется для выравнивания с justify-between */}
       <div />
 

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import Splash from './pages/Splash';
 import Start from './pages/Start';
+import LanguageSelect from './pages/LanguageSelect';
 import Name from './pages/Name';
 import Gender from './pages/Gender';
 import BirthDate from './pages/BirthDate';
@@ -59,7 +60,8 @@ function App() {
             style={{ height: '100%' }}
           >
             <Routes location={location}>
-              <Route path="/" element={<Navigate to="/start" replace />} />
+              <Route path="/" element={<Navigate to="/language-select" replace />} />
+              <Route path="/language-select" element={<LanguageSelect />} />
               <Route path="/start" element={<Start />} />
               <Route path="/name" element={<Name />} />
               <Route path="/gender" element={<Gender />} />

@@ -5,7 +5,6 @@ import Input from '../components/Input';
 import Button from '../components/Button';
 import { useUser } from '../context/UserContext';
 import { useLanguage } from '../context/LanguageContext';
-import LanguageSelect from '../components/LanguageSelect';
 
 export default function Name() {
   const { setUserData } = useUser();
@@ -21,11 +20,6 @@ export default function Name() {
 
   return (
     <StepWrapper>
-      {/* Переключатель языка в правом верхнем углу */}
-      <div className="absolute top-4 right-4 z-10">
-        <LanguageSelect variant="compact" />
-      </div>
-      
       <h1 className="text-xl font-normal text-center mt-2 font-mono">{t('name.title')}</h1>
       <div className="flex flex-col items-center justify-center flex-1">
         <div className="mb-6 w-full mt-8">

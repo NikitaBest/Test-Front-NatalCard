@@ -4,7 +4,6 @@ import StepWrapper from '../components/StepWrapper';
 import Button from '../components/Button';
 import { useUser } from '../context/UserContext';
 import { useLanguage } from '../context/LanguageContext';
-import LanguageSelect from '../components/LanguageSelect';
 
 export default function Gender() {
   const { setUserData } = useUser();
@@ -24,11 +23,6 @@ export default function Gender() {
 
   return (
     <StepWrapper>
-      {/* Переключатель языка в правом верхнем углу */}
-      <div className="absolute top-4 right-4 z-10">
-        <LanguageSelect variant="compact" />
-      </div>
-      
       <h1 className="text-xl font-normal text-center mt-2 font-mono">{t('gender.title')}</h1>
       <div className="flex flex-col items-center justify-center flex-1">
         <div className="flex justify-center w-full mt-12 gap-4">

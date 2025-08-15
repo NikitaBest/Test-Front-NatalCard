@@ -3,7 +3,6 @@ import StepWrapper from '../components/StepWrapper';
 import Button from '../components/Button';
 import { useUser } from '../context/UserContext';
 import { useLanguage } from '../context/LanguageContext';
-import LanguageSelect from '../components/LanguageSelect';
 import Picker from 'react-mobile-picker';
 import { useNavigate } from 'react-router-dom';
 import '../styles/picker.css';
@@ -60,11 +59,6 @@ export default function BirthDate() {
 
   return (
     <StepWrapper>
-      {/* Переключатель языка в правом верхнем углу */}
-      <div className="absolute top-4 right-4 z-10">
-        <LanguageSelect variant="compact" />
-      </div>
-      
       <h1 className="text-xl font-normal text-center mt-2 font-mono">{t('birthDate.title')}</h1>
       <div className="flex flex-col items-center justify-center flex-grow">
         <div className="mb-6 w-full mt-8 flex justify-center">
