@@ -20,11 +20,12 @@ export default function Profile() {
   const [error, setError] = useState(null);
   const [isRequestInProgress, setIsRequestInProgress] = useState(false);
   const [showLoadingAnimation, setShowLoadingAnimation] = useState(true);
+  const [minTimePassed, setMinTimePassed] = useState(false);
 
-  // Минимальное время показа анимации (3 секунды)
+  // Минимальное время показа анимации (4 секунды)
   useEffect(() => {
     const timer = setTimeout(() => {
-      setShowLoadingAnimation(false);
+      setMinTimePassed(true);
     }, 4000);
     
     return () => clearTimeout(timer);
@@ -34,6 +35,7 @@ export default function Profile() {
     setIsRequestInProgress(true);
     setError(null);
     setShowLoadingAnimation(true);
+    setMinTimePassed(false);
     
     try {
       const data = await getUserChart();
@@ -42,9 +44,16 @@ export default function Profile() {
       setError(err.message);
     } finally {
       setIsRequestInProgress(false);
-      // Анимация скроется через 2 секунды благодаря useEffect выше
+      setLoading(false);
     }
   };
+
+  // Скрываем анимацию только когда данные загружены И прошло минимум 4 секунды
+  useEffect(() => {
+    if (minTimePassed && !loading && !isRequestInProgress) {
+      setShowLoadingAnimation(false);
+    }
+  }, [minTimePassed, loading, isRequestInProgress]);
 
   useEffect(() => {
     fetchChartData();

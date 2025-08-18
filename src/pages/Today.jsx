@@ -49,12 +49,13 @@ export default function Today() {
   const [error, setError] = useState(null);
   const [chartData, setChartData] = useState(null);
   const [showLoadingAnimation, setShowLoadingAnimation] = useState(true);
+  const [minTimePassed, setMinTimePassed] = useState(false);
 
-  // Минимальное время показа анимации (3 секунды)
+  // Минимальное время показа анимации (4 секунды)
   useEffect(() => {
     const timer = setTimeout(() => {
-      setShowLoadingAnimation(false);
-    }, 3000);
+      setMinTimePassed(true);
+    }, 4000);
     
     return () => clearTimeout(timer);
   }, []);
@@ -80,6 +81,7 @@ export default function Today() {
       setLoading(true);
       setError(null);
       setShowLoadingAnimation(true);
+      setMinTimePassed(false);
       
       // Небольшая задержка перед очисткой данных для лучшего UX
       setTimeout(() => {
@@ -140,11 +142,17 @@ export default function Today() {
         setDailyData(null);
       } finally {
         setLoading(false);
-        // Анимация скроется через 2 секунды благодаря useEffect выше
       }
     }
     fetchDaily();
   }, [selectedDate, t]);
+
+  // Скрываем анимацию только когда данные загружены И прошло минимум 4 секунды
+  useEffect(() => {
+    if (minTimePassed && !loading) {
+      setShowLoadingAnimation(false);
+    }
+  }, [minTimePassed, loading]);
 
   // Вычисляем знаки
   let ascSign = '', sunSign = '', moonSign = '';

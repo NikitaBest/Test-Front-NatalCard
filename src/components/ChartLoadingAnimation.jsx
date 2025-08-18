@@ -6,7 +6,6 @@ export default function ChartLoadingAnimation() {
   const { t } = useLanguage();
   const [currentStep, setCurrentStep] = useState(0);
   const [animationKey, setAnimationKey] = useState(0);
-  const [showAnimation, setShowAnimation] = useState(true);
   
   // Тексты о построении карты
   const loadingSteps = [
@@ -15,15 +14,6 @@ export default function ChartLoadingAnimation() {
     t('profile.loading.building'),
     t('profile.loading.finalizing')
   ];
-
-  // Минимальное время показа анимации (3 секунды)
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowAnimation(false);
-    }, 4000);
-    
-    return () => clearTimeout(timer);
-  }, []);
 
   // Анимация смены текста
   useEffect(() => {
@@ -41,11 +31,6 @@ export default function ChartLoadingAnimation() {
     
     return () => clearInterval(animationInterval);
   }, []);
-
-  // Если анимация должна скрыться, возвращаем null
-  if (!showAnimation) {
-    return null;
-  }
 
   // Анимация сборки карты из кусочков - квадратная структура с вертикальными и горизонтальными линиями
   const chartPieces = [
