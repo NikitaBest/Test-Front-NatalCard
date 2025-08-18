@@ -1,52 +1,54 @@
+import React, { useState, useEffect } from 'react';
 import BottomMenu from '../components/BottomMenu';
 import UserProfileHeader from '../components/UserProfileHeader';
 import ProfileTabs from '../components/ProfileTabs';
 import NatalChartSquare from '../components/NatalChartSquare';
 import NatalTable from '../components/NatalTable';
-import ProfileInfoBlock from '../components/ProfileInfoBlock';
 import ChartLoadingAnimation from '../components/ChartLoadingAnimation';
+import ProfileInfoBlock from '../components/ProfileInfoBlock';
 import { useUser } from '../context/UserContext';
 import { useLanguage } from '../context/LanguageContext';
-import { useEffect, useState } from 'react';
 import { getUserChart } from '../utils/api';
-import React from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Profile() {
   const { userData } = useUser();
   const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState('map');
   const [chartData, setChartData] = useState(null);
-  const [loading, setLoading] = useState(true); // Начинаем с true
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [isRequestInProgress, setIsRequestInProgress] = useState(false); // Предотвращаем множественные запросы
+  const [isRequestInProgress, setIsRequestInProgress] = useState(false);
+  const [showLoadingAnimation, setShowLoadingAnimation] = useState(true);
 
-  const fetchChartData = () => {
-    if (isRequestInProgress) return; // Не делаем запрос, если уже идет
+  // Минимальное время показа анимации (3 секунды)
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowLoadingAnimation(false);
+    }, 4000);
     
-    setLoading(true);
-    setError(null);
-    setChartData(null); // Очищаем старые данные при каждом новом запросе
+    return () => clearTimeout(timer);
+  }, []);
+
+  const fetchChartData = async () => {
     setIsRequestInProgress(true);
+    setError(null);
+    setShowLoadingAnimation(true);
     
-    getUserChart()
-      .then(data => {
-        setChartData(data);
-        setError(null);
-      })
-      .catch(err => {
-        setError(err.message);
-        setChartData(null);
-      })
-      .finally(() => {
-        setLoading(false);
-        setIsRequestInProgress(false);
-      });
+    try {
+      const data = await getUserChart();
+      setChartData(data);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setIsRequestInProgress(false);
+      // Анимация скроется через 2 секунды благодаря useEffect выше
+    }
   };
 
   useEffect(() => {
     fetchChartData();
-  }, [t]);
+  }, []);
 
   // Функция для получения названия знака по номеру rasi
   function getSignNameByRasi(rasi) {
@@ -83,7 +85,7 @@ export default function Profile() {
             exit={{ opacity: 0, x: 30 }}
             transition={{ duration: 0.25 }}
           >
-            {loading ? (
+            {(loading || showLoadingAnimation) ? (
               <ChartLoadingAnimation />
             ) : error ? (
               <div className="text-center my-8">
@@ -120,7 +122,7 @@ export default function Profile() {
             exit={{ opacity: 0, x: -30 }}
             transition={{ duration: 0.25 }}
           >
-            {loading ? (
+            {(loading || showLoadingAnimation) ? (
               <ChartLoadingAnimation />
             ) : error ? (
               <div className="text-center my-8">

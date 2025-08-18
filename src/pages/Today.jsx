@@ -48,6 +48,16 @@ export default function Today() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [chartData, setChartData] = useState(null);
+  const [showLoadingAnimation, setShowLoadingAnimation] = useState(true);
+
+  // Минимальное время показа анимации (3 секунды)
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowLoadingAnimation(false);
+    }, 3000);
+    
+    return () => clearTimeout(timer);
+  }, []);
 
   // Функция для получения названия знака по номеру rasi
   function getSignNameByRasi(rasi) {
@@ -69,6 +79,7 @@ export default function Today() {
     async function fetchDaily() {
       setLoading(true);
       setError(null);
+      setShowLoadingAnimation(true);
       
       // Небольшая задержка перед очисткой данных для лучшего UX
       setTimeout(() => {
@@ -129,6 +140,7 @@ export default function Today() {
         setDailyData(null);
       } finally {
         setLoading(false);
+        // Анимация скроется через 2 секунды благодаря useEffect выше
       }
     }
     fetchDaily();
@@ -155,7 +167,7 @@ export default function Today() {
       <h2 className="text-center font-mono text-1xl font-normal text-gray-800 mb-6 mt-8">
         {t('today.title').replace('{date}', selectedDate.toLocaleDateString('ru-RU'))}
       </h2>
-      {loading && <HoroscopeLoadingAnimation />}
+      {(loading || showLoadingAnimation) && <HoroscopeLoadingAnimation />}
       {error && <div className="text-center text-red-500">{error}</div>}
       {dailyData && (
         <TodayInfoBlock

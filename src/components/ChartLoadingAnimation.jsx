@@ -6,6 +6,7 @@ export default function ChartLoadingAnimation() {
   const { t } = useLanguage();
   const [currentStep, setCurrentStep] = useState(0);
   const [animationKey, setAnimationKey] = useState(0);
+  const [showAnimation, setShowAnimation] = useState(true);
   
   // Тексты о построении карты
   const loadingSteps = [
@@ -14,6 +15,15 @@ export default function ChartLoadingAnimation() {
     t('profile.loading.building'),
     t('profile.loading.finalizing')
   ];
+
+  // Минимальное время показа анимации (3 секунды)
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowAnimation(false);
+    }, 4000);
+    
+    return () => clearTimeout(timer);
+  }, []);
 
   // Анимация смены текста
   useEffect(() => {
@@ -31,6 +41,11 @@ export default function ChartLoadingAnimation() {
     
     return () => clearInterval(animationInterval);
   }, []);
+
+  // Если анимация должна скрыться, возвращаем null
+  if (!showAnimation) {
+    return null;
+  }
 
   // Анимация сборки карты из кусочков - квадратная структура с вертикальными и горизонтальными линиями
   const chartPieces = [
@@ -90,7 +105,7 @@ export default function ChartLoadingAnimation() {
   ];
 
   return (
-    <div className="fixed inset-0 flex flex-col items-center justify-center bg-white z-50">
+    <div className="fixed inset-0 flex flex-col items-center justify-center bg-white z-50 px-4">
       {/* Анимированный текст */}
       <motion.div
         key={currentStep}
@@ -98,15 +113,15 @@ export default function ChartLoadingAnimation() {
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -10 }}
         transition={{ duration: 0.5 }}
-        className="text-center mb-8"
+        className="text-center mb-6 sm:mb-8 md:mb-12"
       >
-        <p className="text-xl font-mono text-gray-800">
+        <p className="text-base sm:text-lg md:text-xl font-mono text-gray-800 px-2">
           {loadingSteps[currentStep]}
         </p>
       </motion.div>
 
-      {/* Анимированная карта */}
-      <div className="relative w-48 h-48">
+      {/* Центральная схема карты */}
+      <div className="relative w-64 h-64 sm:w-72 sm:h-72 md:w-80 md:h-80 lg:w-96 lg:h-96 mb-6 sm:mb-8">
         <svg
           key={animationKey}
           viewBox="0 0 100 100"
@@ -256,9 +271,9 @@ export default function ChartLoadingAnimation() {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 1.0, duration: 0.5 }}
-        className="text-center mt-8 px-4"
+        className="text-center mt-4 sm:mt-6 md:mt-8 px-4"
       >
-        <p className="text-sm font-mono text-gray-600 max-w-xs">
+        <p className="text-xs sm:text-sm font-mono text-gray-600 max-w-xs sm:max-w-sm md:max-w-md">
           {t('profile.loading.warning')}
         </p>
       </motion.div>

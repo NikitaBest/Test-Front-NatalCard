@@ -6,6 +6,7 @@ export default function HoroscopeLoadingAnimation() {
   const { t } = useLanguage();
   const [currentStep, setCurrentStep] = useState(0);
   const [animationKey, setAnimationKey] = useState(0);
+  const [showAnimation, setShowAnimation] = useState(true);
   
   // Тексты о построении гороскопа
   const loadingSteps = [
@@ -14,6 +15,15 @@ export default function HoroscopeLoadingAnimation() {
     t('today.loading.building'),
     t('today.loading.finalizing')
   ];
+
+  // Минимальное время показа анимации (3 секунды)
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowAnimation(false);
+    }, 3000);
+    
+    return () => clearTimeout(timer);
+  }, []);
 
   // Анимация смены текста
   useEffect(() => {
@@ -31,6 +41,11 @@ export default function HoroscopeLoadingAnimation() {
     
     return () => clearInterval(animationInterval);
   }, []);
+
+  // Если анимация должна скрыться, возвращаем null
+  if (!showAnimation) {
+    return null;
+  }
 
   // Астрологические символы для анимации
   const astroSymbols = [
@@ -61,7 +76,7 @@ export default function HoroscopeLoadingAnimation() {
   ];
 
   return (
-    <div className="fixed inset-0 flex flex-col items-center justify-center bg-white z-50">
+    <div className="fixed inset-0 flex flex-col items-center justify-center bg-white z-50 px-4">
       {/* Анимированный текст */}
       <motion.div
         key={currentStep}
@@ -69,15 +84,15 @@ export default function HoroscopeLoadingAnimation() {
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -10 }}
         transition={{ duration: 0.5 }}
-        className="text-center mb-12"
+        className="text-center mb-6 sm:mb-8 md:mb-12"
       >
-        <p className="text-xl font-mono text-gray-800">
+        <p className="text-base sm:text-lg md:text-xl font-mono text-gray-800 px-2">
           {loadingSteps[currentStep]}
         </p>
       </motion.div>
 
       {/* Центральная астрологическая схема */}
-      <div className="relative w-80 h-80 mb-8">
+      <div className="relative w-64 h-64 sm:w-72 sm:h-72 md:w-80 md:h-80 lg:w-96 lg:h-96 mb-6 sm:mb-8">
         <svg
           key={animationKey}
           viewBox="0 0 100 100"
@@ -280,9 +295,9 @@ export default function HoroscopeLoadingAnimation() {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 1.0, duration: 0.5 }}
-        className="text-center mt-8 px-4"
+        className="text-center mt-4 sm:mt-6 md:mt-8 px-4"
       >
-        <p className="text-sm font-mono text-gray-600 max-w-xs">
+        <p className="text-xs sm:text-sm font-mono text-gray-600 max-w-xs sm:max-w-sm md:max-w-md">
           {t('today.loading.warning')}
         </p>
       </motion.div>
