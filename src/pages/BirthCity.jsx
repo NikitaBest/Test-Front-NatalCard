@@ -51,17 +51,57 @@ export default function BirthCity() {
         time: userData.birthTime,
         locationId: selectedCity.id,
       });
+
+      // Валидация данных перед отправкой
+      if (!userData.name || !userData.name.trim()) {
+        throw new Error('Имя не может быть пустым');
+      }
+
+      if (!userData.birthDate || !userData.birthDate.trim()) {
+        throw new Error('Дата рождения не может быть пустой');
+      }
+
+      if (!userData.birthTime || !userData.birthTime.trim()) {
+        throw new Error('Время рождения не может быть пустым');
+      }
+
+      if (!selectedCity.cityName || !selectedCity.cityName.trim()) {
+        throw new Error('Название города не может быть пустым');
+      }
+
+      // Проверяем формат даты (YYYY-MM-DD)
+      const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+      if (!dateRegex.test(userData.birthDate)) {
+        throw new Error('Неверный формат даты. Ожидается YYYY-MM-DD');
+      }
+
+      // Проверяем формат времени (HH:MM)
+      const timeRegex = /^\d{2}:\d{2}$/;
+      if (!timeRegex.test(userData.birthTime)) {
+        throw new Error('Неверный формат времени. Ожидается HH:MM');
+      }
+
+      // Проверяем координаты
+      if (isNaN(Number(selectedCity.latitude)) || isNaN(Number(selectedCity.longitude))) {
+        throw new Error('Неверные координаты города');
+      }
+
       // Формируем объект для updateUserProfile
       const profileData = {
-        name: userData.name,
+        name: userData.name.trim(),
         gender: userData.gender === 'male' ? 1 : 2,
-        birthDate: userData.birthDate,
-        birthTime: userData.birthTime,
-        birthLocation: selectedCity.cityName,
+        birthDate: userData.birthDate.trim(),
+        birthTime: userData.birthTime.trim(),
+        birthLocation: selectedCity.cityName.trim(),
         latitude: Number(selectedCity.latitude),
         longitude: Number(selectedCity.longitude),
-        utc: utcData.utc || 0,
+        utc: Number(utcData.utc) || 0,
       };
+
+      // Логирование для отладки
+      console.log('Отправляемые данные профиля:', profileData);
+      console.log('UTC данные:', utcData);
+
       const response = await updateUserProfile(profileData);
       if (response && response.value) {
         localStorage.setItem('user', JSON.stringify(response.value));

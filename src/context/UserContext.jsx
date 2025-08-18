@@ -9,7 +9,7 @@ export function UserProvider({ children }) {
     gender: '',
     birthDate: '',
     birthTime: '',
-    birthCity: ''
+    birthLocation: ''
   });
   const [isLoading, setIsLoading] = useState(true);
   const [isProfileFilled, setIsProfileFilled] = useState(false);
@@ -78,7 +78,7 @@ export function UserProvider({ children }) {
             gender: '',
             birthDate: '',
             birthTime: '',
-            birthCity: ''
+            birthLocation: ''
           });
           setIsProfileFilled(false);
         }
@@ -90,7 +90,7 @@ export function UserProvider({ children }) {
           gender: '',
           birthDate: '',
           birthTime: '',
-          birthCity: ''
+          birthLocation: ''
         });
         setIsProfileFilled(false);
       } finally {
