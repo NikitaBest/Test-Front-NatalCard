@@ -165,6 +165,22 @@ export default function AskAI() {
     }
   }, []);
 
+  // useEffect для обновления высоты textarea при изменении inputValue
+  useEffect(() => {
+    const textarea = document.querySelector('textarea');
+    if (textarea) {
+      textarea.style.height = 'auto';
+      const newHeight = Math.min(textarea.scrollHeight, 88);
+      textarea.style.height = newHeight + 'px';
+      
+      if (textarea.scrollHeight > 88) {
+        textarea.style.overflowY = 'auto';
+      } else {
+        textarea.style.overflowY = 'hidden';
+      }
+    }
+  }, [inputValue]);
+
   // Функция для форматирования текста
   const formatText = (text) => {
     return text
@@ -183,6 +199,22 @@ export default function AskAI() {
   const handleQuestionClick = (q, idx) => {
     setSelectedQuestion(idx);
     setInputValue(q);
+    
+    // Обновляем высоту textarea после установки значения
+    setTimeout(() => {
+      const textarea = document.querySelector('textarea');
+      if (textarea) {
+        textarea.style.height = 'auto';
+        const newHeight = Math.min(textarea.scrollHeight, 88);
+        textarea.style.height = newHeight + 'px';
+        
+        if (textarea.scrollHeight > 88) {
+          textarea.style.overflowY = 'auto';
+        } else {
+          textarea.style.overflowY = 'hidden';
+        }
+      }
+    }, 0);
   };
 
   const handleInputChange = (e) => {
