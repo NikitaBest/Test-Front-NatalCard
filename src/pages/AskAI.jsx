@@ -192,7 +192,15 @@ export default function AskAI() {
     // Автоматическое изменение высоты textarea
     const textarea = e.target;
     textarea.style.height = 'auto';
-    textarea.style.height = Math.min(textarea.scrollHeight, 88) + 'px'; // Максимум 88px (2 строки)
+    const newHeight = Math.min(textarea.scrollHeight, 88); // Максимум 88px (2 строки)
+    textarea.style.height = newHeight + 'px';
+    
+    // Если текст длиннее максимальной высоты, включаем скролл
+    if (textarea.scrollHeight > 88) {
+      textarea.style.overflowY = 'auto';
+    } else {
+      textarea.style.overflowY = 'hidden';
+    }
   };
 
   // Функция для проверки готовности ответа ИИ
@@ -421,7 +429,7 @@ export default function AskAI() {
                    transition: 'padding-bottom 0.3s ease-in-out'
                  }}>
               <textarea
-                className="flex-1 py-3 px-3 text-base font-mono text-gray-400 bg-transparent outline-none border-none placeholder-gray-400 resize-none overflow-hidden"
+                className="flex-1 py-3 px-3 text-base font-mono text-gray-400 bg-transparent outline-none border-none placeholder-gray-400 resize-none"
                 placeholder={dialogStarted ? t('askAI.messagePlaceholder') : t('askAI.placeholder')}
                 value={inputValue}
                 onChange={handleInputChange}
@@ -438,7 +446,13 @@ export default function AskAI() {
                 style={{
                   minHeight: '44px',
                   maxHeight: '88px', // Максимум 2 строки
-                  lineHeight: '1.4'
+                  lineHeight: '1.4',
+                  overflowY: 'auto',
+                  scrollbarWidth: 'none', // Firefox
+                  msOverflowStyle: 'none', // IE/Edge
+                  WebkitScrollbar: {
+                    display: 'none' // Chrome/Safari
+                  }
                 }}
               />
               <button className="p-2 flex items-center justify-center" type="button" onClick={handleSend} disabled={!inputValue.trim() || loading || isCheckingReadiness}>
