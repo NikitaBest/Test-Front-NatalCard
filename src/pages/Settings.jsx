@@ -5,7 +5,7 @@ import LanguageSelect from '../components/LanguageSelect';
 import { useState, useEffect, useRef } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { getAIChats, getAIChatHistory, sendAIMessage, getAIAnswer } from '../utils/api';
+import { getAIChats, getAIChatHistory, sendAIMessage, getAIAnswer, checkAIAnswerReady } from '../utils/api';
 import bgImage from '../assets/bg2.png';
 
 // Импортируем функцию getHeaders из api.js
@@ -158,6 +158,7 @@ export default function Settings() {
   const [messages, setMessages] = useState([]);
   const [loadingHistory, setLoadingHistory] = useState(false);
   const [loadingAI, setLoadingAI] = useState(false);
+  const [isCheckingReadiness, setIsCheckingReadiness] = useState(false);
   const [error, setError] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [keyboardVisible, setKeyboardVisible] = useState(false);
@@ -356,7 +357,7 @@ export default function Settings() {
                   </div>
                 </div>
                 {/* Контейнер сообщений */}
-                <ChatMessagesList messages={messages} loading={loadingHistory} loadingAI={loadingAI} formatText={formatText} />
+                <ChatMessagesList messages={messages} loading={loadingHistory} loadingAI={loadingAI} isCheckingReadiness={isCheckingReadiness} formatText={formatText} />
                 {/* Фиксированное поле ввода */}
                 <div className="fixed left-0 right-0 z-50 w-full flex justify-center pointer-events-none px-2"
                      style={{
@@ -370,6 +371,7 @@ export default function Settings() {
                       disabled={loadingHistory} 
                       formatText={formatText}
                       onLoadingChange={setLoadingAI}
+                      onCheckingReadinessChange={setIsCheckingReadiness}
                       keyboardVisible={keyboardVisible}
                     />
                   </div>
@@ -475,11 +477,80 @@ export default function Settings() {
 }
 
 // --- ChatInputSection ---
-function ChatInputSection({ chatId, onMessageSent, disabled, formatText, onLoadingChange, keyboardVisible }) {
+function ChatInputSection({ chatId, onMessageSent, disabled, formatText, onLoadingChange, onCheckingReadinessChange, keyboardVisible }) {
   const { t } = useLanguage();
   const [inputValue, setInputValue] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [isCheckingReadiness, setIsCheckingReadiness] = useState(false);
+
+  // Функция для проверки готовности ответа ИИ
+  const checkAnswerReadiness = async (currentChatId) => {
+    try {
+      const isReady = await checkAIAnswerReady(currentChatId);
+      return isReady;
+    } catch (err) {
+      console.error('Ошибка проверки готовности ответа ИИ:', err);
+      return false;
+    }
+  };
+
+  // Функция для получения ответа ИИ
+  const fetchAIAnswer = async (dateTime, currentChatId) => {
+    try {
+      const answerData = await getAIAnswer(dateTime, currentChatId);
+      
+      if (answerData.value && answerData.value.content) {
+        // Добавляем ответ ИИ как новое сообщение (будет печататься)
+        const aiMessage = {
+          isUser: false,
+          content: answerData.value.content,
+          createdAt: answerData.value.createdAt,
+          isNew: true, // Помечаем как новое сообщение
+        };
+        onMessageSent(aiMessage);
+      }
+    } catch (e) {
+      throw e;
+    }
+  };
+
+  // Основная логика проверки готовности и получения ответа
+  const startAnswerLoading = async (dateTime, currentChatId) => {
+    setIsCheckingReadiness(true);
+    onCheckingReadinessChange?.(true);
+    
+    // Проверяем готовность каждые 4 секунды
+    const checkInterval = setInterval(async () => {
+      try {
+        const isReady = await checkAnswerReadiness(currentChatId);
+        
+        if (isReady) {
+          console.log('AI answer is ready, stopping checks and loading data');
+          clearInterval(checkInterval);
+          setIsCheckingReadiness(false);
+          onCheckingReadinessChange?.(false);
+          // Ответ готов, загружаем данные
+          await fetchAIAnswer(dateTime, currentChatId);
+        }
+      } catch (err) {
+        console.error('Ошибка при проверке готовности ответа ИИ:', err);
+        // Продолжаем проверять, не прерываем процесс
+      }
+    }, 4000);
+
+    // Останавливаем проверку через 5 минут (максимальное время ожидания)
+    setTimeout(() => {
+      clearInterval(checkInterval);
+      if (isCheckingReadiness) {
+        setIsCheckingReadiness(false);
+        onCheckingReadinessChange?.(false);
+        setError('Превышено время ожидания ответа ИИ');
+        setLoading(false);
+        onLoadingChange?.(false);
+      }
+    }, 300000); // 5 минут
+  };
 
   const handleSend = async () => {
     if (!inputValue.trim()) return;
@@ -507,18 +578,9 @@ function ChatInputSection({ chatId, onMessageSent, disabled, formatText, onLoadi
       const data = await sendAIMessage(dateTime, chatId, userMessage);
       if (!data.value) throw new Error('Нет ответа от сервера');
       
-      // Получаем ответ ИИ
-      const answerData = await getAIAnswer(data.value.createdAt, chatId);
-      if (answerData.value && answerData.value.content) {
-        // Добавляем ответ ИИ как новое сообщение (будет печататься)
-        const aiMessage = {
-          isUser: false,
-          content: answerData.value.content,
-          createdAt: answerData.value.createdAt,
-          isNew: true, // Помечаем как новое сообщение
-        };
-        onMessageSent(aiMessage);
-      }
+      // Начинаем проверку готовности ответа ИИ
+      await startAnswerLoading(data.value.createdAt, chatId);
+      
     } catch (e) {
       setError(e.message);
     } finally {
@@ -538,10 +600,10 @@ function ChatInputSection({ chatId, onMessageSent, disabled, formatText, onLoadi
         placeholder={t('settings.messagePlaceholder')}
         value={inputValue}
         onChange={e => setInputValue(e.target.value)}
-        disabled={loading || disabled}
+        disabled={loading || isCheckingReadiness || disabled}
         onKeyDown={e => { if (e.key === 'Enter') handleSend(); }}
       />
-      <button className="p-2 flex items-center justify-center" type="button" onClick={handleSend} disabled={!inputValue.trim() || loading || disabled}>
+      <button className="p-2 flex items-center justify-center" type="button" onClick={handleSend} disabled={!inputValue.trim() || loading || isCheckingReadiness || disabled}>
         {inputValue.trim() ? (
           <svg width="24" height="24" fill="none" viewBox="0 0 24 24">
             <circle cx="12" cy="12" r="12" fill="#1A1A1A"/>
@@ -560,7 +622,7 @@ function ChatInputSection({ chatId, onMessageSent, disabled, formatText, onLoadi
 }
 
 // --- ChatMessagesList ---
-function ChatMessagesList({ messages, loading, loadingAI, formatText }) {
+function ChatMessagesList({ messages, loading, loadingAI, isCheckingReadiness, formatText }) {
   const messagesEndRef = useRef(null);
   const containerRef = useRef(null);
 
@@ -609,7 +671,7 @@ function ChatMessagesList({ messages, loading, loadingAI, formatText }) {
             </div>
           ))}
           {/* Анимированное сообщение загрузки */}
-          {loadingAI && <LoadingMessage />}
+          {(loadingAI || isCheckingReadiness) && <LoadingMessage />}
         </>
       )}
       <div ref={messagesEndRef} />

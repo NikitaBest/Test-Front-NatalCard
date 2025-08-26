@@ -3,7 +3,7 @@ import AskAITabs from '../components/AskAITabs';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLanguage } from '../context/LanguageContext';
-import { sendAIMessage, getAIAnswer } from '../utils/api';
+import { sendAIMessage, getAIAnswer, checkAIAnswerReady } from '../utils/api';
 import bgImage from '../assets/bg2.png';
 
 // Импортируем функцию getHeaders из api.js
@@ -143,6 +143,7 @@ export default function AskAI() {
   const [chatId, setChatId] = useState(0);
   const [selectedQuestion, setSelectedQuestion] = useState(null);
   const [keyboardVisible, setKeyboardVisible] = useState(false);
+  const [isCheckingReadiness, setIsCheckingReadiness] = useState(false);
 
   // Хук для отслеживания виртуальной клавиатуры
   useEffect(() => {
@@ -189,6 +190,67 @@ export default function AskAI() {
     setSelectedQuestion(null);
   };
 
+  // Функция для проверки готовности ответа ИИ
+  const checkAnswerReadiness = async (currentChatId) => {
+    try {
+      const isReady = await checkAIAnswerReady(currentChatId);
+      return isReady;
+    } catch (err) {
+      console.error('Ошибка проверки готовности ответа ИИ:', err);
+      return false;
+    }
+  };
+
+  // Функция для получения ответа ИИ
+  const fetchAIAnswer = async (dateTime, currentChatId) => {
+    try {
+      const answerData = await getAIAnswer(dateTime, currentChatId);
+      
+      if (answerData.value && answerData.value.content) {
+        setMessages(prev => [...prev, {
+          isUser: false,
+          content: answerData.value.content,
+          createdAt: answerData.value.createdAt,
+        }]);
+      }
+    } catch (e) {
+      throw e;
+    }
+  };
+
+  // Основная логика проверки готовности и получения ответа
+  const startAnswerLoading = async (dateTime, currentChatId) => {
+    setIsCheckingReadiness(true);
+    
+    // Проверяем готовность каждые 4 секунды
+    const checkInterval = setInterval(async () => {
+      try {
+        const isReady = await checkAnswerReadiness(currentChatId);
+        
+        if (isReady) {
+          console.log('AI answer is ready, stopping checks and loading data');
+          clearInterval(checkInterval);
+          setIsCheckingReadiness(false);
+          // Ответ готов, загружаем данные
+          await fetchAIAnswer(dateTime, currentChatId);
+        }
+      } catch (err) {
+        console.error('Ошибка при проверке готовности ответа ИИ:', err);
+        // Продолжаем проверять, не прерываем процесс
+      }
+    }, 4000);
+
+    // Останавливаем проверку через 5 минут (максимальное время ожидания)
+    setTimeout(() => {
+      clearInterval(checkInterval);
+      if (isCheckingReadiness) {
+        setIsCheckingReadiness(false);
+        setError('Превышено время ожидания ответа ИИ');
+        setLoading(false);
+      }
+    }, 300000); // 5 минут
+  };
+
   const handleSend = async () => {
     if (!inputValue.trim()) return;
     
@@ -216,18 +278,12 @@ export default function AskAI() {
       if (!data.value) throw new Error('Нет ответа от сервера');
       
       // Сохраняем chatId, если новый
+      const currentChatId = data.value.chatId || chatId;
       if (data.value.chatId && chatId !== data.value.chatId) setChatId(data.value.chatId);
       
-      // 2. Получаем ответ ИИ
-      const answerData = await getAIAnswer(data.value.createdAt, data.value.chatId);
+      // 2. Начинаем проверку готовности ответа ИИ
+      await startAnswerLoading(data.value.createdAt, currentChatId);
       
-      if (answerData.value && answerData.value.content) {
-        setMessages(prev => [...prev, {
-          isUser: false,
-          content: answerData.value.content,
-          createdAt: answerData.value.createdAt,
-        }]);
-      }
     } catch (e) {
       // Улучшенная обработка ошибок
       let errorMessage = 'Произошла ошибка при обработке запроса';
@@ -335,7 +391,7 @@ export default function AskAI() {
                     </div>
                   ))}
                   {/* Анимированное сообщение загрузки */}
-                  {loading && <LoadingMessage />}
+                  {(loading || isCheckingReadiness) && <LoadingMessage />}
                 </div>
               )}
               {error && <div className="text-center text-red-500 mb-4">{error}</div>}
@@ -364,12 +420,12 @@ export default function AskAI() {
                 placeholder={dialogStarted ? t('askAI.messagePlaceholder') : t('askAI.placeholder')}
                 value={inputValue}
                 onChange={handleInputChange}
-                disabled={loading}
+                disabled={loading || isCheckingReadiness}
                 onKeyDown={e => { if (e.key === 'Enter' && !dialogStarted) handleSend(); }}
                 onFocus={() => setKeyboardVisible(true)}
                 onBlur={() => setKeyboardVisible(false)}
               />
-              <button className="p-2 flex items-center justify-center" type="button" onClick={handleSend} disabled={!inputValue.trim() || loading}>
+              <button className="p-2 flex items-center justify-center" type="button" onClick={handleSend} disabled={!inputValue.trim() || loading || isCheckingReadiness}>
                 {inputValue.trim() ? (
                   <svg width="28" height="28" fill="none" viewBox="0 0 28 28">
                     <circle cx="14" cy="14" r="14" fill="#1A1A1A"/>

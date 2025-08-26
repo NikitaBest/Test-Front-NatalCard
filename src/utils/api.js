@@ -157,6 +157,20 @@ export async function getAIAnswer(dateTime, chatId) {
   return response.json();
 }
 
+export async function checkAIAnswerReady(chatId) {
+  const response = await fetchWithTimeout(
+    `https://astro-backend.odonta.burtimaxbot.ru/ai-chat/answer/check?chatId=${chatId}`,
+    {
+      headers: getHeaders(),
+    },
+    10000 // 10 секунд для проверки готовности
+  );
+  
+  if (!response.ok) throw new Error('Ошибка проверки готовности ответа ИИ');
+  const data = await response.json();
+  return data.value; // Возвращаем boolean значение готовности
+}
+
 export async function getAIChats() {
   const response = await fetchWithTimeout('https://astro-backend.odonta.burtimaxbot.ru/ai-chat/chats', {
     headers: getHeaders(),
