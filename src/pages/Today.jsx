@@ -211,9 +211,18 @@ export default function Today() {
     });
     
     if (minTimePassed && !loading && !isCheckingReadiness) {
+      console.log('Hiding loading animation');
       setShowLoadingAnimation(false);
     }
-  }, [minTimePassed, loading, isCheckingReadiness]);
+  }, [minTimePassed, loading, isCheckingReadiness, dailyData]);
+
+  // Принудительно скрываем анимацию при наличии данных
+  useEffect(() => {
+    if (dailyData && showLoadingAnimation) {
+      console.log('Forcing animation hide - data is available');
+      setShowLoadingAnimation(false);
+    }
+  }, [dailyData, showLoadingAnimation]);
 
   // Вычисляем знаки
   let ascSign = '', sunSign = '', moonSign = '';
@@ -236,7 +245,7 @@ export default function Today() {
       <h2 className="text-center font-mono text-1xl font-normal text-gray-800 mb-6 mt-8">
         {t('today.title').replace('{date}', selectedDate.toLocaleDateString('ru-RU'))}
       </h2>
-      {(loading || showLoadingAnimation || isCheckingReadiness) && <HoroscopeLoadingAnimation />}
+      {(loading || showLoadingAnimation || isCheckingReadiness) && !dailyData && <HoroscopeLoadingAnimation />}
       {error && <div className="text-center text-red-500">{error}</div>}
       {dailyData && (
         <TodayInfoBlock
