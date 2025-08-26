@@ -190,4 +190,18 @@ export async function getDailyHoroscope(date) {
   
   if (!response.ok) throw new Error('Ошибка загрузки гороскопа');
   return response.json();
+}
+
+export async function checkDailyHoroscopeReady(date) {
+  const response = await fetchWithTimeout(
+    `https://astro-backend.odonta.burtimaxbot.ru/user/daily-horoscope/check?date=${date}`,
+    {
+      headers: getHeaders(),
+    },
+    10000 // 10 секунд для проверки готовности
+  );
+  
+  if (!response.ok) throw new Error('Ошибка проверки готовности гороскопа');
+  const data = await response.json();
+  return data.value; // Возвращаем boolean значение готовности
 } 

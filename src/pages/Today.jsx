@@ -6,7 +6,7 @@ import HoroscopeLoadingAnimation from '../components/HoroscopeLoadingAnimation';
 import { useUser } from '../context/UserContext';
 import { useLanguage } from '../context/LanguageContext';
 import { useState, useEffect } from 'react';
-import { getUserChart, getDailyHoroscope } from '../utils/api';
+import { getUserChart, getDailyHoroscope, checkDailyHoroscopeReady } from '../utils/api';
 
 // Импортируем функцию getHeaders из api.js
 function getHeaders() {
@@ -50,6 +50,7 @@ export default function Today() {
   const [chartData, setChartData] = useState(null);
   const [showLoadingAnimation, setShowLoadingAnimation] = useState(true);
   const [minTimePassed, setMinTimePassed] = useState(false);
+  const [isCheckingReadiness, setIsCheckingReadiness] = useState(false);
 
   // Минимальное время показа анимации (4 секунды)
   useEffect(() => {
@@ -76,83 +77,143 @@ export default function Today() {
     getUserChart().then(setChartData).catch(() => {});
   }, []);
 
-  useEffect(() => {
-    async function fetchDaily() {
-      setLoading(true);
-      setError(null);
-      setShowLoadingAnimation(true);
-      setMinTimePassed(false);
+  // Функция для проверки готовности гороскопа
+  const checkHoroscopeReadiness = async (dateStr) => {
+    try {
+      const isReady = await checkDailyHoroscopeReady(dateStr);
+      return isReady;
+    } catch (err) {
+      console.error('Ошибка проверки готовности гороскопа:', err);
+      return false;
+    }
+  };
+
+  // Функция для загрузки данных гороскопа
+  const fetchDailyHoroscope = async (dateStr) => {
+    console.log('Starting fetchDailyHoroscope for date:', dateStr);
+    setError(null);
+    
+    try {
+      const data = await getDailyHoroscope(dateStr);
+      console.log('Received horoscope data:', data);
       
-      // Небольшая задержка перед очисткой данных для лучшего UX
-      setTimeout(() => {
-        setDailyData(null);
-      }, 100);
+      if (!data.value || !data.value.explanations || !data.value.explanations.length) {
+        throw new Error(t('today.noData'));
+      }
       
+      const explanations = data.value.explanations;
+      setDailyData({
+        blocks: explanations.map((explanation, idx) => ({
+          title: explanation.title,
+          tips: (explanation.sub_titles || []).map((sub, i) => {
+            let icon, prefix;
+            switch(i) {
+              case 0:
+                icon = '🪙 ';
+                prefix = t('today.headers.inResource') + ': ';
+                break;
+              case 1:
+                icon = '👁️‍🗨️ ';
+                prefix = t('today.headers.focusDay') + ': ';
+                break;
+              case 2:
+                icon = '❗';
+                prefix = t('today.headers.payAttention') + ': ';
+                break;
+              case 3:
+                icon = '🧿';
+                prefix = t('today.headers.affirmation') + ': ';
+                break;
+              default:
+                icon = '○';
+                prefix = '';
+            }
+            return {
+              icon: icon,
+              text: prefix + sub
+            };
+          }),
+          image: explanationImages[idx % explanationImages.length],
+          text: explanation.description
+        }))
+      });
+      console.log('Daily data set successfully');
+    } catch (e) {
+      console.error('Error in fetchDailyHoroscope:', e);
+      setError(e.message);
+      setDailyData(null);
+    } finally {
+      console.log('Setting loading to false');
+      setLoading(false);
+    }
+  };
+
+  // Основная логика проверки готовности и загрузки данных
+  const startHoroscopeLoading = async (date) => {
+    setIsCheckingReadiness(true);
+    setLoading(true);
+    setError(null);
+    setShowLoadingAnimation(true);
+    setMinTimePassed(false);
+    
+    // Небольшая задержка перед очисткой данных для лучшего UX
+    setTimeout(() => {
+      setDailyData(null);
+    }, 100);
+    
+    // Формат даты для запроса: YYYY-MM-DD (DateOnly формат)
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const dateStr = `${year}-${month}-${day}`;
+    
+    // Проверяем готовность каждые 4 секунды
+    const checkInterval = setInterval(async () => {
       try {
-        // Формат даты для запроса: YYYY-MM-DD (DateOnly формат)
-        const year = selectedDate.getFullYear();
-        const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
-        const day = String(selectedDate.getDate()).padStart(2, '0');
-        const dateStr = `${year}-${month}-${day}`;
+        const isReady = await checkHoroscopeReadiness(dateStr);
         
-        const data = await getDailyHoroscope(dateStr);
-        
-        if (!data.value || !data.value.explanations || !data.value.explanations.length) {
-          throw new Error(t('today.noData'));
+        if (isReady) {
+          console.log('Horoscope is ready, stopping checks and loading data');
+          clearInterval(checkInterval);
+          setIsCheckingReadiness(false);
+          // Гороскоп готов, загружаем данные
+          await fetchDailyHoroscope(dateStr);
         }
-        
-        const explanations = data.value.explanations;
-        setDailyData({
-          blocks: explanations.map((explanation, idx) => ({
-            title: explanation.title,
-            tips: (explanation.sub_titles || []).map((sub, i) => {
-              let icon, prefix;
-              switch(i) {
-                case 0:
-                  icon = '🪙 ';
-                  prefix = t('today.headers.inResource') + ': ';
-                  break;
-                case 1:
-                  icon = '👁️‍🗨️ ';
-                  prefix = t('today.headers.focusDay') + ': ';
-                  break;
-                case 2:
-                  icon = '❗';
-                  prefix = t('today.headers.payAttention') + ': ';
-                  break;
-                case 3:
-                  icon = '🧿';
-                  prefix = t('today.headers.affirmation') + ': ';
-                  break;
-                default:
-                  icon = '○';
-                  prefix = '';
-              }
-              return {
-                icon: icon,
-                text: prefix + sub
-              };
-            }),
-            image: explanationImages[idx % explanationImages.length],
-            text: explanation.description
-          }))
-        });
-      } catch (e) {
-        setError(e.message);
-        setDailyData(null);
-      } finally {
+      } catch (err) {
+        console.error('Ошибка при проверке готовности гороскопа:', err);
+        // Продолжаем проверять, не прерываем процесс
+      }
+    }, 4000);
+
+    // Останавливаем проверку через 5 минут (максимальное время ожидания)
+    setTimeout(() => {
+      clearInterval(checkInterval);
+      if (isCheckingReadiness) {
+        setIsCheckingReadiness(false);
+        setError('Превышено время ожидания готовности гороскопа');
         setLoading(false);
       }
-    }
-    fetchDaily();
+    }, 300000); // 5 минут
+  };
+
+  useEffect(() => {
+    startHoroscopeLoading(selectedDate);
   }, [selectedDate, t]);
 
   // Скрываем анимацию только когда данные загружены И прошло минимум 4 секунды
   useEffect(() => {
-    if (minTimePassed && !loading) {
+    console.log('Animation state check:', {
+      minTimePassed,
+      loading,
+      isCheckingReadiness,
+      showLoadingAnimation,
+      hasData: !!dailyData
+    });
+    
+    if (minTimePassed && !loading && !isCheckingReadiness) {
       setShowLoadingAnimation(false);
     }
-  }, [minTimePassed, loading]);
+  }, [minTimePassed, loading, isCheckingReadiness]);
 
   // Вычисляем знаки
   let ascSign = '', sunSign = '', moonSign = '';
@@ -175,7 +236,7 @@ export default function Today() {
       <h2 className="text-center font-mono text-1xl font-normal text-gray-800 mb-6 mt-8">
         {t('today.title').replace('{date}', selectedDate.toLocaleDateString('ru-RU'))}
       </h2>
-      {(loading || showLoadingAnimation) && <HoroscopeLoadingAnimation />}
+      {(loading || showLoadingAnimation || isCheckingReadiness) && <HoroscopeLoadingAnimation />}
       {error && <div className="text-center text-red-500">{error}</div>}
       {dailyData && (
         <TodayInfoBlock
