@@ -114,6 +114,17 @@ export async function getUserChart() {
   return response.json();
 }
 
+export async function checkUserChartReady() {
+  const response = await fetchWithTimeout('https://astro-backend.odonta.burtimaxbot.ru/user/chart/check', {
+    method: 'GET',
+    headers: getHeaders(),
+  }, 10000); // 10 секунд для проверки готовности
+  
+  if (!response.ok) throw new Error('Ошибка проверки готовности натальной карты');
+  const data = await response.json();
+  return data.value; // Возвращаем boolean значение готовности
+}
+
 // Новые функции для AI чата с таймаутами
 export async function sendAIMessage(dateTime, chatId, content) {
   const response = await fetchWithTimeout('https://astro-backend.odonta.burtimaxbot.ru/ai-chat/send-message', {

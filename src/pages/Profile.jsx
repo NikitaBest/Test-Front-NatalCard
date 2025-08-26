@@ -8,7 +8,7 @@ import ChartLoadingAnimation from '../components/ChartLoadingAnimation';
 import ProfileInfoBlock from '../components/ProfileInfoBlock';
 import { useUser } from '../context/UserContext';
 import { useLanguage } from '../context/LanguageContext';
-import { getUserChart } from '../utils/api';
+import { getUserChart, checkUserChartReady } from '../utils/api';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Profile() {
@@ -21,6 +21,7 @@ export default function Profile() {
   const [isRequestInProgress, setIsRequestInProgress] = useState(false);
   const [showLoadingAnimation, setShowLoadingAnimation] = useState(true);
   const [minTimePassed, setMinTimePassed] = useState(false);
+  const [isCheckingReadiness, setIsCheckingReadiness] = useState(false);
 
   // Минимальное время показа анимации (4 секунды)
   useEffect(() => {
@@ -31,11 +32,21 @@ export default function Profile() {
     return () => clearTimeout(timer);
   }, []);
 
+  // Функция для проверки готовности карты
+  const checkChartReadiness = async () => {
+    try {
+      const isReady = await checkUserChartReady();
+      return isReady;
+    } catch (err) {
+      console.error('Ошибка проверки готовности карты:', err);
+      return false;
+    }
+  };
+
+  // Функция для загрузки данных карты
   const fetchChartData = async () => {
     setIsRequestInProgress(true);
     setError(null);
-    setShowLoadingAnimation(true);
-    setMinTimePassed(false);
     
     try {
       const data = await getUserChart();
@@ -48,15 +59,51 @@ export default function Profile() {
     }
   };
 
+  // Основная логика проверки готовности и загрузки данных
+  const startChartLoading = async () => {
+    setIsCheckingReadiness(true);
+    setLoading(true);
+    setError(null);
+    setShowLoadingAnimation(true);
+    setMinTimePassed(false);
+    
+    // Проверяем готовность каждые 4 секунды
+    const checkInterval = setInterval(async () => {
+      try {
+        const isReady = await checkChartReadiness();
+        
+        if (isReady) {
+          clearInterval(checkInterval);
+          setIsCheckingReadiness(false);
+          // Карта готова, загружаем данные
+          await fetchChartData();
+        }
+      } catch (err) {
+        console.error('Ошибка при проверке готовности:', err);
+        // Продолжаем проверять, не прерываем процесс
+      }
+    }, 4000);
+
+    // Останавливаем проверку через 5 минут (максимальное время ожидания)
+    setTimeout(() => {
+      clearInterval(checkInterval);
+      if (isCheckingReadiness) {
+        setIsCheckingReadiness(false);
+        setError('Превышено время ожидания готовности карты');
+        setLoading(false);
+      }
+    }, 300000); // 5 минут
+  };
+
   // Скрываем анимацию только когда данные загружены И прошло минимум 4 секунды
   useEffect(() => {
-    if (minTimePassed && !loading && !isRequestInProgress) {
+    if (minTimePassed && !loading && !isRequestInProgress && !isCheckingReadiness) {
       setShowLoadingAnimation(false);
     }
-  }, [minTimePassed, loading, isRequestInProgress]);
+  }, [minTimePassed, loading, isRequestInProgress, isCheckingReadiness]);
 
   useEffect(() => {
-    fetchChartData();
+    startChartLoading();
   }, []);
 
   // Функция для получения названия знака по номеру rasi
@@ -94,17 +141,17 @@ export default function Profile() {
             exit={{ opacity: 0, x: 30 }}
             transition={{ duration: 0.25 }}
           >
-            {(loading || showLoadingAnimation) ? (
+            {(loading || showLoadingAnimation || isCheckingReadiness) ? (
               <ChartLoadingAnimation />
             ) : error ? (
               <div className="text-center my-8">
                 <div className="text-red-500 mb-4">{error}</div>
                 <button 
                   className="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800"
-                  onClick={fetchChartData}
-                  disabled={isRequestInProgress}
+                  onClick={startChartLoading}
+                  disabled={isRequestInProgress || isCheckingReadiness}
                 >
-                  {isRequestInProgress ? t('common.loading') : t('profile.error.retry')}
+                  {isRequestInProgress || isCheckingReadiness ? t('common.loading') : t('profile.error.retry')}
                 </button>
               </div>
             ) : (
@@ -131,17 +178,17 @@ export default function Profile() {
             exit={{ opacity: 0, x: -30 }}
             transition={{ duration: 0.25 }}
           >
-            {(loading || showLoadingAnimation) ? (
+            {(loading || showLoadingAnimation || isCheckingReadiness) ? (
               <ChartLoadingAnimation />
             ) : error ? (
               <div className="text-center my-8">
                 <div className="text-red-500 mb-4">{error}</div>
                 <button 
                   className="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800"
-                  onClick={fetchChartData}
-                  disabled={isRequestInProgress}
+                  onClick={startChartLoading}
+                  disabled={isRequestInProgress || isCheckingReadiness}
                 >
-                  {isRequestInProgress ? t('common.loading') : t('profile.error.retry')}
+                  {isRequestInProgress || isCheckingReadiness ? t('common.loading') : t('profile.error.retry')}
                 </button>
               </div>
             ) : (
