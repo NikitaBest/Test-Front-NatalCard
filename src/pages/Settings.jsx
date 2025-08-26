@@ -484,6 +484,22 @@ function ChatInputSection({ chatId, onMessageSent, disabled, formatText, onLoadi
   const [error, setError] = useState(null);
   const [isCheckingReadiness, setIsCheckingReadiness] = useState(false);
 
+  // useEffect для обновления высоты textarea при изменении inputValue
+  useEffect(() => {
+    const textarea = document.querySelector('textarea');
+    if (textarea) {
+      textarea.style.height = 'auto';
+      const newHeight = Math.min(textarea.scrollHeight, 88);
+      textarea.style.height = newHeight + 'px';
+      
+      if (textarea.scrollHeight > 88) {
+        textarea.style.overflowY = 'auto';
+      } else {
+        textarea.style.overflowY = 'hidden';
+      }
+    }
+  }, [inputValue]);
+
   // Функция для проверки готовности ответа ИИ
   const checkAnswerReadiness = async (currentChatId) => {
     try {
@@ -590,18 +606,49 @@ function ChatInputSection({ chatId, onMessageSent, disabled, formatText, onLoadi
   };
 
   return (
-    <div className="flex items-center border-t border-gray-300 bg-white rounded-t-xl shadow-lg"
+    <div className="flex items-end border-t border-gray-300 bg-white rounded-t-xl shadow-lg"
          style={{
            paddingBottom: keyboardVisible ? '10px' : '0px',
            transition: 'padding-bottom 0.3s ease-in-out'
          }}>
-      <input
-        className="flex-1 py-4 px-3 text-sm font-mono text-gray-400 bg-transparent outline-none border-none placeholder-gray-400"
+      <textarea
+        className="flex-1 py-3 px-3 text-sm font-mono text-gray-400 bg-transparent outline-none border-none placeholder-gray-400 resize-none"
         placeholder={t('settings.messagePlaceholder')}
         value={inputValue}
-        onChange={e => setInputValue(e.target.value)}
+        onChange={e => {
+          setInputValue(e.target.value);
+          
+          // Автоматическое изменение высоты textarea
+          const textarea = e.target;
+          textarea.style.height = 'auto';
+          const newHeight = Math.min(textarea.scrollHeight, 88);
+          textarea.style.height = newHeight + 'px';
+          
+          if (textarea.scrollHeight > 88) {
+            textarea.style.overflowY = 'auto';
+          } else {
+            textarea.style.overflowY = 'hidden';
+          }
+        }}
         disabled={loading || isCheckingReadiness || disabled}
-        onKeyDown={e => { if (e.key === 'Enter') handleSend(); }}
+        onKeyDown={e => { 
+          if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            handleSend();
+          }
+        }}
+        rows={1}
+        style={{
+          minHeight: '44px',
+          maxHeight: '88px', // Максимум 2 строки
+          lineHeight: '1.4',
+          overflowY: 'auto',
+          scrollbarWidth: 'none', // Firefox
+          msOverflowStyle: 'none', // IE/Edge
+          WebkitScrollbar: {
+            display: 'none' // Chrome/Safari
+          }
+        }}
       />
       <button className="p-2 flex items-center justify-center" type="button" onClick={handleSend} disabled={!inputValue.trim() || loading || isCheckingReadiness || disabled}>
         {inputValue.trim() ? (
