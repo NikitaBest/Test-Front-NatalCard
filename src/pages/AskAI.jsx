@@ -188,6 +188,11 @@ export default function AskAI() {
   const handleInputChange = (e) => {
     setInputValue(e.target.value);
     setSelectedQuestion(null);
+    
+    // Автоматическое изменение высоты textarea
+    const textarea = e.target;
+    textarea.style.height = 'auto';
+    textarea.style.height = Math.min(textarea.scrollHeight, 88) + 'px'; // Максимум 88px (2 строки)
   };
 
   // Функция для проверки готовности ответа ИИ
@@ -410,20 +415,31 @@ export default function AskAI() {
                transition: 'bottom 0.3s ease-in-out'
              }}>
           <div className="w-full max-w-md mx-auto px-2 pointer-events-auto">
-            <div className="flex items-center border-t border-gray-300 bg-white rounded-t-xl shadow-lg"
+            <div className="flex items-end border-t border-gray-300 bg-white rounded-t-xl shadow-lg"
                  style={{
                    paddingBottom: keyboardVisible ? '10px' : '0px',
                    transition: 'padding-bottom 0.3s ease-in-out'
                  }}>
-              <input
-                className="flex-1 py-5 px-3 text-base font-mono text-gray-400 bg-transparent outline-none border-none placeholder-gray-400"
+              <textarea
+                className="flex-1 py-3 px-3 text-base font-mono text-gray-400 bg-transparent outline-none border-none placeholder-gray-400 resize-none overflow-hidden"
                 placeholder={dialogStarted ? t('askAI.messagePlaceholder') : t('askAI.placeholder')}
                 value={inputValue}
                 onChange={handleInputChange}
                 disabled={loading || isCheckingReadiness}
-                onKeyDown={e => { if (e.key === 'Enter' && !dialogStarted) handleSend(); }}
+                onKeyDown={e => { 
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSend();
+                  }
+                }}
                 onFocus={() => setKeyboardVisible(true)}
                 onBlur={() => setKeyboardVisible(false)}
+                rows={1}
+                style={{
+                  minHeight: '44px',
+                  maxHeight: '88px', // Максимум 2 строки
+                  lineHeight: '1.4'
+                }}
               />
               <button className="p-2 flex items-center justify-center" type="button" onClick={handleSend} disabled={!inputValue.trim() || loading || isCheckingReadiness}>
                 {inputValue.trim() ? (
