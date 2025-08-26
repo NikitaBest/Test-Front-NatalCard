@@ -208,7 +208,10 @@ export default function Profile() {
           </motion.div>
         )}
       </AnimatePresence>
-      <BottomMenu activeIndex={2} />
+      <BottomMenu 
+        activeIndex={2} 
+        isNavigationDisabled={loading || showLoadingAnimation || isCheckingReadiness || isRequestInProgress} 
+      />
     </div>
   );
 } 

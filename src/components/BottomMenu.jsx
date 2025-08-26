@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext';
 
-export default function BottomMenu({ activeIndex = 0 }) {
+export default function BottomMenu({ activeIndex = 0, isNavigationDisabled = false }) {
   const navigate = useNavigate();
   const { t } = useLanguage();
   
@@ -12,6 +12,12 @@ export default function BottomMenu({ activeIndex = 0 }) {
     { label: t('navigation.profile'), path: '/profile' },
     { label: t('navigation.today'), path: '/today' },
   ];
+
+  const handleNavigation = (path) => {
+    if (!isNavigationDisabled) {
+      navigate(path);
+    }
+  };
 
   return (
     <nav className="fixed left-0 right-0 bottom-0 bg-white border-t border-gray-300 z-50">
@@ -24,12 +30,20 @@ export default function BottomMenu({ activeIndex = 0 }) {
               'text-xs sm:text-sm md:text-base transition ' +
               (activeIndex === idx
                 ? 'text-black font-semibold'
-                : 'text-gray-400 font-normal')
+                : isNavigationDisabled
+                ? 'text-gray-300 font-normal cursor-not-allowed'
+                : 'text-gray-400 font-normal hover:text-gray-600')
             }
-            onClick={() => navigate(item.path)}
+            onClick={() => handleNavigation(item.path)}
             type="button"
-            disabled={activeIndex === idx}
-            style={{ cursor: activeIndex === idx ? 'default' : 'pointer', background: 'none', border: 'none', padding: 0 }}
+            disabled={activeIndex === idx || isNavigationDisabled}
+            style={{ 
+              cursor: activeIndex === idx || isNavigationDisabled ? 'default' : 'pointer', 
+              background: 'none', 
+              border: 'none', 
+              padding: 0,
+              opacity: isNavigationDisabled && activeIndex !== idx ? 0.5 : 1
+            }}
           >
             {item.label}
           </button>

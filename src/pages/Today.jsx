@@ -252,7 +252,10 @@ export default function Today() {
           blocks={dailyData.blocks}
         />
       )}
-      <BottomMenu activeIndex={3} />
+      <BottomMenu 
+        activeIndex={3} 
+        isNavigationDisabled={loading || showLoadingAnimation || isCheckingReadiness} 
+      />
     </div>
   );
 } 
