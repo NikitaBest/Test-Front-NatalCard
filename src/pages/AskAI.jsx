@@ -148,11 +148,14 @@ export default function AskAI() {
 
   // Хук для отслеживания виртуальной клавиатуры
   useEffect(() => {
-    // Проверяем, является ли устройство мобильным
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    // Проверяем, является ли устройство мобильным (улучшенная проверка)
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 
+                     (navigator.maxTouchPoints && navigator.maxTouchPoints > 2) ||
+                     ('ontouchstart' in window);
     
     const handleResize = () => {
       const visualViewport = window.visualViewport;
+      
       if (visualViewport && isMobile) {
         const keyboardHeight = window.innerHeight - visualViewport.height;
         const viewportHeight = visualViewport.height;
@@ -162,6 +165,17 @@ export default function AskAI() {
           keyboardHeight, 
           viewportHeight, 
           screenHeight, 
+          shouldHideMenu, 
+          isMobile 
+        });
+        setKeyboardVisible(shouldHideMenu);
+      } else if (isMobile && !visualViewport) {
+        // Fallback для мобильных устройств без visualViewport
+        const currentHeight = window.innerHeight;
+        const shouldHideMenu = currentHeight < window.screen.height * 0.8;
+        console.log('Mobile fallback detection:', { 
+          currentHeight, 
+          screenHeight: window.screen.height, 
           shouldHideMenu, 
           isMobile 
         });

@@ -31,6 +31,12 @@ export default function ChatInput({
     } else {
       textarea.style.overflowY = 'hidden';
     }
+    
+    console.log('ChatInput height update:', { 
+      scrollHeight: textarea.scrollHeight, 
+      newHeight, 
+      value: textarea.value.length 
+    });
   };
 
   // Обновляем inputValue при изменении initialValue и пересчитываем высоту
@@ -42,7 +48,7 @@ export default function ChatInput({
       if (textareaRef.current) {
         updateTextareaHeight(textareaRef.current);
       }
-    }, 0);
+    }, 10); // Увеличили задержку для продакшена
   }, [initialValue]);
 
   const handleInputChange = (e) => {
@@ -67,7 +73,7 @@ export default function ChatInput({
     // После вставки текста обновляем высоту
     setTimeout(() => {
       updateTextareaHeight(e.target);
-    }, 0);
+    }, 10); // Увеличили задержку для продакшена
   };
 
   const textareaClass = size === 'large' 
