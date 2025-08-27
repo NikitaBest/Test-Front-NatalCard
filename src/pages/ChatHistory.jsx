@@ -228,7 +228,7 @@ export default function ChatHistory() {
 
 
   return (
-    <div className="min-h-screen bg-white pt-10 relative overflow-hidden">
+    <div className="min-h-screen bg-white relative overflow-hidden">
       <img
         src={bgImage}
         alt=""
@@ -237,7 +237,7 @@ export default function ChatHistory() {
       />
       {/* Фиксированная шапка только если не выбран чат */}
       {!selectedChat && (
-        <div className="fixed top-0 left-0 right-0 z-30 bg-white/90 w-full mt-4">
+        <div className="fixed top-0 left-0 right-0 z-30 bg-white/90 w-full">
           <div className="flex items-center px-4 py-2 border-b border-gray-300">
             <button
               className="mr-2 flex items-center justify-center w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 transition"
@@ -255,7 +255,7 @@ export default function ChatHistory() {
         </div>
       )}
       {/* Список чатов */}
-      <div className="w-full overflow-hidden pb-[56px] pt-[60px]"
+      <div className="w-full overflow-hidden pb-[56px] pt-[70px]"
            style={{
              paddingBottom: keyboardVisible ? '140px' : '135px',
              transition: 'padding-bottom 0.3s ease-in-out'
@@ -311,7 +311,7 @@ export default function ChatHistory() {
               transition={{ duration: 0.25 }}
             >
               {/* Фиксированная шапка */}
-              <div className="fixed top-0 left-0 right-0 z-30 bg-white/90 w-full mt-4">
+              <div className="fixed top-0 left-0 right-0 z-30 bg-white/90 w-full">
                 <div className="flex items-center px-4 py-2 border-b border-gray-300">
                   <button
                     className="mr-2 flex items-center justify-center w-9 h-9 rounded-full bg-gray-100 hover:bg-gray-200 transition"
@@ -507,7 +507,7 @@ function ChatMessagesList({ messages, loading, loadingAI, isCheckingReadiness, f
         minHeight: '200px',
         marginBottom: '0px',
         paddingBottom: '120px',
-        paddingTop: '70px',
+        paddingTop: '80px',
       }}
     >
       {loading ? (
