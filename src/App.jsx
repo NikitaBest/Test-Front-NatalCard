@@ -10,6 +10,7 @@ import BirthTime from './pages/BirthTime';
 import BirthCity from './pages/BirthCity';
 import AskAI from './pages/AskAI';
 import Settings from './pages/Settings';
+import ChatHistory from './pages/ChatHistory';
 import Profile from './pages/Profile';
 import Today from './pages/Today';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -70,6 +71,7 @@ function App() {
               <Route path="/birth-city" element={<BirthCity />} />
               <Route path="/ask-ai" element={<AskAI />} />
               <Route path="/settings" element={<Settings />} />
+              <Route path="/chat-history" element={<ChatHistory />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/today" element={<Today />} />
             </Routes>
