@@ -20,7 +20,14 @@ export default function BottomMenu({ activeIndex = 0, isNavigationDisabled = fal
   };
 
   return (
-    <nav className="fixed left-0 right-0 bottom-0 bg-white border-t border-gray-300 z-50">
+    <nav 
+      className="fixed left-0 right-0 bottom-0 bg-white border-t border-gray-300 transition-all duration-300"
+      style={{
+        transform: isNavigationDisabled ? 'translateY(100%)' : 'translateY(0)',
+        opacity: isNavigationDisabled ? 0 : 1,
+        zIndex: 1000
+      }}
+    >
       <div className="flex justify-between items-center px-1 pt-3 pb-8 max-w-lg mx-auto">
         {menu.map((item, idx) => (
           <button

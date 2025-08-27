@@ -287,7 +287,7 @@ export default function Settings() {
         {/* Список чатов */}
         <div className="w-full overflow-hidden pb-[56px] pt-[60px]"
              style={{
-               paddingBottom: keyboardVisible ? '120px' : '115px', // Вплотную к меню без клавиатуры
+               paddingBottom: keyboardVisible ? '140px' : '135px', // Вплотную к меню без клавиатуры
                transition: 'padding-bottom 0.3s ease-in-out'
              }}>
           {error && <div className="text-red-500 text-center py-4 px-4">{error}</div>}
@@ -360,9 +360,9 @@ export default function Settings() {
                 {/* Контейнер сообщений */}
                 <ChatMessagesList messages={messages} loading={loadingHistory} loadingAI={loadingAI} isCheckingReadiness={isCheckingReadiness} formatText={formatText} />
                 {/* Фиксированное поле ввода */}
-                <div className="fixed left-0 right-0 z-50 w-full flex justify-center pointer-events-none px-2"
+                <div className="fixed left-0 right-0 z-[9999] w-full flex justify-center pointer-events-none px-2"
                      style={{
-                       bottom: keyboardVisible ? '60px' : '55px', // Вплотную к меню без клавиатуры
+                       bottom: keyboardVisible ? '80px' : '75px', // Вплотную к меню без клавиатуры
                        transition: 'bottom 0.3s ease-in-out'
                      }}>
                   <div className="w-full pointer-events-auto">

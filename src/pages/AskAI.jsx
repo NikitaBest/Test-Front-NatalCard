@@ -331,7 +331,7 @@ export default function AskAI() {
       <div className="relative z-10 min-h-screen flex flex-col">
         <div className="w-full flex flex-col items-center flex-1 bg-white/80"
              style={{
-               paddingBottom: keyboardVisible ? '120px' : '115px', // Вплотную к меню без клавиатуры
+               paddingBottom: keyboardVisible ? '140px' : '135px', // Вплотную к меню без клавиатуры
                transition: 'padding-bottom 0.3s ease-in-out'
              }}>
           <h1 className="text-2xl font-normal text-center mt-0 font-mono">{t('askAI.title')}</h1>
@@ -401,9 +401,9 @@ export default function AskAI() {
             </div>
           )}
         </div>
-        <div className="fixed left-0 right-0 z-50 w-full flex justify-center pointer-events-none"
+        <div className="fixed left-0 right-0 z-[9999] w-full flex justify-center pointer-events-none"
              style={{
-               bottom: keyboardVisible ? '60px' : '55px',
+               bottom: keyboardVisible ? '80px' : '75px',
                transition: 'bottom 0.3s ease-in-out'
              }}>
           <div className="w-full max-w-md mx-auto px-2 pointer-events-auto">
