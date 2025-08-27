@@ -65,6 +65,22 @@ export default function ChatInput({
   const handleKeyDown = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
+      // Добавляем новую строку вместо отправки сообщения
+      const cursorPosition = e.target.selectionStart;
+      const textBefore = e.target.value.substring(0, cursorPosition);
+      const textAfter = e.target.value.substring(cursorPosition);
+      const newValue = textBefore + '\n' + textAfter;
+      
+      setInputValue(newValue);
+      
+      // Устанавливаем курсор после новой строки
+      setTimeout(() => {
+        e.target.setSelectionRange(cursorPosition + 1, cursorPosition + 1);
+        updateTextareaHeight(e.target);
+      }, 0);
+    } else if (e.key === 'Enter' && e.shiftKey) {
+      e.preventDefault();
+      // Shift+Enter отправляет сообщение
       handleSend();
     }
   };
