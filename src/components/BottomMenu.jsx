@@ -6,6 +6,9 @@ export default function BottomMenu({ activeIndex = 0, isNavigationDisabled = fal
   const navigate = useNavigate();
   const { t } = useLanguage();
   
+  // Отладочная информация
+  console.log('BottomMenu render:', { isNavigationDisabled, activeIndex });
+  
   const menu = [
     { label: t('navigation.settings'), path: '/settings' },
     { label: 'LIA', path: '/ask-ai' },
@@ -25,6 +28,7 @@ export default function BottomMenu({ activeIndex = 0, isNavigationDisabled = fal
       style={{
         transform: isNavigationDisabled ? 'translateY(100%)' : 'translateY(0)',
         opacity: isNavigationDisabled ? 0 : 1,
+        visibility: isNavigationDisabled ? 'hidden' : 'visible',
         zIndex: 1000
       }}
     >

@@ -155,9 +155,20 @@ export default function AskAI() {
       const visualViewport = window.visualViewport;
       if (visualViewport && isMobile) {
         const keyboardHeight = window.innerHeight - visualViewport.height;
-        setKeyboardVisible(keyboardHeight > 150); // Если клавиатура больше 150px
+        const viewportHeight = visualViewport.height;
+        const screenHeight = window.innerHeight;
+        const shouldHideMenu = keyboardHeight > 100 || (screenHeight - viewportHeight) > 50;
+        console.log('Mobile keyboard detection:', { 
+          keyboardHeight, 
+          viewportHeight, 
+          screenHeight, 
+          shouldHideMenu, 
+          isMobile 
+        });
+        setKeyboardVisible(shouldHideMenu);
       } else {
         // На десктопе всегда false
+        console.log('Desktop device, keyboardVisible set to false');
         setKeyboardVisible(false);
       }
     };
