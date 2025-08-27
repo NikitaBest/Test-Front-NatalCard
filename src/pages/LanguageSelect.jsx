@@ -13,10 +13,14 @@ export default function LanguageSelectPage() {
 
   // Проверяем заполненность профиля при загрузке страницы
   useEffect(() => {
-    if (isProfileFilled) {
-      navigate('/profile');
+    if (isProfileFilled && !isLoading) {
+      // Небольшая задержка чтобы убедиться, что состояние обновилось
+      const timer = setTimeout(() => {
+        navigate('/profile');
+      }, 100);
+      return () => clearTimeout(timer);
     }
-  }, [isProfileFilled, navigate]);
+  }, [isProfileFilled, isLoading, navigate]);
 
   // Показываем сплэш пока загружается проверка пользователя
   if (isLoading) {

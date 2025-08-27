@@ -12,10 +12,14 @@ export default function Start() {
 
   useEffect(() => {
     // Проверяем, есть ли уже заполненный профиль в контексте
-    if (isProfileFilled) {
-      navigate('/profile');
+    if (isProfileFilled && !isLoading) {
+      // Небольшая задержка чтобы убедиться, что состояние обновилось
+      const timer = setTimeout(() => {
+        navigate('/profile');
+      }, 100);
+      return () => clearTimeout(timer);
     }
-  }, [isProfileFilled, navigate]);
+  }, [isProfileFilled, isLoading, navigate]);
 
   // Показываем сплэш пока загружается проверка пользователя
   if (isLoading) {

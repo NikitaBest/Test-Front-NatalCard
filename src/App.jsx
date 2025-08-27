@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import Splash from './pages/Splash';
 import Start from './pages/Start';
 import LanguageSelect from './pages/LanguageSelect';
@@ -20,8 +20,9 @@ import { LanguageProvider } from './context/LanguageContext';
 function App() {
   const [isAppLoading, setIsAppLoading] = useState(true);
   const [showSplash, setShowSplash] = useState(true);
-  const { isLoading } = useUser();
+  const { isLoading, isProfileFilled } = useUser();
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -30,6 +31,17 @@ function App() {
     }, 3000);
     return () => clearTimeout(timer);
   }, []);
+
+  // Проверяем профиль и делаем редирект если он заполнен
+  useEffect(() => {
+    if (!isLoading && isProfileFilled && showSplash) {
+      // Если профиль заполнен и мы еще на сплэше, редиректим на профиль
+      setTimeout(() => {
+        setShowSplash(false);
+        navigate('/profile');
+      }, 1000); // Небольшая задержка чтобы пользователь увидел анимацию
+    }
+  }, [isLoading, isProfileFilled, showSplash, navigate]);
 
   useEffect(() => {
     // Telegram WebApp настройки
@@ -61,7 +73,7 @@ function App() {
             style={{ height: '100%' }}
           >
             <Routes location={location}>
-              <Route path="/" element={<Navigate to="/language-select" replace />} />
+              <Route path="/" element={<Navigate to={isProfileFilled ? "/profile" : "/language-select"} replace />} />
               <Route path="/language-select" element={<LanguageSelect />} />
               <Route path="/start" element={<Start />} />
               <Route path="/name" element={<Name />} />

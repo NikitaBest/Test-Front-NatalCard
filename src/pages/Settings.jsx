@@ -26,7 +26,7 @@ function getHeaders() {
 
 
 export default function Settings() {
-  const { userData, setUserData } = useUser();
+  const { userData, resetProfile } = useUser();
   const { t, language, changeLanguage } = useLanguage();
   const [chats, setChats] = useState([]);
   const [loadingChats, setLoadingChats] = useState(false);
@@ -148,9 +148,10 @@ export default function Settings() {
                 className="flex-1 py-3 px-6 bg-black text-white rounded-xl text-base font-mono hover:bg-gray-800 transition-colors"
                 onClick={() => {
                   localStorage.removeItem('user');
-                  setUserData({ name: '', gender: '', birthDate: '', birthTime: '', birthLocation: '' });
+                  localStorage.removeItem('language');
+                  resetProfile();
                   setShowModal(false);
-                  navigate('/name');
+                  navigate('/language-select');
                 }}
               >
                 {t('common.yes')}

@@ -114,11 +114,23 @@ export function UserProvider({ children }) {
     return () => window.removeEventListener('storage', syncUserData);
   }, []);
 
+  const resetProfile = () => {
+    setUserData({
+      name: '',
+      gender: '',
+      birthDate: '',
+      birthTime: '',
+      birthLocation: ''
+    });
+    setIsProfileFilled(false);
+  };
+
   const value = { 
     userData, 
     setUserData, 
     isLoading, 
-    isProfileFilled 
+    isProfileFilled,
+    resetProfile
   };
 
   return (
