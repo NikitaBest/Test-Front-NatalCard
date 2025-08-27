@@ -421,7 +421,7 @@ export default function AskAI() {
             />
           </div>
         </div>
-        <BottomMenu activeIndex={1} />
+        <BottomMenu activeIndex={1} isNavigationDisabled={keyboardVisible} />
       </div>
     </div>
   );

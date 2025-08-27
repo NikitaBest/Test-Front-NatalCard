@@ -381,7 +381,7 @@ export default function Settings() {
             )}
           </AnimatePresence>
         </div>
-        <BottomMenu activeIndex={0} />
+        <BottomMenu activeIndex={0} isNavigationDisabled={keyboardVisible} />
       </div>
     );
   }
@@ -472,7 +472,7 @@ export default function Settings() {
           </div>
         </div>
       )}
-      <BottomMenu activeIndex={0} />
+      <BottomMenu activeIndex={0} isNavigationDisabled={keyboardVisible} />
     </div>
   );
 }
