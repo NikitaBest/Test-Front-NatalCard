@@ -148,19 +148,25 @@ export default function AskAI() {
 
   // Хук для отслеживания виртуальной клавиатуры
   useEffect(() => {
+    // Проверяем, является ли устройство мобильным
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
     const handleResize = () => {
       const visualViewport = window.visualViewport;
-      if (visualViewport) {
+      if (visualViewport && isMobile) {
         const keyboardHeight = window.innerHeight - visualViewport.height;
         setKeyboardVisible(keyboardHeight > 150); // Если клавиатура больше 150px
+      } else {
+        // На десктопе всегда false
+        setKeyboardVisible(false);
       }
     };
 
-    if (window.visualViewport) {
+    if (window.visualViewport && isMobile) {
       window.visualViewport.addEventListener('resize', handleResize);
       return () => window.visualViewport.removeEventListener('resize', handleResize);
     } else {
-      // Fallback для браузеров без visualViewport
+      // Fallback для браузеров без visualViewport или на десктопе
       window.addEventListener('resize', handleResize);
       return () => window.removeEventListener('resize', handleResize);
     }
@@ -415,8 +421,6 @@ export default function AskAI() {
               isCheckingReadiness={isCheckingReadiness}
               keyboardVisible={keyboardVisible}
               size="large"
-              onFocus={() => setKeyboardVisible(true)}
-              onBlur={() => setKeyboardVisible(false)}
               initialValue={selectedQuestion !== null ? getQuestions()[selectedQuestion] : ''}
             />
           </div>
