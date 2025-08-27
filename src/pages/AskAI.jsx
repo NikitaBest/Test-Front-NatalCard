@@ -403,7 +403,7 @@ export default function AskAI() {
         </div>
         <div className="fixed left-0 right-0 z-[9999] w-full flex justify-center pointer-events-none"
              style={{
-               bottom: keyboardVisible ? '80px' : '75px',
+               bottom: keyboardVisible ? '70px' : '61px',
                transition: 'bottom 0.3s ease-in-out'
              }}>
           <div className="w-full max-w-md mx-auto px-2 pointer-events-auto">

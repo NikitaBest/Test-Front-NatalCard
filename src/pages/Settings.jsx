@@ -362,7 +362,7 @@ export default function Settings() {
                 {/* Фиксированное поле ввода */}
                 <div className="fixed left-0 right-0 z-[9999] w-full flex justify-center pointer-events-none px-2"
                      style={{
-                       bottom: keyboardVisible ? '80px' : '75px', // Вплотную к меню без клавиатуры
+                       bottom: keyboardVisible ? '70px' : '61px', // Вплотную к меню без клавиатуры
                        transition: 'bottom 0.3s ease-in-out'
                      }}>
                   <div className="w-full pointer-events-auto">
