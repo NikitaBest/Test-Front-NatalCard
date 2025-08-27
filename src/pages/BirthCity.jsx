@@ -105,10 +105,17 @@ export default function BirthCity() {
       const response = await updateUserProfile(profileData);
       if (response && response.value) {
         localStorage.setItem('user', JSON.stringify(response.value));
+        setUserData(response.value); // Обновляем UserContext
+        console.log('Профиль успешно сохранен:', response.value);
+      } else {
+        throw new Error('Не удалось сохранить профиль: нет данных в ответе');
       }
       navigate('/profile');
     } catch (err) {
+      console.error('Ошибка сохранения профиля:', err);
       alert(t('birthCity.saveError') + err.message);
+      // НЕ переходим на профиль при ошибке
+      return;
     } finally {
       setLoading(false);
     }
