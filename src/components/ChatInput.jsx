@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 
 export default function ChatInput({ 
@@ -16,17 +16,12 @@ export default function ChatInput({
 }) {
   const { t } = useLanguage();
   const [inputValue, setInputValue] = useState(initialValue);
+  const textareaRef = useRef(null);
 
-  // Обновляем inputValue при изменении initialValue
-  useEffect(() => {
-    setInputValue(initialValue);
-  }, [initialValue]);
-
-  const handleInputChange = (e) => {
-    setInputValue(e.target.value);
+  // Функция для обновления высоты textarea
+  const updateTextareaHeight = (textarea) => {
+    if (!textarea) return;
     
-    // Автоматическое изменение высоты textarea
-    const textarea = e.target;
     textarea.style.height = 'auto';
     const newHeight = Math.min(textarea.scrollHeight, 88);
     textarea.style.height = newHeight + 'px';
@@ -36,6 +31,23 @@ export default function ChatInput({
     } else {
       textarea.style.overflowY = 'hidden';
     }
+  };
+
+  // Обновляем inputValue при изменении initialValue и пересчитываем высоту
+  useEffect(() => {
+    setInputValue(initialValue);
+    
+    // Пересчитываем высоту после обновления значения
+    setTimeout(() => {
+      if (textareaRef.current) {
+        updateTextareaHeight(textareaRef.current);
+      }
+    }, 0);
+  }, [initialValue]);
+
+  const handleInputChange = (e) => {
+    setInputValue(e.target.value);
+    updateTextareaHeight(e.target);
   };
 
   const handleSend = () => {
@@ -49,6 +61,13 @@ export default function ChatInput({
       e.preventDefault();
       handleSend();
     }
+  };
+
+  const handlePaste = (e) => {
+    // После вставки текста обновляем высоту
+    setTimeout(() => {
+      updateTextareaHeight(e.target);
+    }, 0);
   };
 
   const textareaClass = size === 'large' 
@@ -66,12 +85,14 @@ export default function ChatInput({
            zIndex: 9999
          }}>
       <textarea
+        ref={textareaRef}
         className={textareaClass}
         placeholder={placeholder}
         value={inputValue}
         onChange={handleInputChange}
         disabled={disabled || loading || isCheckingReadiness}
         onKeyDown={handleKeyDown}
+        onPaste={handlePaste}
         onFocus={onFocus}
         onBlur={onBlur}
         rows={1}
