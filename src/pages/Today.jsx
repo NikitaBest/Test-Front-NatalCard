@@ -254,7 +254,6 @@ export default function Today() {
       )}
       <BottomMenu 
         activeIndex={3} 
-        isNavigationDisabled={loading || showLoadingAnimation || isCheckingReadiness} 
       />
     </div>
   );
