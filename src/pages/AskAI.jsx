@@ -1,5 +1,6 @@
 import BottomMenu from '../components/BottomMenu';
 import AskAITabs from '../components/AskAITabs';
+import ChatInput from '../components/ChatInput';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLanguage } from '../context/LanguageContext';
@@ -135,7 +136,7 @@ function HamburgerIcon() {
 export default function AskAI() {
   const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState('self');
-  const [inputValue, setInputValue] = useState('');
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [messages, setMessages] = useState([]);
@@ -165,21 +166,7 @@ export default function AskAI() {
     }
   }, []);
 
-  // useEffect для обновления высоты textarea при изменении inputValue
-  useEffect(() => {
-    const textarea = document.querySelector('textarea');
-    if (textarea) {
-      textarea.style.height = 'auto';
-      const newHeight = Math.min(textarea.scrollHeight, 88);
-      textarea.style.height = newHeight + 'px';
-      
-      if (textarea.scrollHeight > 88) {
-        textarea.style.overflowY = 'auto';
-      } else {
-        textarea.style.overflowY = 'hidden';
-      }
-    }
-  }, [inputValue]);
+
 
   // Функция для форматирования текста
   const formatText = (text) => {
@@ -198,42 +185,9 @@ export default function AskAI() {
 
   const handleQuestionClick = (q, idx) => {
     setSelectedQuestion(idx);
-    setInputValue(q);
-    
-    // Обновляем высоту textarea после установки значения
-    setTimeout(() => {
-      const textarea = document.querySelector('textarea');
-      if (textarea) {
-        textarea.style.height = 'auto';
-        const newHeight = Math.min(textarea.scrollHeight, 88);
-        textarea.style.height = newHeight + 'px';
-        
-        if (textarea.scrollHeight > 88) {
-          textarea.style.overflowY = 'auto';
-        } else {
-          textarea.style.overflowY = 'hidden';
-        }
-      }
-    }, 0);
   };
 
-  const handleInputChange = (e) => {
-    setInputValue(e.target.value);
-    setSelectedQuestion(null);
-    
-    // Автоматическое изменение высоты textarea
-    const textarea = e.target;
-    textarea.style.height = 'auto';
-    const newHeight = Math.min(textarea.scrollHeight, 88); // Максимум 88px (2 строки)
-    textarea.style.height = newHeight + 'px';
-    
-    // Если текст длиннее максимальной высоты, включаем скролл
-    if (textarea.scrollHeight > 88) {
-      textarea.style.overflowY = 'auto';
-    } else {
-      textarea.style.overflowY = 'hidden';
-    }
-  };
+
 
   // Функция для проверки готовности ответа ИИ
   const checkAnswerReadiness = async (currentChatId) => {
@@ -296,10 +250,10 @@ export default function AskAI() {
     }, 300000); // 5 минут
   };
 
-  const handleSend = async () => {
-    if (!inputValue.trim()) return;
+  const handleSend = async (message) => {
+    if (!message || !message.trim()) return;
     
-    const userMessage = inputValue.trim();
+    const userMessage = message.trim();
     const now = new Date();
     const dateTime = now.toISOString();
     
@@ -309,7 +263,6 @@ export default function AskAI() {
       content: userMessage,
       createdAt: dateTime,
     }]);
-    setInputValue('');
     setDialogStarted(true);
     
     // Начинаем загрузку
@@ -354,7 +307,6 @@ export default function AskAI() {
   const handleBack = () => {
     setMessages([]);
     setDialogStarted(false);
-    setInputValue('');
     setSelectedQuestion(null);
     setChatId(0);
     setError(null);
@@ -390,7 +342,7 @@ export default function AskAI() {
           <hr className="w-[90%] mx-auto border-gray-300 mb-4" />
           {!dialogStarted && (
             <div className="mb-12">
-              <AskAITabs active={activeTab} onChange={tab => { setActiveTab(tab); setInputValue(''); setSelectedQuestion(null); setDialogStarted(false); setMessages([]); setChatId(0); setError(null); }} />
+              <AskAITabs active={activeTab} onChange={tab => { setActiveTab(tab); setSelectedQuestion(null); setDialogStarted(false); setMessages([]); setChatId(0); setError(null); }} />
             </div>
           )}
           {/* Вопросы только до начала диалога */}
@@ -451,56 +403,22 @@ export default function AskAI() {
         </div>
         <div className="fixed left-0 right-0 z-50 w-full flex justify-center pointer-events-none"
              style={{
-               bottom: keyboardVisible ? '60px' : '55px', // Вплотную к меню без клавиатуры
+               bottom: keyboardVisible ? '60px' : '55px',
                transition: 'bottom 0.3s ease-in-out'
              }}>
           <div className="w-full max-w-md mx-auto px-2 pointer-events-auto">
-            <div className="flex items-end border-t border-gray-300 bg-white rounded-t-xl shadow-lg"
-                 style={{
-                   paddingBottom: keyboardVisible ? '10px' : '0px',
-                   transition: 'padding-bottom 0.3s ease-in-out'
-                 }}>
-              <textarea
-                className="flex-1 py-3 px-3 text-base font-mono text-gray-400 bg-transparent outline-none border-none placeholder-gray-400 resize-none"
-                placeholder={dialogStarted ? t('askAI.messagePlaceholder') : t('askAI.placeholder')}
-                value={inputValue}
-                onChange={handleInputChange}
-                disabled={loading || isCheckingReadiness}
-                onKeyDown={e => { 
-                  if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    handleSend();
-                  }
-                }}
-                onFocus={() => setKeyboardVisible(true)}
-                onBlur={() => setKeyboardVisible(false)}
-                rows={1}
-                style={{
-                  minHeight: '44px',
-                  maxHeight: '88px', // Максимум 2 строки
-                  lineHeight: '1.4',
-                  overflowY: 'auto',
-                  scrollbarWidth: 'none', // Firefox
-                  msOverflowStyle: 'none', // IE/Edge
-                  WebkitScrollbar: {
-                    display: 'none' // Chrome/Safari
-                  }
-                }}
-              />
-              <button className="p-2 flex items-center justify-center" type="button" onClick={handleSend} disabled={!inputValue.trim() || loading || isCheckingReadiness}>
-                {inputValue.trim() ? (
-                  <svg width="28" height="28" fill="none" viewBox="0 0 28 28">
-                    <circle cx="14" cy="14" r="14" fill="#1A1A1A"/>
-                    <path d="M10.5 14h7m0 0-2.5-2.5M17.5 14l-2.5 2.5" stroke="#FFFFFF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                ) : (
-                  <svg width="28" height="28" fill="none" viewBox="0 0 28 28">
-                    <circle cx="14" cy="14" r="14" fill="#F3F4F6"/>
-                    <path d="M10.5 14h7m0 0-2.5-2.5M17.5 14l-2.5 2.5" stroke="#A1A1AA" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                )}
-              </button>
-            </div>
+            <ChatInput
+              onSend={handleSend}
+              placeholder={dialogStarted ? t('askAI.messagePlaceholder') : t('askAI.placeholder')}
+              disabled={false}
+              loading={loading}
+              isCheckingReadiness={isCheckingReadiness}
+              keyboardVisible={keyboardVisible}
+              size="large"
+              onFocus={() => setKeyboardVisible(true)}
+              onBlur={() => setKeyboardVisible(false)}
+              initialValue={selectedQuestion !== null ? getQuestions()[selectedQuestion] : ''}
+            />
           </div>
         </div>
         <BottomMenu activeIndex={1} />

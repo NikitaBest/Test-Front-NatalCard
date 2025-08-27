@@ -1,4 +1,5 @@
 import BottomMenu from '../components/BottomMenu';
+import ChatInput from '../components/ChatInput';
 import { useUser } from '../context/UserContext';
 import { useLanguage } from '../context/LanguageContext';
 import LanguageSelect from '../components/LanguageSelect';
@@ -479,26 +480,9 @@ export default function Settings() {
 // --- ChatInputSection ---
 function ChatInputSection({ chatId, onMessageSent, disabled, formatText, onLoadingChange, onCheckingReadinessChange, keyboardVisible }) {
   const { t } = useLanguage();
-  const [inputValue, setInputValue] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [isCheckingReadiness, setIsCheckingReadiness] = useState(false);
-
-  // useEffect для обновления высоты textarea при изменении inputValue
-  useEffect(() => {
-    const textarea = document.querySelector('textarea');
-    if (textarea) {
-      textarea.style.height = 'auto';
-      const newHeight = Math.min(textarea.scrollHeight, 88);
-      textarea.style.height = newHeight + 'px';
-      
-      if (textarea.scrollHeight > 88) {
-        textarea.style.overflowY = 'auto';
-      } else {
-        textarea.style.overflowY = 'hidden';
-      }
-    }
-  }, [inputValue]);
 
   // Функция для проверки готовности ответа ИИ
   const checkAnswerReadiness = async (currentChatId) => {
@@ -568,10 +552,10 @@ function ChatInputSection({ chatId, onMessageSent, disabled, formatText, onLoadi
     }, 300000); // 5 минут
   };
 
-  const handleSend = async () => {
-    if (!inputValue.trim()) return;
+  const handleSend = async (message) => {
+    if (!message || !message.trim()) return;
     
-    const userMessage = inputValue.trim();
+    const userMessage = message.trim();
     const now = new Date();
     const dateTime = now.toISOString();
     
@@ -582,7 +566,6 @@ function ChatInputSection({ chatId, onMessageSent, disabled, formatText, onLoadi
       createdAt: dateTime,
     };
     onMessageSent(userMessageObj);
-    setInputValue("");
     
     // Начинаем загрузку
     setLoading(true);
@@ -606,65 +589,16 @@ function ChatInputSection({ chatId, onMessageSent, disabled, formatText, onLoadi
   };
 
   return (
-    <div className="flex items-end border-t border-gray-300 bg-white rounded-t-xl shadow-lg"
-         style={{
-           paddingBottom: keyboardVisible ? '10px' : '0px',
-           transition: 'padding-bottom 0.3s ease-in-out'
-         }}>
-      <textarea
-        className="flex-1 py-3 px-3 text-sm font-mono text-gray-400 bg-transparent outline-none border-none placeholder-gray-400 resize-none"
-        placeholder={t('settings.messagePlaceholder')}
-        value={inputValue}
-        onChange={e => {
-          setInputValue(e.target.value);
-          
-          // Автоматическое изменение высоты textarea
-          const textarea = e.target;
-          textarea.style.height = 'auto';
-          const newHeight = Math.min(textarea.scrollHeight, 88);
-          textarea.style.height = newHeight + 'px';
-          
-          if (textarea.scrollHeight > 88) {
-            textarea.style.overflowY = 'auto';
-          } else {
-            textarea.style.overflowY = 'hidden';
-          }
-        }}
-        disabled={loading || isCheckingReadiness || disabled}
-        onKeyDown={e => { 
-          if (e.key === 'Enter' && !e.shiftKey) {
-            e.preventDefault();
-            handleSend();
-          }
-        }}
-        rows={1}
-        style={{
-          minHeight: '44px',
-          maxHeight: '88px', // Максимум 2 строки
-          lineHeight: '1.4',
-          overflowY: 'auto',
-          scrollbarWidth: 'none', // Firefox
-          msOverflowStyle: 'none', // IE/Edge
-          WebkitScrollbar: {
-            display: 'none' // Chrome/Safari
-          }
-        }}
-      />
-      <button className="p-2 flex items-center justify-center" type="button" onClick={handleSend} disabled={!inputValue.trim() || loading || isCheckingReadiness || disabled}>
-        {inputValue.trim() ? (
-          <svg width="24" height="24" fill="none" viewBox="0 0 24 24">
-            <circle cx="12" cy="12" r="12" fill="#1A1A1A"/>
-            <path d="M9 12h6m0 0-2-2m2 2-2 2" stroke="#FFFFFF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
-        ) : (
-          <svg width="24" height="24" fill="none" viewBox="0 0 24 24">
-            <circle cx="12" cy="12" r="12" fill="#F3F4F6"/>
-            <path d="M9 12h6m0 0-2-2m2 2-2 2" stroke="#A1A1AA" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
-        )}
-      </button>
-      {error && <div className="text-red-500 text-xs ml-2 px-2">{error}</div>}
-    </div>
+    <ChatInput
+      onSend={handleSend}
+      placeholder={t('settings.messagePlaceholder')}
+      disabled={disabled}
+      loading={loading}
+      isCheckingReadiness={isCheckingReadiness}
+      keyboardVisible={keyboardVisible}
+      size="small"
+      error={error}
+    />
   );
 }
 
