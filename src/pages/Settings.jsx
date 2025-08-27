@@ -1,7 +1,6 @@
 import BottomMenu from '../components/BottomMenu';
 import { useUser } from '../context/UserContext';
 import { useLanguage } from '../context/LanguageContext';
-import LanguageSelect from '../components/LanguageSelect';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getAIChats } from '../utils/api';
@@ -117,9 +116,9 @@ export default function Settings() {
             {/* Язык — отдельная строка */}
             <div className="flex justify-between items-center w-full px-4 py-3 border-b border-gray-300 text-sm font-mono text-gray-700">
               <span className="text-left font-normal flex-1">{t('settings.language')}</span>
-              <div className="text-right font-normal flex-1 flex justify-end">
-                <LanguageSelect variant="compact" />
-              </div>
+              <span className="text-right font-normal flex-1 text-gray-400">
+                {language === 'ru' ? 'Русский' : 'English'}
+              </span>
             </div>
           </div>
           {/* Кнопка изменить данные */}
