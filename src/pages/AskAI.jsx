@@ -96,7 +96,7 @@ function TypewriterEffect({ text, onComplete, formatText }) {
       const timer = setTimeout(() => {
         setDisplayedText(prev => prev + text[currentIndex]);
         setCurrentIndex(prev => prev + 1);
-      }, 30); // Скорость печатания (30ms на символ)
+      }, 15); // Скорость печатания (15ms на символ - в 2 раза быстрее)
 
       return () => clearTimeout(timer);
     } else if (onComplete) {
