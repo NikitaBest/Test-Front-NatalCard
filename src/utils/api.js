@@ -127,17 +127,28 @@ export async function checkUserChartReady() {
 
 // Новые функции для AI чата с таймаутами
 export async function sendAIMessage(dateTime, chatId, content) {
+  const language = localStorage.getItem('language') || 'ru';
+  
+  const body = {
+    dateTime,
+    chatId,
+    content: content.trim(),
+    language: language, // Добавляем язык в тело запроса
+  };
+  
+  console.log('Отправляем сообщение в AI чат:', {
+    headers: getHeaders(),
+    body,
+    language: language
+  });
+  
   const response = await fetchWithTimeout('https://astro-backend.odonta.burtimaxbot.ru/ai-chat/send-message', {
     method: 'POST',
     headers: {
       ...getHeaders(),
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({
-      dateTime,
-      chatId,
-      content: content.trim(),
-    })
+    body: JSON.stringify(body)
   }, 60000); // 60 секунд для отправки сообщения (увеличено с 30)
   
   if (!response.ok) throw new Error('Ошибка отправки сообщения');
@@ -145,8 +156,10 @@ export async function sendAIMessage(dateTime, chatId, content) {
 }
 
 export async function getAIAnswer(dateTime, chatId) {
+  const language = localStorage.getItem('language') || 'ru';
+  
   const response = await fetchWithTimeout(
-    `https://astro-backend.odonta.burtimaxbot.ru/ai-chat/answer?dateTime=${encodeURIComponent(dateTime)}&chatId=${chatId}`,
+    `https://astro-backend.odonta.burtimaxbot.ru/ai-chat/answer?dateTime=${encodeURIComponent(dateTime)}&chatId=${chatId}&language=${language}`,
     {
       headers: getHeaders(),
     },
@@ -158,8 +171,10 @@ export async function getAIAnswer(dateTime, chatId) {
 }
 
 export async function checkAIAnswerReady(chatId) {
+  const language = localStorage.getItem('language') || 'ru';
+  
   const response = await fetchWithTimeout(
-    `https://astro-backend.odonta.burtimaxbot.ru/ai-chat/answer/check?chatId=${chatId}`,
+    `https://astro-backend.odonta.burtimaxbot.ru/ai-chat/answer/check?chatId=${chatId}&language=${language}`,
     {
       headers: getHeaders(),
     },
