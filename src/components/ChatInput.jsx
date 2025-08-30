@@ -46,7 +46,14 @@ export default function ChatInput({
     // Пересчитываем высоту после обновления значения
     setTimeout(() => {
       if (textareaRef.current) {
-        updateTextareaHeight(textareaRef.current);
+        if (initialValue) {
+          // Если есть начальное значение (выбран вопрос), пересчитываем высоту
+          updateTextareaHeight(textareaRef.current);
+        } else {
+          // Если нет значения (сброс), возвращаем к исходной высоте
+          textareaRef.current.style.height = '44px';
+          textareaRef.current.style.overflowY = 'hidden';
+        }
       }
     }, 10); // Увеличили задержку для продакшена
   }, [initialValue]);
@@ -60,6 +67,15 @@ export default function ChatInput({
     if (!inputValue.trim() || disabled || loading || isCheckingReadiness) return;
     onSend(inputValue.trim());
     setInputValue('');
+    
+    // Сбрасываем высоту textarea к исходному состоянию
+    setTimeout(() => {
+      if (textareaRef.current) {
+        textareaRef.current.style.height = '44px'; // Возвращаем к минимальной высоте
+        textareaRef.current.style.overflowY = 'hidden'; // Скрываем скролл
+        console.log('ChatInput: Сбросили высоту textarea после отправки сообщения');
+      }
+    }, 10);
   };
 
   const handleKeyDown = (e) => {
