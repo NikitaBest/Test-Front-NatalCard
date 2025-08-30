@@ -173,12 +173,20 @@ export default function ChatHistory() {
   // Функция для форматирования текста
   const formatText = (text) => {
     return text
+      // Сначала убираем лишние пробелы и переносы
+      .replace(/\s+/g, ' ') // Заменяем множественные пробелы на один
+      .replace(/\n\s*\n/g, '\n') // Убираем пустые строки
+      .replace(/^\s+|\s+$/g, '') // Убираем пробелы в начале и конце
+      // Затем применяем форматирование
       .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
       .replace(/\*(.*?)\*/g, '<em>$1</em>')
       .replace(/\n/g, '<br>')
       .replace(/(\d+\.\s)/g, '<br><strong>$1</strong>')
       .replace(/([.!?])\s+/g, '$1<br><br>')
-      .replace(/<br><br><br>/g, '<br><br>');
+      .replace(/<br><br><br>/g, '<br><br>')
+      .replace(/<br>\s*<br>/g, '<br><br>') // Убираем пробелы между <br> тегами
+      .replace(/\s+<br>/g, '<br>') // Убираем пробелы перед <br>
+      .replace(/<br>\s+/g, '<br>'); // Убираем пробелы после <br>
   };
 
   // Загружаем чаты сразу при заходе на страницу
