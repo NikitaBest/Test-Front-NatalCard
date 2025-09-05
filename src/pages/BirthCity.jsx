@@ -10,7 +10,7 @@ import { useEffect } from 'react';
 
 export default function BirthCity() {
   const { userData, setUserData } = useUser();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [city, setCity] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const [selectedCity, setSelectedCity] = useState(null);
@@ -96,6 +96,7 @@ export default function BirthCity() {
         latitude: Number(selectedCity.latitude),
         longitude: Number(selectedCity.longitude),
         utc: Number(utcData.utc) || 0,
+        languageCode: language, // Добавляем выбранный язык
       };
 
       // Логирование для отладки

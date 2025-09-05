@@ -1,7 +1,6 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import ru from '../locales/ru.json';
 import en from '../locales/en.json';
-import { updateUserProfile } from '../utils/api';
 
 const translations = { ru, en };
 
@@ -25,18 +24,11 @@ export function LanguageProvider({ children }) {
     return value || key;
   };
 
-  const changeLanguage = async (lang) => {
+  const changeLanguage = (lang) => {
     if (translations[lang]) {
       setLanguage(lang);
       localStorage.setItem('language', lang);
-      
-      // Отправляем обновление языка на бэкенд
-      try {
-        await updateUserProfile({ languageCode: lang });
-      } catch (error) {
-        console.warn('Ошибка обновления языка на сервере:', error);
-        // Не прерываем смену языка локально, даже если сервер недоступен
-      }
+      // Язык будет отправлен вместе с остальными данными профиля
     }
   };
 

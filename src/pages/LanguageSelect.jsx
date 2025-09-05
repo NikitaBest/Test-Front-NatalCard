@@ -27,8 +27,8 @@ export default function LanguageSelectPage() {
     return <Splash fadeOut={false} />;
   }
 
-  const handleLanguageSelect = async (langValue) => {
-    await changeLanguage(langValue);
+  const handleLanguageSelect = (langValue) => {
+    changeLanguage(langValue);
   };
 
   const handleContinue = () => {
