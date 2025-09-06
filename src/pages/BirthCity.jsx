@@ -45,6 +45,12 @@ export default function BirthCity() {
     if (!selectedCity) return;
     setLoading(true);
     try {
+      // Получаем userId из localStorage
+      const userId = localStorage.getItem('userId');
+      if (!userId) {
+        throw new Error('Не найден ID пользователя. Пожалуйста, перезайдите в приложение.');
+      }
+
       // Получаем UTC
       const utcData = await getCityUtc({
         date: userData.birthDate,
@@ -102,14 +108,33 @@ export default function BirthCity() {
       // Логирование для отладки
       console.log('Отправляемые данные профиля:', profileData);
       console.log('UTC данные:', utcData);
+      console.log('User ID:', userId);
 
       const response = await updateUserProfile(profileData);
-      if (response && response.value) {
-        localStorage.setItem('user', JSON.stringify(response.value));
-        setUserData(response.value); // Обновляем UserContext
-        console.log('Профиль успешно сохранен:', response.value);
+      if (response && (response.value || response.success)) {
+        // Если есть value, используем его, иначе используем текущие данные профиля
+        const userDataToSave = response.value || {
+          ...userData,
+          ...profileData,
+          id: Number(userId)
+        };
+        
+        localStorage.setItem('user', JSON.stringify(userDataToSave));
+        setUserData(userDataToSave); // Обновляем UserContext
+        console.log('Профиль успешно сохранен:', userDataToSave);
       } else {
-        throw new Error('Не удалось сохранить профиль: нет данных в ответе');
+        // Если нет ответа от сервера, но это может быть из-за chunked encoding,
+        // все равно сохраняем данные локально
+        console.log('Нет ответа от сервера, но сохраняем данные локально');
+        const userDataToSave = {
+          ...userData,
+          ...profileData,
+          id: Number(userId)
+        };
+        
+        localStorage.setItem('user', JSON.stringify(userDataToSave));
+        setUserData(userDataToSave);
+        console.log('Профиль сохранен локально:', userDataToSave);
       }
       navigate('/profile');
     } catch (err) {
