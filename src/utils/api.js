@@ -160,17 +160,41 @@ export async function searchCity(keyword) {
 }
 
 export async function getCityUtc({ date, time, locationId }) {
-  const response = await fetchWithTimeout(
-    `https://backend.tma.thelifemission.com/location/utc?date=${encodeURIComponent(date)}&time=${encodeURIComponent(time)}&locationId=${encodeURIComponent(locationId)}`,
-    {
-      headers: getHeaders(),
-    },
-    15000 // 15 секунд для получения UTC
-  );
-  
-  if (!response.ok) throw new Error('Ошибка получения UTC');
-  const data = await response.json();
-  return data.value;
+  // Валидация входных параметров
+  if (!date || !time || !locationId) {
+    throw new Error('Не все обязательные параметры переданы для получения UTC');
+  }
+
+  try {
+    const response = await fetchWithTimeout(
+      `https://backend.tma.thelifemission.com/location/utc?date=${encodeURIComponent(date)}&time=${encodeURIComponent(time)}&locationId=${encodeURIComponent(locationId)}`,
+      {
+        headers: getHeaders(),
+      },
+      15000 // 15 секунд для получения UTC
+    );
+    
+    if (!response.ok) {
+      // Пытаемся получить детали ошибки от сервера
+      try {
+        const errorData = await response.json();
+        if (errorData.errors) {
+          const errorMessages = Object.values(errorData.errors).flat();
+          throw new Error(`Ошибка валидации UTC: ${errorMessages.join(', ')}`);
+        }
+        throw new Error(`Ошибка получения UTC: ${errorData.message || response.statusText}`);
+      } catch (parseError) {
+        throw new Error(`Ошибка получения UTC: ${response.status} ${response.statusText}`);
+      }
+    }
+    
+    const data = await response.json();
+    return data.value;
+  } catch (error) {
+    // Логируем ошибку для отладки
+    console.error('Ошибка в getCityUtc:', error);
+    throw error;
+  }
 }
 
 export async function getUserChart() {

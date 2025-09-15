@@ -51,6 +51,18 @@ export default function BirthCity() {
         throw new Error('Не найден ID пользователя. Пожалуйста, перезайдите в приложение.');
       }
 
+      // Валидация даты и времени перед получением UTC
+      console.log('Проверка данных пользователя:', {
+        birthDate: userData.birthDate,
+        birthTime: userData.birthTime,
+        name: userData.name,
+        gender: userData.gender
+      });
+      
+      if (!userData.birthDate || !userData.birthTime) {
+        throw new Error(`Дата и время рождения обязательны для расчета UTC. Дата: ${userData.birthDate}, Время: ${userData.birthTime}`);
+      }
+
       // Получаем UTC
       const utcData = await getCityUtc({
         date: userData.birthDate,
