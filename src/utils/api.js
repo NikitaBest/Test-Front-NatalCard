@@ -66,7 +66,7 @@ async function fetchWithTimeout(url, options = {}, timeout = 120000, retries = 3
 }
 
 export async function loginUser(testUserData) {
-  const response = await fetchWithTimeout('https://astro-backend.odonta.burtimaxbot.ru/auth/login', {
+  const response = await fetchWithTimeout('https://backend.tma.thelifemission.com/auth/login', {
     method: 'POST',
     headers: { 
       'Content-Type': 'application/json', 
@@ -92,7 +92,7 @@ export async function updateUserProfile(profileData) {
   };
 
   try {
-    const response = await fetchWithTimeout('https://astro-backend.odonta.burtimaxbot.ru/user/update', {
+    const response = await fetchWithTimeout('https://backend.tma.thelifemission.com/user/update', {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -147,7 +147,7 @@ export async function updateUserProfile(profileData) {
 
 export async function searchCity(keyword) {
   const response = await fetchWithTimeout(
-    `https://astro-backend.odonta.burtimaxbot.ru/location/search?keyword=${encodeURIComponent(keyword)}`,
+    `https://backend.tma.thelifemission.com/location/search?keyword=${encodeURIComponent(keyword)}`,
     {
       headers: getHeaders(),
     },
@@ -161,7 +161,7 @@ export async function searchCity(keyword) {
 
 export async function getCityUtc({ date, time, locationId }) {
   const response = await fetchWithTimeout(
-    `https://astro-backend.odonta.burtimaxbot.ru/location/utc?date=${encodeURIComponent(date)}&time=${encodeURIComponent(time)}&locationId=${encodeURIComponent(locationId)}`,
+    `https://backend.tma.thelifemission.com/location/utc?date=${encodeURIComponent(date)}&time=${encodeURIComponent(time)}&locationId=${encodeURIComponent(locationId)}`,
     {
       headers: getHeaders(),
     },
@@ -175,7 +175,7 @@ export async function getCityUtc({ date, time, locationId }) {
 
 export async function getUserChart() {
   try {
-    const response = await fetchWithTimeout('https://astro-backend.odonta.burtimaxbot.ru/user/chart', {
+    const response = await fetchWithTimeout('https://backend.tma.thelifemission.com/user/chart', {
       method: 'GET',
       headers: getHeaders(),
     }, 180000); // 3 минуты для получения натальной карты (может быть долгим)
@@ -199,7 +199,7 @@ export async function getUserChart() {
 }
 
 export async function checkUserChartReady() {
-  const response = await fetchWithTimeout('https://astro-backend.odonta.burtimaxbot.ru/user/chart/check', {
+  const response = await fetchWithTimeout('https://backend.tma.thelifemission.com/user/chart/check', {
     method: 'GET',
     headers: getHeaders(),
   }, 10000); // 10 секунд для проверки готовности
@@ -226,7 +226,7 @@ export async function sendAIMessage(dateTime, chatId, content) {
     language: language
   });
   
-  const response = await fetchWithTimeout('https://astro-backend.odonta.burtimaxbot.ru/ai-chat/send-message', {
+  const response = await fetchWithTimeout('https://backend.tma.thelifemission.com/ai-chat/send-message', {
     method: 'POST',
     headers: {
       ...getHeaders(),
@@ -243,7 +243,7 @@ export async function getAIAnswer(dateTime, chatId) {
   const language = localStorage.getItem('language') || 'ru';
   
   const response = await fetchWithTimeout(
-    `https://astro-backend.odonta.burtimaxbot.ru/ai-chat/answer?dateTime=${encodeURIComponent(dateTime)}&chatId=${chatId}&language=${language}`,
+    `https://backend.tma.thelifemission.com/ai-chat/answer?dateTime=${encodeURIComponent(dateTime)}&chatId=${chatId}&language=${language}`,
     {
       headers: getHeaders(),
     },
@@ -258,7 +258,7 @@ export async function checkAIAnswerReady(chatId) {
   const language = localStorage.getItem('language') || 'ru';
   
   const response = await fetchWithTimeout(
-    `https://astro-backend.odonta.burtimaxbot.ru/ai-chat/answer/check?chatId=${chatId}&language=${language}`,
+    `https://backend.tma.thelifemission.com/ai-chat/answer/check?chatId=${chatId}&language=${language}`,
     {
       headers: getHeaders(),
     },
@@ -271,7 +271,7 @@ export async function checkAIAnswerReady(chatId) {
 }
 
 export async function getAIChats() {
-  const response = await fetchWithTimeout('https://astro-backend.odonta.burtimaxbot.ru/ai-chat/chats', {
+  const response = await fetchWithTimeout('https://backend.tma.thelifemission.com/ai-chat/chats', {
     headers: getHeaders(),
   }, 30000); // 30 секунд для получения списка чатов
   
@@ -281,7 +281,7 @@ export async function getAIChats() {
 
 export async function getAIChatHistory(chatId) {
   const response = await fetchWithTimeout(
-    `https://astro-backend.odonta.burtimaxbot.ru/ai-chat/history?chatId=${chatId}`,
+    `https://backend.tma.thelifemission.com/ai-chat/history?chatId=${chatId}`,
     {
       headers: getHeaders(),
     },
@@ -295,7 +295,7 @@ export async function getAIChatHistory(chatId) {
 export async function getDailyHoroscope(date) {
   try {
     const response = await fetchWithTimeout(
-      `https://astro-backend.odonta.burtimaxbot.ru/user/daily-horoscope?date=${date}`,
+      `https://backend.tma.thelifemission.com/user/daily-horoscope?date=${date}`,
       {
         headers: getHeaders(),
       },
@@ -322,7 +322,7 @@ export async function getDailyHoroscope(date) {
 
 export async function checkDailyHoroscopeReady(date) {
   const response = await fetchWithTimeout(
-    `https://astro-backend.odonta.burtimaxbot.ru/user/daily-horoscope/check?date=${date}`,
+    `https://backend.tma.thelifemission.com/user/daily-horoscope/check?date=${date}`,
     {
       headers: getHeaders(),
     },
