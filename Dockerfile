@@ -10,6 +10,8 @@ COPY . .
  
 EXPOSE 3000
 
+# Сборка для продакшена
 RUN npm run build 
 
-CMD [ "npm", "start" ]
+# Запуск preview сервера
+CMD [ "npm", "run", "start:prod" ]
