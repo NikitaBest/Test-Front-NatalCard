@@ -12,10 +12,24 @@ export default defineConfig(({ command, mode }) => {
     server: {
       port: 3000,
       host: mode === 'production' ? true : false,
+      allowedHosts: [
+        'localhost',
+        '127.0.0.1',
+        'frontend-dev.tma.thelifemission.com',
+        'frontend.tma.thelifemission.com',
+        '.thelifemission.com' // разрешает все поддомены
+      ],
     },
     preview: {
       port: 3000,
       host: mode === 'production' ? true : false,
+      allowedHosts: [
+        'localhost',
+        '127.0.0.1',
+        'frontend-dev.tma.thelifemission.com',
+        'frontend.tma.thelifemission.com',
+        '.thelifemission.com' // разрешает все поддомены
+      ],
     },
     build: {
       outDir: 'dist',
