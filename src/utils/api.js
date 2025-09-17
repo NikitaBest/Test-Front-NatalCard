@@ -1,4 +1,14 @@
 
+// Функция для получения базового URL API
+function getApiBaseUrl() {
+  // Используем переменную окружения, если доступна
+  if (import.meta.env.VITE_API_URL) {
+    return import.meta.env.VITE_API_URL;
+  }
+  
+  // Fallback для продакшена
+  return 'https://backend.tma.thelifemission.com';
+}
 
 function getHeaders() {
   const token = localStorage.getItem('token');
@@ -66,7 +76,8 @@ async function fetchWithTimeout(url, options = {}, timeout = 120000, retries = 3
 }
 
 export async function loginUser(testUserData) {
-  const response = await fetchWithTimeout('https://backend.tma.thelifemission.com/auth/login', {
+  const apiBaseUrl = getApiBaseUrl();
+  const response = await fetchWithTimeout(`${apiBaseUrl}/auth/login`, {
     method: 'POST',
     headers: { 
       'Content-Type': 'application/json', 
@@ -92,7 +103,8 @@ export async function updateUserProfile(profileData) {
   };
 
   try {
-    const response = await fetchWithTimeout('https://backend.tma.thelifemission.com/user/update', {
+    const apiBaseUrl = getApiBaseUrl();
+    const response = await fetchWithTimeout(`${apiBaseUrl}/user/update`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -146,8 +158,9 @@ export async function updateUserProfile(profileData) {
 }
 
 export async function searchCity(keyword) {
+  const apiBaseUrl = getApiBaseUrl();
   const response = await fetchWithTimeout(
-    `https://backend.tma.thelifemission.com/location/search?keyword=${encodeURIComponent(keyword)}`,
+    `${apiBaseUrl}/location/search?keyword=${encodeURIComponent(keyword)}`,
     {
       headers: getHeaders(),
     },
@@ -166,8 +179,9 @@ export async function getCityUtc({ date, time, locationId }) {
   }
 
   try {
+    const apiBaseUrl = getApiBaseUrl();
     const response = await fetchWithTimeout(
-      `https://backend.tma.thelifemission.com/location/utc?date=${encodeURIComponent(date)}&time=${encodeURIComponent(time)}&locationId=${encodeURIComponent(locationId)}`,
+      `${apiBaseUrl}/location/utc?date=${encodeURIComponent(date)}&time=${encodeURIComponent(time)}&locationId=${encodeURIComponent(locationId)}`,
       {
         headers: getHeaders(),
       },
@@ -199,7 +213,8 @@ export async function getCityUtc({ date, time, locationId }) {
 
 export async function getUserChart() {
   try {
-    const response = await fetchWithTimeout('https://backend.tma.thelifemission.com/user/chart', {
+    const apiBaseUrl = getApiBaseUrl();
+    const response = await fetchWithTimeout(`${apiBaseUrl}/user/chart`, {
       method: 'GET',
       headers: getHeaders(),
     }, 180000); // 3 минуты для получения натальной карты (может быть долгим)
@@ -223,7 +238,8 @@ export async function getUserChart() {
 }
 
 export async function checkUserChartReady() {
-  const response = await fetchWithTimeout('https://backend.tma.thelifemission.com/user/chart/check', {
+  const apiBaseUrl = getApiBaseUrl();
+  const response = await fetchWithTimeout(`${apiBaseUrl}/user/chart/check`, {
     method: 'GET',
     headers: getHeaders(),
   }, 10000); // 10 секунд для проверки готовности
@@ -250,7 +266,8 @@ export async function sendAIMessage(dateTime, chatId, content) {
     language: language
   });
   
-  const response = await fetchWithTimeout('https://backend.tma.thelifemission.com/ai-chat/send-message', {
+  const apiBaseUrl = getApiBaseUrl();
+  const response = await fetchWithTimeout(`${apiBaseUrl}/ai-chat/send-message`, {
     method: 'POST',
     headers: {
       ...getHeaders(),
@@ -266,8 +283,9 @@ export async function sendAIMessage(dateTime, chatId, content) {
 export async function getAIAnswer(dateTime, chatId) {
   const language = localStorage.getItem('language') || 'ru';
   
+  const apiBaseUrl = getApiBaseUrl();
   const response = await fetchWithTimeout(
-    `https://backend.tma.thelifemission.com/ai-chat/answer?dateTime=${encodeURIComponent(dateTime)}&chatId=${chatId}&language=${language}`,
+    `${apiBaseUrl}/ai-chat/answer?dateTime=${encodeURIComponent(dateTime)}&chatId=${chatId}&language=${language}`,
     {
       headers: getHeaders(),
     },
@@ -281,8 +299,9 @@ export async function getAIAnswer(dateTime, chatId) {
 export async function checkAIAnswerReady(chatId) {
   const language = localStorage.getItem('language') || 'ru';
   
+  const apiBaseUrl = getApiBaseUrl();
   const response = await fetchWithTimeout(
-    `https://backend.tma.thelifemission.com/ai-chat/answer/check?chatId=${chatId}&language=${language}`,
+    `${apiBaseUrl}/ai-chat/answer/check?chatId=${chatId}&language=${language}`,
     {
       headers: getHeaders(),
     },
@@ -295,7 +314,8 @@ export async function checkAIAnswerReady(chatId) {
 }
 
 export async function getAIChats() {
-  const response = await fetchWithTimeout('https://backend.tma.thelifemission.com/ai-chat/chats', {
+  const apiBaseUrl = getApiBaseUrl();
+  const response = await fetchWithTimeout(`${apiBaseUrl}/ai-chat/chats`, {
     headers: getHeaders(),
   }, 30000); // 30 секунд для получения списка чатов
   
@@ -304,8 +324,9 @@ export async function getAIChats() {
 }
 
 export async function getAIChatHistory(chatId) {
+  const apiBaseUrl = getApiBaseUrl();
   const response = await fetchWithTimeout(
-    `https://backend.tma.thelifemission.com/ai-chat/history?chatId=${chatId}`,
+    `${apiBaseUrl}/ai-chat/history?chatId=${chatId}`,
     {
       headers: getHeaders(),
     },
@@ -318,8 +339,9 @@ export async function getAIChatHistory(chatId) {
 
 export async function getDailyHoroscope(date) {
   try {
+    const apiBaseUrl = getApiBaseUrl();
     const response = await fetchWithTimeout(
-      `https://backend.tma.thelifemission.com/user/daily-horoscope?date=${date}`,
+      `${apiBaseUrl}/user/daily-horoscope?date=${date}`,
       {
         headers: getHeaders(),
       },
@@ -345,8 +367,9 @@ export async function getDailyHoroscope(date) {
 }
 
 export async function checkDailyHoroscopeReady(date) {
+  const apiBaseUrl = getApiBaseUrl();
   const response = await fetchWithTimeout(
-    `https://backend.tma.thelifemission.com/user/daily-horoscope/check?date=${date}`,
+    `${apiBaseUrl}/user/daily-horoscope/check?date=${date}`,
     {
       headers: getHeaders(),
     },

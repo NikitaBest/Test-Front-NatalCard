@@ -157,16 +157,16 @@
       "pisces": "Рыбы"
     },
     "planets": {
+      "ascendant": "Асцендент",
       "sun": "Солнце",
       "moon": "Луна",
-      "mercury": "Меркурий",
-      "venus": "Венера",
       "mars": "Марс",
+      "mercury": "Меркурий",
       "jupiter": "Юпитер",
+      "venus": "Венера",
       "saturn": "Сатурн",
-      "uranus": "Уран",
-      "neptune": "Нептун",
-      "pluto": "Плутон"
+      "rahu": "Раху",
+      "ketu": "Кету"
     }
   },
   "today": {

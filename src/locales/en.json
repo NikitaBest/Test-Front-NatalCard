@@ -157,16 +157,16 @@
       "pisces": "Pisces"
     },
     "planets": {
+      "ascendant": "Ascendant",
       "sun": "Sun",
       "moon": "Moon",
-      "mercury": "Mercury",
-      "venus": "Venus",
       "mars": "Mars",
+      "mercury": "Mercury",
       "jupiter": "Jupiter",
+      "venus": "Venus",
       "saturn": "Saturn",
-      "uranus": "Uranus",
-      "neptune": "Neptune",
-      "pluto": "Pluto"
+      "rahu": "Rahu",
+      "ketu": "Ketu"
     }
   },
   "today": {

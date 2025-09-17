@@ -19,17 +19,17 @@ export default function NatalTable({ chartData }) {
     10: safeTranslate('profile.signs.capricorn', 'Козерог'), 11: safeTranslate('profile.signs.aquarius', 'Водолей'), 12: safeTranslate('profile.signs.pisces', 'Рыбы')
   };
   
-  // Переводы для планет с fallback значениями
+  // Переводы для планет с fallback значениями (соответствует enum Planet с бэкенда)
   const planetNames = {
-    1: safeTranslate('profile.planets.sun', 'Солнце'), 2: safeTranslate('profile.planets.moon', 'Луна'), 3: safeTranslate('profile.planets.mercury', 'Меркурий'), 
-    4: safeTranslate('profile.planets.venus', 'Венера'), 5: safeTranslate('profile.planets.mars', 'Марс'), 6: safeTranslate('profile.planets.jupiter', 'Юпитер'), 
-    7: safeTranslate('profile.planets.saturn', 'Сатурн'), 8: safeTranslate('profile.planets.uranus', 'Уран'), 9: safeTranslate('profile.planets.neptune', 'Нептун'), 
-    10: safeTranslate('profile.planets.pluto', 'Плутон')
+    1: safeTranslate('profile.planets.ascendant', 'Асцендент'), 2: safeTranslate('profile.planets.sun', 'Солнце'), 3: safeTranslate('profile.planets.moon', 'Луна'), 
+    4: safeTranslate('profile.planets.mars', 'Марс'), 5: safeTranslate('profile.planets.mercury', 'Меркурий'), 6: safeTranslate('profile.planets.jupiter', 'Юпитер'), 
+    7: safeTranslate('profile.planets.venus', 'Венера'), 8: safeTranslate('profile.planets.saturn', 'Сатурн'), 9: safeTranslate('profile.planets.rahu', 'Раху'), 
+    10: safeTranslate('profile.planets.ketu', 'Кету')
   };
   
   const planetSymbols = {
-    1: `${planetNames[1]} ☉`, 2: `${planetNames[2]} ☽`, 3: `${planetNames[3]} ☿`, 4: `${planetNames[4]} ♀`, 5: `${planetNames[5]} ♂`, 
-    6: `${planetNames[6]} ♃`, 7: `${planetNames[7]} ♄`, 8: `${planetNames[8]} ♅`, 9: `${planetNames[9]} ♆`, 10: `${planetNames[10]} ♇`
+    1: `${planetNames[1]} ⬆`, 2: `${planetNames[2]} ☉`, 3: `${planetNames[3]} ☽`, 4: `${planetNames[4]} ♂`, 5: `${planetNames[5]} ☿`, 
+    6: `${planetNames[6]} ♃`, 7: `${planetNames[7]} ♀`, 8: `${planetNames[8]} ♄`, 9: `${planetNames[9]} ☊`, 10: `${planetNames[10]} ☋`
   };
 
   let tableRows = null;
