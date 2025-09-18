@@ -160,24 +160,30 @@ export default function AskAI() {
         const keyboardHeight = window.innerHeight - visualViewport.height;
         const viewportHeight = visualViewport.height;
         const screenHeight = window.innerHeight;
-        const shouldHideMenu = keyboardHeight > 100 || (screenHeight - viewportHeight) > 50;
+        // Улучшенная логика для больших экранов
+        const shouldHideMenu = keyboardHeight > 150 || (screenHeight - viewportHeight) > 100;
         console.log('Mobile keyboard detection:', { 
           keyboardHeight, 
           viewportHeight, 
           screenHeight, 
           shouldHideMenu, 
-          isMobile 
+          isMobile,
+          visualViewportHeight: visualViewport.height,
+          visualViewportWidth: visualViewport.width
         });
         setKeyboardVisible(shouldHideMenu);
       } else if (isMobile && !visualViewport) {
         // Fallback для мобильных устройств без visualViewport
         const currentHeight = window.innerHeight;
-        const shouldHideMenu = currentHeight < window.screen.height * 0.8;
+        const screenHeight = window.screen.height;
+        // Более точная проверка для больших экранов
+        const shouldHideMenu = currentHeight < screenHeight * 0.75;
         console.log('Mobile fallback detection:', { 
           currentHeight, 
-          screenHeight: window.screen.height, 
+          screenHeight, 
           shouldHideMenu, 
-          isMobile 
+          isMobile,
+          ratio: currentHeight / screenHeight
         });
         setKeyboardVisible(shouldHideMenu);
       } else {
@@ -189,7 +195,12 @@ export default function AskAI() {
 
     if (window.visualViewport && isMobile) {
       window.visualViewport.addEventListener('resize', handleResize);
-      return () => window.visualViewport.removeEventListener('resize', handleResize);
+      // Дополнительные обработчики для лучшей адаптации
+      window.addEventListener('resize', handleResize);
+      return () => {
+        window.visualViewport.removeEventListener('resize', handleResize);
+        window.removeEventListener('resize', handleResize);
+      };
     } else {
       // Fallback для браузеров без visualViewport или на десктопе
       window.addEventListener('resize', handleResize);
@@ -443,7 +454,17 @@ export default function AskAI() {
         <div className="fixed left-0 right-0 z-[9999] w-full flex justify-center pointer-events-none"
              style={{
                bottom: keyboardVisible ? '70px' : '61px',
-               transition: 'bottom 0.3s ease-in-out'
+               transition: 'bottom 0.3s ease-in-out',
+               // Дополнительная адаптация для мобильных устройств
+               paddingLeft: 'env(safe-area-inset-left, 0px)',
+               paddingRight: 'env(safe-area-inset-right, 0px)',
+               // Улучшенное позиционирование для больших экранов
+               maxWidth: '100vw',
+               left: '50%',
+               transform: 'translateX(-50%)',
+               // Предотвращение перекрытия клавиатурой
+               position: 'fixed',
+               willChange: 'bottom'
              }}>
           <div className="w-full max-w-md mx-auto px-2 pointer-events-auto">
             <ChatInput
