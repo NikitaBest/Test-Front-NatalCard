@@ -118,9 +118,16 @@ export default function ChatInput({
   return (
     <div className="flex items-end border-t border-gray-300 bg-white"
          style={{
-           paddingBottom: keyboardVisible ? '10px' : '0px',
            transition: 'padding-bottom 0.3s ease-in-out',
-           zIndex: 9999
+           zIndex: 9999,
+           // Дополнительная адаптация для мобильных устройств
+           position: 'relative',
+           width: '100%',
+           minHeight: '60px',
+           // Безопасная зона для устройств с вырезами
+           paddingLeft: 'env(safe-area-inset-left, 0px)',
+           paddingRight: 'env(safe-area-inset-right, 0px)',
+           paddingBottom: keyboardVisible ? 'max(10px, env(safe-area-inset-bottom, 0px))' : 'env(safe-area-inset-bottom, 0px)'
          }}>
       <textarea
         ref={textareaRef}
@@ -143,7 +150,17 @@ export default function ChatInput({
           msOverflowStyle: 'none',
           WebkitScrollbar: {
             display: 'none'
-          }
+          },
+          // Дополнительная адаптация для мобильных устройств
+          fontSize: '16px', // Предотвращает зум на iOS
+          transform: 'translateZ(0)', // Аппаратное ускорение
+          WebkitAppearance: 'none', // Убираем стандартные стили iOS
+          borderRadius: '0', // Убираем скругления для лучшей совместимости
+          border: 'none',
+          outline: 'none',
+          resize: 'none',
+          // Улучшенная прокрутка на мобильных
+          WebkitOverflowScrolling: 'touch'
         }}
       />
       <button 
