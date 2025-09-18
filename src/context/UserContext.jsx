@@ -13,6 +13,7 @@ export function UserProvider({ children }) {
   });
   const [isLoading, setIsLoading] = useState(true);
   const [isProfileFilled, setIsProfileFilled] = useState(false);
+  const [onLanguageReceived, setOnLanguageReceived] = useState(null);
 
   // Функция проверки заполненности профиля
   const checkProfileFilled = (user) => {
@@ -27,6 +28,7 @@ export function UserProvider({ children }) {
 
   // Проверка авторизации через бекенд при каждом открытии/обновлении приложения
   useEffect(() => {
+    console.log('UserContext: useEffect запущен, начинаем авторизацию');
     const checkAuth = async () => {
       setIsLoading(true);
       
@@ -62,6 +64,7 @@ export function UserProvider({ children }) {
         
         // Всегда делаем авторизацию через бекенд
         const data = await loginUser(userData);
+        console.log('UserContext: получен ответ от бэкенда:', data);
         
         if (data.token) {
           localStorage.setItem('token', data.token);
@@ -71,6 +74,19 @@ export function UserProvider({ children }) {
           localStorage.setItem('user', JSON.stringify(data.user));
           setUserData(data.user);
           setIsProfileFilled(checkProfileFilled(data.user));
+          
+          // Проверяем, есть ли язык в ответе бэкенда
+          console.log('UserContext: проверяем languageCode:', data.user.languageCode);
+          console.log('UserContext: onLanguageReceived callback:', !!onLanguageReceived);
+          if (data.user.languageCode && onLanguageReceived) {
+            console.log('UserContext: вызываем onLanguageReceived с языком:', data.user.languageCode);
+            onLanguageReceived(data.user.languageCode);
+          } else {
+            console.log('UserContext: НЕ вызываем onLanguageReceived. Причина:', {
+              hasLanguageCode: !!data.user.languageCode,
+              hasCallback: !!onLanguageReceived
+            });
+          }
         } else {
           // Если нет данных пользователя, устанавливаем пустые данные
           setUserData({
@@ -130,7 +146,8 @@ export function UserProvider({ children }) {
     setUserData, 
     isLoading, 
     isProfileFilled,
-    resetProfile
+    resetProfile,
+    setOnLanguageReceived
   };
 
   return (
