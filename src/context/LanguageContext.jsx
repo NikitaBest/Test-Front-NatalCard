@@ -19,6 +19,10 @@ export function LanguageProvider({ children }) {
   useEffect(() => {
     console.log('LanguageProvider: очищаем localStorage от старого языка');
     localStorage.removeItem('language');
+    
+    // Принудительно сбрасываем язык на русский по умолчанию
+    console.log('LanguageProvider: сбрасываем язык на русский по умолчанию');
+    setLanguage('ru');
   }, []);
   
   const t = (key) => {
@@ -79,6 +83,7 @@ export function LanguageProvider({ children }) {
         if (backendLanguage && translations[backendLanguage]) {
           console.log('LanguageContext: ✅ Устанавливаем язык от бэкенда:', backendLanguage);
           console.log('LanguageContext: текущий язык до изменения:', language);
+          console.log('LanguageContext: время получения языка от бэкенда:', new Date().toLocaleTimeString());
           setLanguageFromBackend(backendLanguage);
           setIsLanguageInitialized(true);
           console.log('LanguageContext: язык установлен, инициализация завершена');
