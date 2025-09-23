@@ -12,6 +12,7 @@ export function LanguageProvider({ children }) {
   const { setOnLanguageReceived } = useUser();
   
   console.log('LanguageProvider: инициализация, текущий язык:', language);
+  console.log('LanguageProvider: setOnLanguageReceived доступен:', !!setOnLanguageReceived);
   
   const t = (key) => {
     const keys = key.split('.');

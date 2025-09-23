@@ -29,6 +29,7 @@ export function UserProvider({ children }) {
   // Проверка авторизации через бекенд при каждом открытии/обновлении приложения
   useEffect(() => {
     console.log('UserContext: useEffect запущен, начинаем авторизацию');
+    console.log('UserContext: onLanguageReceived callback доступен:', !!onLanguageReceived);
     const checkAuth = async () => {
       setIsLoading(true);
       
@@ -61,6 +62,9 @@ export function UserProvider({ children }) {
             ignoreValidate: true,
           };
         }
+        
+        // Небольшая задержка, чтобы LanguageContext успел установить callback
+        await new Promise(resolve => setTimeout(resolve, 100));
         
         // Всегда делаем авторизацию через бекенд
         const data = await loginUser(userData);
