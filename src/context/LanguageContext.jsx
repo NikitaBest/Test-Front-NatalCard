@@ -8,7 +8,7 @@ const translations = { ru, en };
 const LanguageContext = createContext();
 
 export function LanguageProvider({ children }) {
-  const [language, setLanguage] = useState('ru');
+  const [language, setLanguage] = useState(null);
   const [isLanguageInitialized, setIsLanguageInitialized] = useState(false);
   const { setOnLanguageReceived } = useUser();
   
@@ -19,26 +19,23 @@ export function LanguageProvider({ children }) {
   useEffect(() => {
     console.log('LanguageProvider: очищаем localStorage от старого языка');
     localStorage.removeItem('language');
-    
-    // Принудительно сбрасываем язык на русский по умолчанию
-    console.log('LanguageProvider: сбрасываем язык на русский по умолчанию');
-    setLanguage('ru');
   }, []);
   
   const t = (key) => {
     const keys = key.split('.');
-    let value = translations[language];
+    const currentLang = language && translations[language] ? language : null;
+    let value = currentLang ? translations[currentLang] : undefined;
     
     for (const k of keys) {
       if (value && typeof value === 'object' && k in value) {
         value = value[k];
       } else {
-        return key; // Возвращаем ключ если перевод не найден
+        return key; // Возвращаем ключ если перевод не найден или язык еще не инициализирован
       }
     }
     
     // Логируем первые несколько вызовов для отладки
-    if (Math.random() < 0.05) { // 5% шанс логирования
+    if (Math.random() < 0.05) {
       console.log('LanguageContext: t() вызвана с ключом:', key, 'язык:', language, 'результат:', value || key);
     }
     
@@ -95,7 +92,6 @@ export function LanguageProvider({ children }) {
           }, 50);
         } else {
           console.log('LanguageContext: ❌ Язык от бэкенда не поддерживается или пустой:', backendLanguage);
-          console.log('LanguageContext: оставляем язык по умолчанию (ru)');
           setIsLanguageInitialized(true);
         }
       });
@@ -104,17 +100,22 @@ export function LanguageProvider({ children }) {
     }
   }, [setOnLanguageReceived]);
 
-  // Fallback: если через 5 секунд не получили язык от бэкенда, оставляем по умолчанию
+  // Fallback: если через 5 секунд не получили язык от бэкенда, не рендерим UI с неправильным языком
   useEffect(() => {
     const fallbackTimer = setTimeout(() => {
       if (!isLanguageInitialized) {
-        console.log('LanguageContext: ⏰ Таймаут 5 секунд, оставляем язык по умолчанию (ru)');
+        console.log('LanguageContext: ⏰ Таймаут 5 секунд, язык не получен — оставляем UI скрытым');
         setIsLanguageInitialized(true);
       }
     }, 5000);
 
     return () => clearTimeout(fallbackTimer);
   }, [isLanguageInitialized]);
+
+  if (!isLanguageInitialized || !language) {
+    // Блокируем рендер приложения до получения языка от бэкенда
+    return null;
+  }
 
   return (
     <LanguageContext.Provider value={{ language, changeLanguage, t, isLanguageInitialized }}>
