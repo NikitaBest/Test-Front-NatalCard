@@ -15,6 +15,12 @@ export function LanguageProvider({ children }) {
   console.log('LanguageProvider: инициализация, текущий язык:', language);
   console.log('LanguageProvider: setOnLanguageReceived доступен:', !!setOnLanguageReceived);
   
+  // Очищаем localStorage при инициализации, чтобы язык брался только от бэкенда
+  useEffect(() => {
+    console.log('LanguageProvider: очищаем localStorage от старого языка');
+    localStorage.removeItem('language');
+  }, []);
+  
   const t = (key) => {
     const keys = key.split('.');
     let value = translations[language];
@@ -25,6 +31,11 @@ export function LanguageProvider({ children }) {
       } else {
         return key; // Возвращаем ключ если перевод не найден
       }
+    }
+    
+    // Логируем первые несколько вызовов для отладки
+    if (Math.random() < 0.05) { // 5% шанс логирования
+      console.log('LanguageContext: t() вызвана с ключом:', key, 'язык:', language, 'результат:', value || key);
     }
     
     return value || key;
@@ -39,29 +50,43 @@ export function LanguageProvider({ children }) {
     }
   };
 
+  // Функция для принудительной установки языка от бэкенда (игнорирует localStorage)
+  const setLanguageFromBackend = (lang) => {
+    if (translations[lang]) {
+      console.log('LanguageContext: принудительная установка языка от бэкенда:', lang);
+      console.log('LanguageContext: текущий язык до установки:', language);
+      setLanguage(lang);
+      localStorage.setItem('language', lang);
+      console.log('LanguageContext: язык установлен, localStorage обновлен');
+      
+      // Проверяем, что язык действительно изменился
+      setTimeout(() => {
+        console.log('LanguageContext: проверка через 100ms - текущий язык:', language);
+      }, 100);
+    } else {
+      console.log('LanguageContext: ❌ Язык не поддерживается:', lang);
+    }
+  };
+
   // Настраиваем callback для получения языка ТОЛЬКО от бэкенда
   useEffect(() => {
     console.log('LanguageContext: useEffect запущен, setOnLanguageReceived:', !!setOnLanguageReceived);
     if (setOnLanguageReceived) {
-      console.log('LanguageContext: устанавливаем callback для получения языка от бэкенда');
+      console.log('LanguageContext: ✅ Устанавливаем callback для получения языка от бэкенда');
       setOnLanguageReceived((backendLanguage) => {
         console.log('LanguageContext: получен язык от бэкенда:', backendLanguage);
         console.log('LanguageContext: доступные переводы:', Object.keys(translations));
         if (backendLanguage && translations[backendLanguage]) {
           console.log('LanguageContext: ✅ Устанавливаем язык от бэкенда:', backendLanguage);
           console.log('LanguageContext: текущий язык до изменения:', language);
-          setLanguage(backendLanguage);
-          localStorage.setItem('language', backendLanguage);
+          setLanguageFromBackend(backendLanguage);
           setIsLanguageInitialized(true);
           console.log('LanguageContext: язык установлен, инициализация завершена');
           
           // Принудительное обновление для гарантии смены языка
           setTimeout(() => {
             console.log('LanguageContext: принудительное обновление языка через 50ms');
-            setLanguage(prevLang => {
-              console.log('LanguageContext: принудительное обновление, предыдущий язык:', prevLang, 'новый:', backendLanguage);
-              return backendLanguage;
-            });
+            setLanguageFromBackend(backendLanguage);
           }, 50);
         } else {
           console.log('LanguageContext: ❌ Язык от бэкенда не поддерживается или пустой:', backendLanguage);

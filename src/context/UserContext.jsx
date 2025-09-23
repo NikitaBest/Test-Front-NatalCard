@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { loginUser } from '../utils/api';
 
 const UserContext = createContext();
@@ -13,7 +13,7 @@ export function UserProvider({ children }) {
   });
   const [isLoading, setIsLoading] = useState(true);
   const [isProfileFilled, setIsProfileFilled] = useState(false);
-  const [onLanguageReceived, setOnLanguageReceived] = useState(null);
+  const onLanguageReceivedRef = useRef(null);
 
   // Функция проверки заполненности профиля
   const checkProfileFilled = (user) => {
@@ -29,7 +29,7 @@ export function UserProvider({ children }) {
   // Проверка авторизации через бекенд при каждом открытии/обновлении приложения
   useEffect(() => {
     console.log('UserContext: useEffect запущен, начинаем авторизацию');
-    console.log('UserContext: onLanguageReceived callback доступен:', !!onLanguageReceived);
+    console.log('UserContext: onLanguageReceived callback доступен:', !!onLanguageReceivedRef.current);
     const checkAuth = async () => {
       setIsLoading(true);
       
@@ -63,14 +63,26 @@ export function UserProvider({ children }) {
           };
         }
         
-        // Небольшая задержка, чтобы LanguageContext успел установить callback
-        await new Promise(resolve => setTimeout(resolve, 100));
+        // Ждем, пока LanguageContext установит callback
+        let attempts = 0;
+        while (!onLanguageReceivedRef.current && attempts < 50) {
+          await new Promise(resolve => setTimeout(resolve, 50));
+          attempts++;
+          console.log(`UserContext: ждем callback, попытка ${attempts}/50, callback доступен:`, !!onLanguageReceivedRef.current);
+        }
+        
+        if (!onLanguageReceivedRef.current) {
+          console.log('UserContext: ⚠️ Callback не установлен после 50 попыток, продолжаем без смены языка');
+        } else {
+          console.log('UserContext: ✅ Callback установлен, продолжаем с авторизацией');
+        }
         
         // Всегда делаем авторизацию через бекенд
         console.log('UserContext: отправляем запрос на логин...');
         const data = await loginUser(userData);
         console.log('UserContext: получен ответ от бэкенда:', data);
         console.log('UserContext: время получения ответа:', new Date().toLocaleTimeString());
+        console.log('UserContext: полный объект user:', JSON.stringify(data.user, null, 2));
         
         if (data.token) {
           localStorage.setItem('token', data.token);
@@ -83,18 +95,18 @@ export function UserProvider({ children }) {
           
           // Проверяем, есть ли язык в ответе бэкенда
           console.log('UserContext: проверяем languageCode:', data.user.languageCode);
-          console.log('UserContext: onLanguageReceived callback:', !!onLanguageReceived);
+          console.log('UserContext: onLanguageReceived callback:', !!onLanguageReceivedRef.current);
           console.log('UserContext: тип languageCode:', typeof data.user.languageCode);
           console.log('UserContext: значение languageCode:', JSON.stringify(data.user.languageCode));
           
-          if (data.user.languageCode && onLanguageReceived) {
+          if (data.user.languageCode && onLanguageReceivedRef.current) {
             console.log('UserContext: ✅ Вызываем onLanguageReceived с языком:', data.user.languageCode);
-            onLanguageReceived(data.user.languageCode);
+            onLanguageReceivedRef.current(data.user.languageCode);
             console.log('UserContext: ✅ onLanguageReceived вызван успешно');
           } else {
             console.log('UserContext: ❌ НЕ вызываем onLanguageReceived. Причина:', {
               hasLanguageCode: !!data.user.languageCode,
-              hasCallback: !!onLanguageReceived,
+              hasCallback: !!onLanguageReceivedRef.current,
               languageCodeValue: data.user.languageCode,
               languageCodeType: typeof data.user.languageCode
             });
@@ -151,6 +163,11 @@ export function UserProvider({ children }) {
       birthLocation: ''
     });
     setIsProfileFilled(false);
+  };
+
+  const setOnLanguageReceived = (callback) => {
+    onLanguageReceivedRef.current = callback;
+    console.log('UserContext: setOnLanguageReceived вызван, callback установлен:', !!callback);
   };
 
   const value = { 
