@@ -143,70 +143,8 @@ export default function AskAI() {
   const [dialogStarted, setDialogStarted] = useState(false);
   const [chatId, setChatId] = useState(0);
   const [selectedQuestion, setSelectedQuestion] = useState(null);
-  const [keyboardVisible, setKeyboardVisible] = useState(false);
   const [isCheckingReadiness, setIsCheckingReadiness] = useState(false);
 
-  // Хук для отслеживания виртуальной клавиатуры
-  useEffect(() => {
-    // Проверяем, является ли устройство мобильным (улучшенная проверка)
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 
-                     (navigator.maxTouchPoints && navigator.maxTouchPoints > 2) ||
-                     ('ontouchstart' in window);
-    
-    const handleResize = () => {
-      const visualViewport = window.visualViewport;
-      
-      if (visualViewport && isMobile) {
-        const keyboardHeight = window.innerHeight - visualViewport.height;
-        const viewportHeight = visualViewport.height;
-        const screenHeight = window.innerHeight;
-        // Улучшенная логика для больших экранов
-        const shouldHideMenu = keyboardHeight > 150 || (screenHeight - viewportHeight) > 100;
-        console.log('Mobile keyboard detection:', { 
-          keyboardHeight, 
-          viewportHeight, 
-          screenHeight, 
-          shouldHideMenu, 
-          isMobile,
-          visualViewportHeight: visualViewport.height,
-          visualViewportWidth: visualViewport.width
-        });
-        setKeyboardVisible(shouldHideMenu);
-      } else if (isMobile && !visualViewport) {
-        // Fallback для мобильных устройств без visualViewport
-        const currentHeight = window.innerHeight;
-        const screenHeight = window.screen.height;
-        // Более точная проверка для больших экранов
-        const shouldHideMenu = currentHeight < screenHeight * 0.75;
-        console.log('Mobile fallback detection:', { 
-          currentHeight, 
-          screenHeight, 
-          shouldHideMenu, 
-          isMobile,
-          ratio: currentHeight / screenHeight
-        });
-        setKeyboardVisible(shouldHideMenu);
-      } else {
-        // На десктопе всегда false
-        console.log('Desktop device, keyboardVisible set to false');
-        setKeyboardVisible(false);
-      }
-    };
-
-    if (window.visualViewport && isMobile) {
-      window.visualViewport.addEventListener('resize', handleResize);
-      // Дополнительные обработчики для лучшей адаптации
-      window.addEventListener('resize', handleResize);
-      return () => {
-        window.visualViewport.removeEventListener('resize', handleResize);
-        window.removeEventListener('resize', handleResize);
-      };
-    } else {
-      // Fallback для браузеров без visualViewport или на десктопе
-      window.addEventListener('resize', handleResize);
-      return () => window.removeEventListener('resize', handleResize);
-    }
-  }, []);
 
 
 
@@ -364,7 +302,7 @@ export default function AskAI() {
 
   return (
     <div 
-      className="min-h-screen bg-white pt-6 relative overflow-hidden"
+      className="h-dvh bg-white pt-6 relative overflow-hidden flex flex-col"
       style={{
         backgroundImage: `url(${bgImage})`,
         backgroundSize: 'cover',
@@ -378,11 +316,10 @@ export default function AskAI() {
         className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-auto z-0"
         style={{ opacity: 1, filter: 'drop-shadow(0 0 10px #000) brightness(0.5) contrast(2.5)' }}
       />
-      <div className="relative z-10 min-h-screen flex flex-col">
+      <div className="relative z-10 flex-1 flex flex-col">
         <div className="w-full flex flex-col items-center flex-1 bg-white/80"
              style={{
-               paddingBottom: keyboardVisible ? '140px' : '135px', // Вплотную к меню без клавиатуры
-               transition: 'padding-bottom 0.3s ease-in-out'
+               paddingBottom: '135px' // Фиксированный отступ, dvh автоматически адаптируется
              }}>
           <h1 className="text-2xl font-normal text-center mt-0 font-mono">{t('askAI.title')}</h1>
           <div className="flex flex-row items-center justify-start w-full max-w-xl mx-auto mb-2 px-4">
@@ -453,18 +390,14 @@ export default function AskAI() {
         </div>
         <div className="fixed left-0 right-0 z-[9999] w-full flex justify-center pointer-events-none"
              style={{
-               bottom: keyboardVisible ? '70px' : '61px',
-               transition: 'bottom 0.3s ease-in-out',
-               // Дополнительная адаптация для мобильных устройств
+               bottom: '61px',
+               // Безопасная зона для устройств с вырезами
                paddingLeft: 'env(safe-area-inset-left, 0px)',
                paddingRight: 'env(safe-area-inset-right, 0px)',
                // Улучшенное позиционирование для больших экранов
                maxWidth: '100vw',
                left: '50%',
-               transform: 'translateX(-50%)',
-               // Предотвращение перекрытия клавиатурой
-               position: 'fixed',
-               willChange: 'bottom'
+               transform: 'translateX(-50%)'
              }}>
           <div className="w-full max-w-md mx-auto px-2 pointer-events-auto">
             <ChatInput
@@ -473,13 +406,12 @@ export default function AskAI() {
               disabled={false}
               loading={loading}
               isCheckingReadiness={isCheckingReadiness}
-              keyboardVisible={keyboardVisible}
               size="large"
               initialValue={selectedQuestion !== null ? getQuestions()[selectedQuestion] : ''}
             />
           </div>
         </div>
-        <BottomMenu activeIndex={1} isNavigationDisabled={keyboardVisible} />
+        <BottomMenu activeIndex={1} />
       </div>
     </div>
   );

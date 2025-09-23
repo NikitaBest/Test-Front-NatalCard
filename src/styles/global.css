@@ -16,10 +16,17 @@ body {
   overflow-x: hidden;
 }
 
-/* Предотвращение проблем с высотой при динамической загрузке контента */
+/* Современный подход с dvh для адаптации к клавиатуре */
 .min-h-screen {
-  min-height: 100vh;
+  min-height: 100dvh;
   height: auto;
+}
+
+/* Fallback для старых браузеров */
+@supports not (height: 100dvh) {
+  .min-h-screen {
+    min-height: 100vh;
+  }
 }
 
 /* Явные стили для кнопок вопросов */
@@ -97,15 +104,30 @@ textarea {
   }
 }
 
-/* Поддержка viewport units для мобильных */
-@supports (height: 100dvh) {
-  .full-height {
-    height: 100dvh;
-  }
+/* Современные viewport units для мобильных */
+.h-dvh {
+  height: 100dvh;
 }
 
+.h-screen-dvh {
+  height: 100dvh;
+}
+
+.min-h-dvh {
+  min-height: 100dvh;
+}
+
+/* Fallback для старых браузеров */
 @supports not (height: 100dvh) {
-  .full-height {
+  .h-dvh {
     height: 100vh;
+  }
+  
+  .h-screen-dvh {
+    height: 100vh;
+  }
+  
+  .min-h-dvh {
+    min-height: 100vh;
   }
 }

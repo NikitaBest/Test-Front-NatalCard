@@ -7,7 +7,6 @@ export default function ChatInput({
   disabled = false, 
   loading = false, 
   isCheckingReadiness = false,
-  keyboardVisible = false,
   size = 'large', // 'large' для AskAI, 'small' для Settings
   error = null,
   onFocus = null,
@@ -118,16 +117,11 @@ export default function ChatInput({
   return (
     <div className="flex items-end border-t border-gray-300 bg-white"
          style={{
-           transition: 'padding-bottom 0.3s ease-in-out',
            zIndex: 9999,
-           // Дополнительная адаптация для мобильных устройств
-           position: 'relative',
-           width: '100%',
-           minHeight: '60px',
            // Безопасная зона для устройств с вырезами
            paddingLeft: 'env(safe-area-inset-left, 0px)',
            paddingRight: 'env(safe-area-inset-right, 0px)',
-           paddingBottom: keyboardVisible ? 'max(10px, env(safe-area-inset-bottom, 0px))' : 'env(safe-area-inset-bottom, 0px)'
+           paddingBottom: 'env(safe-area-inset-bottom, 0px)'
          }}>
       <textarea
         ref={textareaRef}
