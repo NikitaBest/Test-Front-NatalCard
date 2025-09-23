@@ -9,6 +9,7 @@ const LanguageContext = createContext();
 
 export function LanguageProvider({ children }) {
   const [language, setLanguage] = useState('ru');
+  const [isLanguageInitialized, setIsLanguageInitialized] = useState(false);
   const { setOnLanguageReceived } = useUser();
   
   console.log('LanguageProvider: инициализация, текущий язык:', language);
@@ -37,7 +38,7 @@ export function LanguageProvider({ children }) {
     }
   };
 
-  // Настраиваем callback для получения языка от бэкенда ПЕРВЫМ
+  // Настраиваем callback для получения языка от бэкенда
   useEffect(() => {
     console.log('LanguageContext: useEffect запущен, setOnLanguageReceived:', !!setOnLanguageReceived);
     if (setOnLanguageReceived) {
@@ -46,22 +47,20 @@ export function LanguageProvider({ children }) {
         console.log('LanguageContext: получен язык от бэкенда:', backendLanguage);
         console.log('LanguageContext: доступные переводы:', Object.keys(translations));
         if (backendLanguage && translations[backendLanguage]) {
-          console.log('LanguageContext: устанавливаем язык от бэкенда:', backendLanguage);
-          console.log('LanguageContext: текущий язык до изменения:', language);
+          console.log('LanguageContext: ✅ Устанавливаем язык от бэкенда:', backendLanguage);
           setLanguage(backendLanguage);
           localStorage.setItem('language', backendLanguage);
-          console.log('LanguageContext: язык установлен, localStorage обновлен');
-          
-          // Принудительно обновляем все компоненты, использующие язык
-          setTimeout(() => {
-            console.log('LanguageContext: принудительное обновление через 100ms');
-            setLanguage(prevLang => {
-              console.log('LanguageContext: принудительное обновление, предыдущий язык:', prevLang);
-              return backendLanguage;
-            });
-          }, 100);
+          setIsLanguageInitialized(true);
+          console.log('LanguageContext: язык установлен, localStorage обновлен, инициализация завершена');
         } else {
-          console.log('LanguageContext: язык от бэкенда не поддерживается или пустой, оставляем текущий');
+          console.log('LanguageContext: язык от бэкенда не поддерживается или пустой, используем fallback');
+          // Если нет языка от бэкенда, используем localStorage как fallback
+          const savedLang = localStorage.getItem('language');
+          if (savedLang && translations[savedLang]) {
+            console.log('LanguageContext: устанавливаем язык из localStorage (fallback):', savedLang);
+            setLanguage(savedLang);
+          }
+          setIsLanguageInitialized(true);
         }
       });
     } else {
@@ -69,25 +68,25 @@ export function LanguageProvider({ children }) {
     }
   }, [setOnLanguageReceived]);
 
-  // Инициализируем язык из localStorage ТОЛЬКО если нет языка от бэкенда
+  // Fallback: если через 3 секунды не получили язык от бэкенда, используем localStorage
   useEffect(() => {
-    const initializeLanguage = async () => {
-      // Проверяем сохраненный язык в localStorage только как fallback
-      const savedLang = localStorage.getItem('language');
-      if (savedLang && translations[savedLang]) {
-        console.log('LanguageContext: устанавливаем язык из localStorage:', savedLang);
-        setLanguage(savedLang);
-      } else {
-        console.log('LanguageContext: нет сохраненного языка, оставляем по умолчанию (ru)');
+    const fallbackTimer = setTimeout(() => {
+      if (!isLanguageInitialized) {
+        console.log('LanguageContext: ⏰ Таймаут 3 секунды, используем localStorage как fallback');
+        const savedLang = localStorage.getItem('language');
+        if (savedLang && translations[savedLang]) {
+          console.log('LanguageContext: устанавливаем язык из localStorage (таймаут):', savedLang);
+          setLanguage(savedLang);
+        }
+        setIsLanguageInitialized(true);
       }
-    };
+    }, 3000);
 
-    // Небольшая задержка, чтобы сначала установился callback для бэкенда
-    setTimeout(initializeLanguage, 50);
-  }, []);
+    return () => clearTimeout(fallbackTimer);
+  }, [isLanguageInitialized]);
 
   return (
-    <LanguageContext.Provider value={{ language, changeLanguage, t }}>
+    <LanguageContext.Provider value={{ language, changeLanguage, t, isLanguageInitialized }}>
       {children}
     </LanguageContext.Provider>
   );

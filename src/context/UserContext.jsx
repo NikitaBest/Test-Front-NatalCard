@@ -67,8 +67,10 @@ export function UserProvider({ children }) {
         await new Promise(resolve => setTimeout(resolve, 100));
         
         // Всегда делаем авторизацию через бекенд
+        console.log('UserContext: отправляем запрос на логин...');
         const data = await loginUser(userData);
         console.log('UserContext: получен ответ от бэкенда:', data);
+        console.log('UserContext: время получения ответа:', new Date().toLocaleTimeString());
         
         if (data.token) {
           localStorage.setItem('token', data.token);
