@@ -37,19 +37,7 @@ export function LanguageProvider({ children }) {
     }
   };
 
-  useEffect(() => {
-    const initializeLanguage = async () => {
-      // Сначала проверяем сохраненный язык в localStorage
-      const savedLang = localStorage.getItem('language');
-      if (savedLang && translations[savedLang]) {
-        setLanguage(savedLang);
-      }
-    };
-
-    initializeLanguage();
-  }, []);
-
-  // Настраиваем callback для получения языка от бэкенда
+  // Настраиваем callback для получения языка от бэкенда ПЕРВЫМ
   useEffect(() => {
     console.log('LanguageContext: useEffect запущен, setOnLanguageReceived:', !!setOnLanguageReceived);
     if (setOnLanguageReceived) {
@@ -58,9 +46,20 @@ export function LanguageProvider({ children }) {
         console.log('LanguageContext: получен язык от бэкенда:', backendLanguage);
         console.log('LanguageContext: доступные переводы:', Object.keys(translations));
         if (backendLanguage && translations[backendLanguage]) {
-          console.log('LanguageContext: устанавливаем язык:', backendLanguage);
+          console.log('LanguageContext: устанавливаем язык от бэкенда:', backendLanguage);
+          console.log('LanguageContext: текущий язык до изменения:', language);
           setLanguage(backendLanguage);
           localStorage.setItem('language', backendLanguage);
+          console.log('LanguageContext: язык установлен, localStorage обновлен');
+          
+          // Принудительно обновляем все компоненты, использующие язык
+          setTimeout(() => {
+            console.log('LanguageContext: принудительное обновление через 100ms');
+            setLanguage(prevLang => {
+              console.log('LanguageContext: принудительное обновление, предыдущий язык:', prevLang);
+              return backendLanguage;
+            });
+          }, 100);
         } else {
           console.log('LanguageContext: язык от бэкенда не поддерживается или пустой, оставляем текущий');
         }
@@ -69,6 +68,23 @@ export function LanguageProvider({ children }) {
       console.log('LanguageContext: setOnLanguageReceived не доступен');
     }
   }, [setOnLanguageReceived]);
+
+  // Инициализируем язык из localStorage ТОЛЬКО если нет языка от бэкенда
+  useEffect(() => {
+    const initializeLanguage = async () => {
+      // Проверяем сохраненный язык в localStorage только как fallback
+      const savedLang = localStorage.getItem('language');
+      if (savedLang && translations[savedLang]) {
+        console.log('LanguageContext: устанавливаем язык из localStorage:', savedLang);
+        setLanguage(savedLang);
+      } else {
+        console.log('LanguageContext: нет сохраненного языка, оставляем по умолчанию (ru)');
+      }
+    };
+
+    // Небольшая задержка, чтобы сначала установился callback для бэкенда
+    setTimeout(initializeLanguage, 50);
+  }, []);
 
   return (
     <LanguageContext.Provider value={{ language, changeLanguage, t }}>

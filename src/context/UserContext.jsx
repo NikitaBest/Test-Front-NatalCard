@@ -83,12 +83,13 @@ export function UserProvider({ children }) {
           console.log('UserContext: проверяем languageCode:', data.user.languageCode);
           console.log('UserContext: onLanguageReceived callback:', !!onLanguageReceived);
           if (data.user.languageCode && onLanguageReceived) {
-            console.log('UserContext: вызываем onLanguageReceived с языком:', data.user.languageCode);
+            console.log('UserContext: ✅ Вызываем onLanguageReceived с языком:', data.user.languageCode);
             onLanguageReceived(data.user.languageCode);
           } else {
-            console.log('UserContext: НЕ вызываем onLanguageReceived. Причина:', {
+            console.log('UserContext: ❌ НЕ вызываем onLanguageReceived. Причина:', {
               hasLanguageCode: !!data.user.languageCode,
-              hasCallback: !!onLanguageReceived
+              hasCallback: !!onLanguageReceived,
+              languageCodeValue: data.user.languageCode
             });
           }
         } else {
