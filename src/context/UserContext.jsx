@@ -79,6 +79,13 @@ export function UserProvider({ children }) {
         
         // Всегда делаем авторизацию через бекенд
         console.log('UserContext: отправляем запрос на логин...');
+        console.log('UserContext: очищаем кэш перед запросом');
+        
+        // Очищаем localStorage от старых данных пользователя
+        localStorage.removeItem('user');
+        localStorage.removeItem('userId');
+        localStorage.removeItem('token');
+        
         const data = await loginUser(userData);
         console.log('UserContext: получен ответ от бэкенда:', data);
         console.log('UserContext: время получения ответа:', new Date().toLocaleTimeString());
@@ -101,6 +108,7 @@ export function UserProvider({ children }) {
           
           if (data.user.languageCode && onLanguageReceivedRef.current) {
             console.log('UserContext: ✅ Вызываем onLanguageReceived с языком:', data.user.languageCode);
+            console.log('UserContext: время вызова callback:', new Date().toLocaleTimeString());
             onLanguageReceivedRef.current(data.user.languageCode);
             console.log('UserContext: ✅ onLanguageReceived вызван успешно');
           } else {
