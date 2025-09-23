@@ -32,13 +32,14 @@ export function LanguageProvider({ children }) {
 
   const changeLanguage = (lang) => {
     if (translations[lang]) {
+      console.log('LanguageContext: изменение языка пользователем на:', lang);
       setLanguage(lang);
       localStorage.setItem('language', lang);
       // Язык будет отправлен вместе с остальными данными профиля
     }
   };
 
-  // Настраиваем callback для получения языка от бэкенда
+  // Настраиваем callback для получения языка ТОЛЬКО от бэкенда
   useEffect(() => {
     console.log('LanguageContext: useEffect запущен, setOnLanguageReceived:', !!setOnLanguageReceived);
     if (setOnLanguageReceived) {
@@ -48,18 +49,23 @@ export function LanguageProvider({ children }) {
         console.log('LanguageContext: доступные переводы:', Object.keys(translations));
         if (backendLanguage && translations[backendLanguage]) {
           console.log('LanguageContext: ✅ Устанавливаем язык от бэкенда:', backendLanguage);
+          console.log('LanguageContext: текущий язык до изменения:', language);
           setLanguage(backendLanguage);
           localStorage.setItem('language', backendLanguage);
           setIsLanguageInitialized(true);
-          console.log('LanguageContext: язык установлен, localStorage обновлен, инициализация завершена');
+          console.log('LanguageContext: язык установлен, инициализация завершена');
+          
+          // Принудительное обновление для гарантии смены языка
+          setTimeout(() => {
+            console.log('LanguageContext: принудительное обновление языка через 50ms');
+            setLanguage(prevLang => {
+              console.log('LanguageContext: принудительное обновление, предыдущий язык:', prevLang, 'новый:', backendLanguage);
+              return backendLanguage;
+            });
+          }, 50);
         } else {
-          console.log('LanguageContext: язык от бэкенда не поддерживается или пустой, используем fallback');
-          // Если нет языка от бэкенда, используем localStorage как fallback
-          const savedLang = localStorage.getItem('language');
-          if (savedLang && translations[savedLang]) {
-            console.log('LanguageContext: устанавливаем язык из localStorage (fallback):', savedLang);
-            setLanguage(savedLang);
-          }
+          console.log('LanguageContext: ❌ Язык от бэкенда не поддерживается или пустой:', backendLanguage);
+          console.log('LanguageContext: оставляем язык по умолчанию (ru)');
           setIsLanguageInitialized(true);
         }
       });
@@ -68,19 +74,14 @@ export function LanguageProvider({ children }) {
     }
   }, [setOnLanguageReceived]);
 
-  // Fallback: если через 3 секунды не получили язык от бэкенда, используем localStorage
+  // Fallback: если через 5 секунд не получили язык от бэкенда, оставляем по умолчанию
   useEffect(() => {
     const fallbackTimer = setTimeout(() => {
       if (!isLanguageInitialized) {
-        console.log('LanguageContext: ⏰ Таймаут 3 секунды, используем localStorage как fallback');
-        const savedLang = localStorage.getItem('language');
-        if (savedLang && translations[savedLang]) {
-          console.log('LanguageContext: устанавливаем язык из localStorage (таймаут):', savedLang);
-          setLanguage(savedLang);
-        }
+        console.log('LanguageContext: ⏰ Таймаут 5 секунд, оставляем язык по умолчанию (ru)');
         setIsLanguageInitialized(true);
       }
-    }, 3000);
+    }, 5000);
 
     return () => clearTimeout(fallbackTimer);
   }, [isLanguageInitialized]);
