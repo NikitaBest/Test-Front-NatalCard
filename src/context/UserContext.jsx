@@ -84,14 +84,19 @@ export function UserProvider({ children }) {
           // Проверяем, есть ли язык в ответе бэкенда
           console.log('UserContext: проверяем languageCode:', data.user.languageCode);
           console.log('UserContext: onLanguageReceived callback:', !!onLanguageReceived);
+          console.log('UserContext: тип languageCode:', typeof data.user.languageCode);
+          console.log('UserContext: значение languageCode:', JSON.stringify(data.user.languageCode));
+          
           if (data.user.languageCode && onLanguageReceived) {
             console.log('UserContext: ✅ Вызываем onLanguageReceived с языком:', data.user.languageCode);
             onLanguageReceived(data.user.languageCode);
+            console.log('UserContext: ✅ onLanguageReceived вызван успешно');
           } else {
             console.log('UserContext: ❌ НЕ вызываем onLanguageReceived. Причина:', {
               hasLanguageCode: !!data.user.languageCode,
               hasCallback: !!onLanguageReceived,
-              languageCodeValue: data.user.languageCode
+              languageCodeValue: data.user.languageCode,
+              languageCodeType: typeof data.user.languageCode
             });
           }
         } else {
