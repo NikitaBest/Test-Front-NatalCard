@@ -93,7 +93,36 @@ textarea {
 /* Улучшенная прокрутка на мобильных */
 .mobile-scroll {
   -webkit-overflow-scrolling: touch;
-  overflow-scrolling: touch;
+}
+
+/* Минимальные стили для скролла в чате AskAI */
+.ask-ai-chat-scroll {
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; /* Скрываем скроллбар в Firefox */
+  -ms-overflow-style: none; /* Скрываем скроллбар в IE/Edge */
+}
+
+.ask-ai-chat-scroll::-webkit-scrollbar {
+  display: none; /* Скрываем скроллбар в WebKit браузерах */
+}
+
+/* Стили для скролла вопросов */
+.ask-ai-questions-scroll {
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; /* Скрываем скроллбар в Firefox */
+  -ms-overflow-style: none; /* Скрываем скроллбар в IE/Edge */
+  scroll-behavior: smooth; /* Плавная прокрутка */
+}
+
+.ask-ai-questions-scroll::-webkit-scrollbar {
+  display: none; /* Скрываем скроллбар в WebKit браузерах */
+}
+
+/* Дополнительные стили для вопросов */
+.ask-ai-question {
+  flex-shrink: 0; /* Предотвращаем сжатие кнопок */
+  word-break: break-word; /* Перенос длинных слов */
+  hyphens: auto; /* Автоматические переносы */
 }
 
 /* Адаптация для больших экранов */
@@ -101,6 +130,79 @@ textarea {
   .chat-input-container {
     max-width: 500px;
     margin: 0 auto;
+  }
+}
+
+/* Адаптивные стили для AskAI компонентов */
+@media (max-width: 640px) {
+  .ask-ai-question {
+    font-size: 0.875rem !important; /* text-sm */
+    padding: 6px 12px !important;
+    margin-bottom: 1.5rem !important; /* mb-6 */
+  }
+  
+  .ask-ai-tabs {
+    max-width: 20rem !important; /* max-w-xs */
+  }
+  
+  .ask-ai-tabs button {
+    font-size: 0.75rem !important; /* text-xs */
+    padding: 0.25rem 0.5rem !important; /* px-1 py-1 */
+  }
+  
+  .ask-ai-questions-scroll {
+    max-height: calc(100vh - 200px) !important;
+    min-height: 200px !important;
+    padding-top: 8px !important;
+    padding-bottom: 55px !important;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 768px) {
+  .ask-ai-question {
+    font-size: 1rem !important; /* text-base */
+    padding: 8px 16px !important;
+    margin-bottom: 2rem !important; /* mb-8 */
+  }
+  
+  .ask-ai-tabs {
+    max-width: 24rem !important; /* max-w-sm */
+  }
+  
+  .ask-ai-tabs button {
+    font-size: 0.875rem !important; /* text-sm */
+    padding: 0.25rem 0.5rem !important; /* px-1 py-1 */
+  }
+  
+  .ask-ai-questions-scroll {
+    max-height: calc(100vh - 220px) !important;
+    min-height: 220px !important;
+    padding-top: 12px !important;
+    padding-bottom: 60px !important;
+  }
+}
+
+@media (min-width: 769px) {
+  .ask-ai-question {
+    font-size: 1.125rem !important; /* text-lg */
+    padding: 10px 20px !important;
+    margin-bottom: 2rem !important; /* mb-8 */
+  }
+  
+  .ask-ai-tabs {
+    max-width: 28rem !important; /* max-w-md */
+  }
+  
+  .ask-ai-tabs button {
+    font-size: 1rem !important; /* text-base */
+    padding: 0.5rem !important; /* px-2 py-1 */
+  }
+  
+  .ask-ai-questions-scroll {
+    max-height: calc(100vh - 240px) !important;
+    min-height: 240px !important;
+    padding-top: 15px !important;
+    padding-bottom: 65px !important;
   }
 }
 

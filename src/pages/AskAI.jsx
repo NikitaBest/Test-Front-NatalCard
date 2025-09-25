@@ -1,7 +1,7 @@
 import BottomMenu from '../components/BottomMenu';
 import AskAITabs from '../components/AskAITabs';
 import ChatInput from '../components/ChatInput';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLanguage } from '../context/LanguageContext';
 import { sendAIMessage, getAIAnswer, checkAIAnswerReady } from '../utils/api';
@@ -136,6 +136,7 @@ function HamburgerIcon() {
 export default function AskAI() {
   const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState('self');
+  const messagesEndRef = useRef(null);
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -145,8 +146,12 @@ export default function AskAI() {
   const [selectedQuestion, setSelectedQuestion] = useState(null);
   const [isCheckingReadiness, setIsCheckingReadiness] = useState(false);
 
-
-
+  // Автоматическая прокрутка к последнему сообщению
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [messages, loading, isCheckingReadiness]);
 
   // Функция для форматирования текста
   const formatText = (text) => {
@@ -317,9 +322,9 @@ export default function AskAI() {
         style={{ opacity: 1, filter: 'drop-shadow(0 0 10px #000) brightness(0.5) contrast(2.5)' }}
       />
       <div className="relative z-10 flex-1 flex flex-col">
-        <div className="w-full flex flex-col items-center flex-1 bg-white/80"
+        <div className="w-full flex flex-col items-center flex-1"
              style={{
-               paddingBottom: '135px' // Фиксированный отступ, dvh автоматически адаптируется
+               paddingBottom: '120px' // Отступ для поля ввода и нижнего меню
              }}>
           <h1 className="text-2xl font-normal text-center mt-0 font-mono">{t('askAI.title')}</h1>
           <div className="flex flex-row items-center justify-start w-full max-w-xl mx-auto mb-2 px-4">
@@ -328,24 +333,24 @@ export default function AskAI() {
           </div>
           <hr className="w-[90%] mx-auto border-gray-300 mb-4" />
           {!dialogStarted && (
-            <div className="mb-12">
+            <div className="mb-4">
               <AskAITabs active={activeTab} onChange={tab => { setActiveTab(tab); setSelectedQuestion(null); setDialogStarted(false); setMessages([]); setChatId(0); setError(null); }} />
             </div>
           )}
           {/* Вопросы только до начала диалога */}
           {!dialogStarted && (
-            <div className="flex flex-col items-center w-full max-w-md mx-auto mb-8 px-4 overflow-fix" style={{ minHeight: '200px' }}>
+            <div className="flex flex-col items-center w-full max-w-sm sm:max-w-md md:max-w-lg mx-auto mb-8 px-2 sm:px-4 overflow-y-auto ask-ai-questions-scroll" style={{ minHeight: '250px', maxHeight: 'calc(100vh - 250px)', paddingTop: '10px', paddingBottom: '60px' }}>
               {getQuestions().map((q, i) => (
                 <button
                   key={i}
-                  className={`ask-ai-question font-mono text-base transition mb-8 focus:outline-none text-center w-full max-w-sm ${
+                  className={`ask-ai-question font-mono text-sm sm:text-base md:text-lg transition mb-6 sm:mb-8 focus:outline-none text-center w-full max-w-sm ${
                     selectedQuestion === i ? 'text-black font-semibold' : 'text-gray-400 hover:text-gray-700'
                   }`}
                   onClick={() => handleQuestionClick(q, i)}
                   type="button"
                   style={{
                     lineHeight: '1.5',
-                    padding: '8px 16px',
+                    padding: '6px 12px',
                     wordWrap: 'break-word',
                     whiteSpace: 'normal',
                     display: 'block',
@@ -360,9 +365,9 @@ export default function AskAI() {
           )}
           {/* История диалога */}
           {dialogStarted && (
-            <div className="flex flex-col items-center w-full max-w-md mx-auto mb-8">
+            <>
               {messages.length > 0 && (
-                <div className="w-full bg-white/80 rounded-xl shadow-none mb-8 px-4 py-6 flex flex-col gap-6">
+                <div className="w-full max-w-md mx-auto bg-white/80 rounded-xl shadow-none px-4 py-6 flex flex-col gap-6 overflow-y-auto ask-ai-chat-scroll" style={{ maxHeight: 'calc(100vh - 200px)' }}>
                   {messages.map((msg, i) => (
                     <div key={i} className={`flex ${msg.isUser ? 'justify-end' : 'justify-start'}`}>
                       {msg.isUser ? (
@@ -376,19 +381,22 @@ export default function AskAI() {
                   ))}
                   {/* Анимированное сообщение загрузки */}
                   {(loading || isCheckingReadiness) && <LoadingMessage />}
+                  {/* Кнопка выхода из чата */}
+                  <button
+                    className="w-full max-w-[180px] h-10 bg-gray-200 text-gray-800 rounded-xl text-base font-mono mb-4 mx-auto"
+                    onClick={handleBack}
+                  >
+                    {t('askAI.exitChat')}
+                  </button>
+                  {/* Невидимый элемент для автоматической прокрутки */}
+                  <div ref={messagesEndRef} />
                 </div>
               )}
               {error && <div className="text-center text-red-500 mb-4">{error}</div>}
-              <button
-                className="w-full max-w-[180px] h-10 bg-gray-200 text-gray-800 rounded-xl text-base font-mono mb-4"
-                onClick={handleBack}
-              >
-                {t('askAI.exitChat')}
-              </button>
-            </div>
+            </>
           )}
         </div>
-        <div className="fixed left-0 right-0 z-[9999] w-full flex justify-center pointer-events-none"
+        <div className="fixed left-0 right-0 z-[9999] w-full pointer-events-none"
              style={{
                bottom: '61px',
                // Безопасная зона для устройств с вырезами
@@ -399,7 +407,7 @@ export default function AskAI() {
                left: '50%',
                transform: 'translateX(-50%)'
              }}>
-          <div className="w-full max-w-md mx-auto px-2 pointer-events-auto">
+          <div className="w-full max-w-md mx-auto pointer-events-auto">
             <ChatInput
               onSend={handleSend}
               placeholder={dialogStarted ? t('askAI.messagePlaceholder') : t('askAI.placeholder')}
