@@ -15,6 +15,7 @@ import Profile from './pages/Profile';
 import Today from './pages/Today';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useUser } from './context/UserContext';
+import { trackPageView, trackNavigation } from './utils/yandexMetrika';
 
 function App() {
   const [isAppLoading, setIsAppLoading] = useState(true);
@@ -57,6 +58,15 @@ function App() {
       }
     }
   }, []);
+
+  // Отслеживание переходов между страницами для Яндекс.Метрики
+  useEffect(() => {
+    if (!showSplash && location.pathname) {
+      const pageName = location.pathname.replace('/', '') || 'home';
+      trackPageView(location.pathname, pageName);
+      trackNavigation(pageName, { path: location.pathname });
+    }
+  }, [location.pathname, showSplash]);
 
   return (
     <>
