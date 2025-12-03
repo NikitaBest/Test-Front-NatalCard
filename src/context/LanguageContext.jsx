@@ -23,8 +23,8 @@ export function LanguageProvider({ children }) {
   
   const t = (key) => {
     const keys = key.split('.');
-    const currentLang = (language || 'ru') && translations[language || 'ru'] ? (language || 'ru') : 'ru';
-    let value = translations[currentLang];
+    const currentLang = language && translations[language] ? language : null;
+    let value = currentLang ? translations[currentLang] : undefined;
     
     for (const k of keys) {
       if (value && typeof value === 'object' && k in value) {
@@ -100,41 +100,25 @@ export function LanguageProvider({ children }) {
     }
   }, [setOnLanguageReceived]);
 
-  // Fallback: если через 5 секунд не получили язык от бэкенда, используем язык по умолчанию
+  // Fallback: если через 5 секунд не получили язык от бэкенда, не рендерим UI с неправильным языком
   useEffect(() => {
     const fallbackTimer = setTimeout(() => {
       if (!isLanguageInitialized) {
-        console.log('LanguageContext: ⏰ Таймаут 5 секунд, язык не получен — используем русский по умолчанию');
-        if (!language) {
-          setLanguage('ru');
-          localStorage.setItem('language', 'ru');
-        }
+        console.log('LanguageContext: ⏰ Таймаут 5 секунд, язык не получен — оставляем UI скрытым');
         setIsLanguageInitialized(true);
       }
     }, 5000);
 
     return () => clearTimeout(fallbackTimer);
-  }, [isLanguageInitialized, language]);
+  }, [isLanguageInitialized]);
 
-  // Если язык не установлен после инициализации, используем русский по умолчанию
-  useEffect(() => {
-    if (isLanguageInitialized && !language) {
-      console.log('LanguageContext: язык не установлен, используем русский по умолчанию');
-      setLanguage('ru');
-      localStorage.setItem('language', 'ru');
-    }
-  }, [isLanguageInitialized, language]);
-
-  if (!isLanguageInitialized) {
-    // Блокируем рендер только до инициализации (максимум 5 секунд)
+  if (!isLanguageInitialized || !language) {
+    // Блокируем рендер приложения до получения языка от бэкенда
     return null;
   }
 
-  // Если язык все еще null после инициализации, используем русский
-  const currentLanguage = language || 'ru';
-
   return (
-    <LanguageContext.Provider value={{ language: currentLanguage, changeLanguage, t, isLanguageInitialized }}>
+    <LanguageContext.Provider value={{ language, changeLanguage, t, isLanguageInitialized }}>
       {children}
     </LanguageContext.Provider>
   );
